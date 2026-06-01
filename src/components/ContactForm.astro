@@ -1,0 +1,88 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+import { default as ConfirmDialog} from './ConfirmDialog.astro';
+import { getDict} from "../lib/dict";
+
+//	/src/assets/以下のパスを指定する。
+//	enとかで置き換え可能
+
+const sendurl = import.meta.env.DEV ? "http://localhost:3000/api/contact" : "https://user.rpg-cobo.com/api/contact";
+const pubkey = import.meta.env.DEV ? "1x00000000000000000000AA" : "0x4AAAAAACNB13Y0X5KgzIAL";
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+const D = getDict( lang);
+
+---
+<div>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer/>
+	<ConfirmDialog title={D("confirm")} callback='submitContact'>
+		この内容で送信しますか？
+	</ConfirmDialog>
+	<form class="contactform" id="contactform" action={sendurl} method="POST">
+		<div>
+			<label html-for="email">メールアドレス: </label>
+			<input id="email" type="email" name="email" />
+		</div>
+		<div>
+			<label html-for="fullname">氏名（フルネーム）: </label>
+			<input id="fullname" type="text" name="fullname" />
+		</div>
+		<div>
+			<label html-for="subject">件名: </label>
+			<input id="subject" type="text" name="subject" />
+		</div>
+		<div>
+			<label html-for="message">お問い合わせ内容: </label>
+			<textarea id="message" name="message" />
+		</div>
+		<div>
+			<label html-for="message">(アンケート) RPG-Coboの使用歴: </label>
+			<select name="usage">
+				<option value="0">回答しない</option>
+				<option value="1">使用したことが無い</option>
+				<option value="2">1日以内</option>
+				<option value="3">1日～3日</option>
+				<option value="4">3日～10日</option>
+				<option value="5">10日～30日</option>
+				<option value="6">30日以上</option>
+			</select>
+		</div>
+		<input type="hidden" name="lang" value={lang}/>
+		<div id="ts" class="cf-turnstile" data-sitekey={pubkey} data-size="normal" data-callback="turnstileSuccess"/>
+		<div>
+			<button type="submit" id="submitbtn" disabled>送信内容を確認</button>
+		</div>
+		<i>※メールアドレスの打ち間違いにはくれぐれもご注意ください。</i>
+	</form>
+	
+	<script>
+		window.turnstileSuccess = function () {
+			document.getElementById( 'submitbtn').disabled = false;
+			console.log(`Challenge Success.`);
+		}
+		
+		const form = document.getElementById("contactform");
+		const dialog = document.getElementById('confirmdialog');
+		
+		form.addEventListener( "submit", function( e) {
+			const email = document.getElementById( "email");
+			const fullname = document.getElementById( "fullname");
+			const subject = document.getElementById( "subject");
+			const message = document.getElementById( "message");
+			// email.value
+			
+			e.preventDefault();
+			dialog.showModal();
+		});
+
+		tapclose( dialog);
+
+		window.submitContact = function( btn){
+			if( btn == 1){	//	ok!
+				form.submit();
+			}
+		}
+	</script>
+</div>

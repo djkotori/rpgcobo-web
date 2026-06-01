@@ -1,0 +1,24 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import { getDict} from "../lib/dict";
+import { Aside } from '@astrojs/starlight/components';
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+const D = getDict( lang);
+const hidetitle = Astro.locals.starlightRoute.entry.data.hidetitle
+---
+
+{
+hidetitle ? (
+	<div/>
+):(
+<Default {...Astro.props}>
+  <slot />
+</Default>
+<Aside type="caution">
+	このウェブサイトは現在公開前のため、ダウンロードやリンク、お問い合わせ等の一部の機能は動作しません。<br/>
+	公開は6月5日を予定しています。
+</Aside>
+)
+}

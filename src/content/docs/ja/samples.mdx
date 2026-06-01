@@ -1,0 +1,19 @@
+---
+title: サンプルゲーム
+description: Get started building your docs site with Starlight.
+template: splash
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { default as Card2 } from '/src/components/Card2.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
+import IMGS from '/src/components/IMGS.astro';
+
+<Card2 title="WebGL書き出しデモ" icon="pencil" rev={true} imgs={["samples/webgldemo-1.png","samples/webgldemo-2.png"]}>
+- このサンプルは RPG-Cobo の新規プロジェクトをそのままWebGL向けに書き出したものです。
+- RPG-Cobo がどのようなゲームを制作できるかの参考にしてください。***ちゃんとしたゲームにはなっていないので、その点はご了承ください。***
+- **今後、より魅力的なサンプルゲームを追加していく予定です！**
+<LinkCard title="WebGL書き出しデモをプレイ" href="https://demo.rpg-cobo.com/" target="_blank" />
+</Card2>

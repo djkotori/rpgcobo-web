@@ -1,0 +1,51 @@
+---
+title: ユーザー登録をしよう
+description: ユーザー登録をしよう
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+ここまでしてきた一連のガイドでは、RPGを制作する方法を解説してきました。  
+まだまだゲームの完成には時間がかかると思いますが、ここで一度みんなに遊んでもらえるように配布する方法を解説します。
+
+プロジェクトを「ビルド」することによって配布可能なファイルにまとめることができます。**ビルドをするためには、ユーザー登録をする必要があります。**
+
+### <M code="f10d"/> ユーザー登録をしよう
+
+ユーザー登録をすることで、「Free ライセンス」というライセンスが初めに付与されます。  
+Free ライセンスはビルド回数やビルド先のOSに制約はありますが、全て無償でゲームを配布することができます。
+
+<Aside>
+もしRPG-Coboをより使い込みたくなったらライセンスを購入しましょう。
+詳しくはこちら⇒[価格設定](/pricing)
+</Aside>
+
+
+それではユーザー登録をしていきましょう。
+
+<Steps>
+1. アクティビティバーの下から2番目の「<M code="f03e"/>アカウント」をクリックし、「<M code="ea77"/>RPG-Coboにログイン」を選択しましょう。
+次のようなダイアログが表示され、続けて自動でウェブブラウザが表示されます。<SS src='docs/register-1.png' alt=''/>
+
+2. RPG-Coboでは、「Google ID」「Github ID」「Discord ID」でのソーシャルログインに対応しています。お使いのIDでサインインしてください。<SS src='docs/register-2.png' alt=''/>
+
+3. 利用規約に同意して「ユーザー登録」を完了しましょう。  
+
+4. ブラウザでのログインが完了すると、自動的にアプリ側でもログイン処理が行われ、ログイン完了となります。<SS src='docs/register-3.png' alt=''/>
+</Steps>
+
+
+### <M code="f10d"/> アカウントのメニュー
+
+ログイン後に「<M code="e853"/>アカウント」をクリックするとアカウントメニューが表示されます。  
+ここではアカウントの状態を確認したり、「[RPG-Cobo ユーザーサイト](https://user.rpg-cobo.com)」を開いたり、ログアウトをすることができます。
+
+<SS src='docs/register-4.png' alt=''/>
+
+---
+
+それではログインができた状態で、次ページのゲームのビルドに進んでみましょう。

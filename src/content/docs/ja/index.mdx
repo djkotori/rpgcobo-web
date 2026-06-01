@@ -1,0 +1,142 @@
+---
+title: RPG-CoboでRPGを作ろう
+description: Get started building your docs site with Starlight.
+template: splash
+hidetitle: true
+---
+
+import { Card, CardGrid, LinkCard, LinkButton } from '@astrojs/starlight/components';
+import { default as Card2 } from '/src/components/Card2.astro';
+import { default as IMG } from '/src/components/IMG.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { getDict} from "/src/lib/dict";
+
+import "@splidejs/splide/css"
+import { Splide, SplideSlide } from 'astro-splide';
+
+<div class="hero" style="margin-right: calc(50% - 50vw); margin-left: calc(50% - 50vw);">
+<div class="hero-slideshow">
+<Splide
+  class='not-content'
+  options={ {
+	cover: true,
+	perMove: 1,
+	type: "fade",
+	rewind: true,
+	arrows: false,
+	pagination: false,
+	pauseOnHover: false,
+	padding: "0rem", //左右のスライドを5rem分表示させる
+	reducedMotion: {
+		interval: 5000,
+		speed: 8000,
+		autoplay: "play",
+	},
+	height: "calc( 100vh - 80px)",
+	breakpoints: {
+		_768: {
+			heightRatio: 0.6, // スマホ時は縦比率を確保
+			height: "50vh",
+			padding: "0",
+		},
+		_1024: {
+			heightRatio: 0.6, // スマホ時は縦比率を確保
+			height: "70vh",
+			padding: "0",
+		},
+	}
+  }}
+>
+  <SplideSlide>  <IMG src='top/slide1.jpg' alt=''/>  </SplideSlide>
+  <SplideSlide>  <IMG src='top/slide2.jpg' alt=''/>  </SplideSlide>
+  <SplideSlide>  <IMG src='top/slide3.jpg' alt=''/>  </SplideSlide>
+
+</Splide>
+</div>
+	<div class="hero-overlay"></div>
+	<div class="container">
+		<div class="hero-content">
+			<h2 class="hero-title animate-fade-in">Create Your<br/>RPG World</h2>
+			<p class="hero-subtitle animate-fade-in-delay">RPG-Coboで自分だけのRPGを作ろう</p>
+		</div>
+	</div>
+</div>
+
+<Aside type="caution">
+	このウェブサイトは現在公開前のため、ダウンロードやリンク、お問い合わせ等の一部の機能は動作しません。<br/>
+	公開は6月5日を予定しています。
+</Aside>
+
+# 最新情報
+---
+
+<Card title='2026/06/05 : ベータテスト開始のお知らせ' icon="star">
+**RPG開発ツール RPG-Cobo は、本日よりベータテスト版を公開しました。**  
+ここから正式サービスへ向けて大きく前進する、重要なステップとなります。
+今回のベータテストでは、ユーザーの皆さまからのご意見・ご要望をもとに、集中的なデバッグと改善を行います。  
+RPG-Coboが「世界で最高のRPG制作ツール」となるための重要なこの期間に、ぜひ皆さまのお力をお借し下さい。
+
+||||
+|-|-|-|
+|〇|**2026年6月**|**ベータテスト版公開**|
+|　|2026年8月|アーリーアクセス開始|
+|　|2026年内|日本正式サービス開始|
+|　|2027年前半|グローバルサービス開始|
+
+<LinkCard title="ベータテストの詳細はこちらから" href="post/20260605-betatest" />
+</Card>
+
+
+## <M code="e0e0"/> RPG-Coboって何？
+
+<Card2 title="RPG開発の次世代ツール" icon="pencil" img="top/rpgcobo1.png">
+RPG-Coboは、無料で始められるRPG開発の次世代のツールです。  
+高解像度ボクセルと最新のレンダリング技術、抜群の操作性のツール、今までなかった先進的でユニークな機能の数々。
+
+あなたのアイデアを最高のRPG体験へと昇華するただ一つのツールがここに誕生しました。
+</Card2>
+
+<Card2 title="高品質な3Dマップを楽々作成できるマップエディタ" icon="pencil" rev={true} imgs={["feature/map1.png","feature/block1.png","feature/map2.png"]}>
+- ブロックを組み立てるような手軽さで、3Dのマップも驚くほど簡単に作成可能です。
+- 表現力が高いボクセル素材によって、ツールに付属のデフォルト素材だけでも魅力的で独創的なあなただけのマップを作成できます。
+- 大小合わせて数百を超える豊富なブロック素材が標準で搭載。
+</Card2>
+
+<Card2 title="プログラム不要で全てあなたの思うままに" icon="pencil" imgs={["feature/db1.png","feature/event1.png","feature/trans1.png","feature/build1.png"]}>
+- 味方キャラや敵キャラ、スキル、アイテムなど、RPGに必要な全てのデータを直観的でグラフィカルに編集
+- イベントエディタによって、ノーコードで簡単にゲームのストーリー展開や演出など、全ての処理をコントロール
+- AI翻訳による多言語ローカライズ機能を標準搭載。全世界に向けてあなたのRPGを発信しましょう！
+- ボイスの作成にもAIによる表現力豊かな自動生成に対応！
+- **ウェブブラウザ、Windows、Android、iOS**に書き出し可能
+</Card2>
+
+<Card2 title="オープンソースで無限の可能性" icon="pencil" rev={true} img="top/opensource.png">
+RPG-CoboはオープンソースのRPG開発ツールです。Apache2 ライセンスに基づいてGitHubに無料で公開されおり、素材等も含め全て商用／非商用問わず自由に再配布できます。  
+さらに、プラグインによるゲームやツールの拡張にも対応。ゲームもツールも自由自在に拡張できます。
+</Card2>
+
+## <M code="eb9b"/> RPG-Coboを始めましょう！
+
+<CardGrid stagger>
+	<Card title="機能紹介" icon="pencil">
+		RPG-Coboは本格的なRPGを制作するための非常に高機能なツールです。
+		その実力をぜひご覧ください！
+		<LinkCard title="機能紹介のページへ" href="features" />
+	</Card>
+	<Card title="今すぐダウンロード" icon="add-document">
+		ダウンロードしてインストールするだけで、すぐにRPG制作を始めることができます。購入もユーザー登録も必要ありません！
+		<LinkCard title="ダウンロードのページへ" href="download" />
+	</Card>
+	<Card title="価格設定" icon="setting">
+		**RPG-Coboは完全無料のツールで、商用配布もOKです。**  
+		より便利に使いたい方は有料ライセンスをお求めください。
+		有料ライセンスの購入も全て**買い切り型**となっており。一度購入したらずっとご利用になれます。
+		<LinkCard title="価格設定のページへ" href="pricing" />
+	</Card>
+	<Card title="ガイド～使い方を学びましょう～" icon="open-book">
+		RPG-CoboでどのようにRPGを制作していくのか分かりやすく解説していきます。
+		まだ使い始めてない方もまずは一読してみてください。
+		<LinkCard title="ガイドのページへ" href="guides/start" />
+	</Card>
+</CardGrid>

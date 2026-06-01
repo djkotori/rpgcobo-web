@@ -1,0 +1,42 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+import { imageSizeFromFile } from 'image-size/fromFile';
+
+//	/src/assets/以下のパスを指定する。
+//	enとかで置き換え可能
+
+interface Props {
+   src: string;
+   alt: string;
+   minscale: number;
+}
+
+const { src, alt, minscale } = Astro.props;
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+let imgpath = "/src/assets/" + src;
+
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{jpeg,jpg,png,gif,webp}');
+let imgref = images[imgpath];
+if( !imgref) {
+	console.log( images);
+	throw new Error(`"${src}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
+}
+
+const cdir = process.cwd();
+
+let img = imgref();
+let dim = await imageSizeFromFile( cdir + imgpath);
+let w = dim.width, h = dim.height, asps = w/h / 1.5;
+if( asps > 1.0) asps = 1.0;
+if( minscale && asps < minscale) asps = minscale;
+const sw = w * asps;
+const style = "width:"+sw+"px";// `width:${sw}px;max-width:100%;`;
+// console.log( "------------", cdir + imgpath, w, h, asps, minscale);
+
+---
+<center>
+<Image src={img} alt={alt} style={style}/>
+</center>

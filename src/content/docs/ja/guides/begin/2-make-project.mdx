@@ -1,0 +1,60 @@
+---
+title: プロジェクトを作成しよう
+description: プロジェクトを作成しよう
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import IMGS from '/src/components/IMGS.astro';
+
+
+### <M code="f10d"/> RPG-Coboポータルアプリでプロジェクトを作成する
+
+[前ページ](../1-install)でインストールした**RPG-Coboポータルアプリ**を開くと、次のような画面が表示されます。  
+
+1. 画面上部の「プロジェクト」メニューを選びます。
+2. 「<M code="e147"/> 新規プロジェクト」のボタンをクリックしましょう。
+
+<center style="width:1026px;max-width:100%;aspect-ratio:1026/769;margin:0 auto;">
+	<IMGS srcs={["docs/make-project-1-0.png","docs/make-project-1-1.png","docs/make-project-1-2.png"]} />
+</center>
+
+---
+
+3. 新規プロジェクトのダイアログが表示されたら、必要な入力をして「決定」ボタンを押してください。
+
+<div class="sspart">
+<SS src='docs/make-project-2.png' alt=''/>
+
+##### <M part="A"/> プロジェクト名
+新しいRPGのプロジェクト名を入力します。※後で変更できるのでどんな名前でも構いません。
+
+##### <M part="B"/> プロジェクト言語
+このRPGでメインで使用する言語を指定してください。
+
+##### <M part="C"/> プロジェクトパス
+プロジェクトのフォルダをどこに作成するかを指定します。
+
+##### <M part="D"/> プロジェクトのテンプレート
+作りたいRPGのイメージに一番近いテンプレートを選択しましょう。
+<Aside>
+現在のところは、ファンタジーRPG用のテンプレートのみ用意されています。今後、和風、現代、SFなどのテンプレートを追加していく予定です。  
+また、ユーザの作成したテンプレートも「<M code="e8b8"/> 環境設定(Ctrl+,)」メニューから追加可能です。
+</Aside>
+
+##### <M part="E"/> ツールのバージョン
+※最新版のツールが自動で選択されるので変更する必要はありません。
+
+</div>
+
+---
+
+これでRPG-Coboのプロジェクトが作成されました！  
+**それでは、作成されたプロジェクトをダブルクリックして、さっそくRPGの制作にとりかかりましょう！**
+
+<SS src='docs/make-project-3.png' alt=''/>
+

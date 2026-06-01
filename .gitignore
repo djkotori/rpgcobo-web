@@ -1,0 +1,32 @@
+# build output
+dist/
+out/
+# generated types
+.astro/
+.frontmatter
+.vscode
+tmp
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# misc
+.DS_Store
+desktop.ini
+*.pem
+*.code-workspace
+*.pyc
+*.local
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store

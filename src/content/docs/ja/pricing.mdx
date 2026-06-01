@@ -1,0 +1,51 @@
+---
+title: 価格設定
+description: Get started building your docs site with Starlight.
+template: splash
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { default as PriceList} from '/src/components/PriceList.astro';
+
+## <M code="e853"/> まずはユーザー登録をしましょう！
+
+ライセンスの購入には、予めRPG-Coboのユーザー登録が必要となります。**登録するだけで無料のFreeライセンスが付与されます**ので、まずは以下のリンクからユーザー登録をしてみてください！
+
+<LinkButton href="https://user.rpg-cobo.com" variant="secondary" target="_blank"><M code="e879"/>RPG-Cobo ユーザーサイト</LinkButton>
+
+
+## <M code="e7af"/> ライセンスの一覧
+<Aside type="caution">
+現在ベータテスト中のため、ライセンスの購入はできません。2026年8月予定のアーリーアクセス開始をお待ちください。
+</Aside>
+
+<PriceList/>
+
+## <M code="e39f"/> どのライセンスを選べばいい？
+
+<CardGrid stagger>
+	<Card title="とりあえず試してみたい方" icon="pencil">
+		- Freeライセンスで十分な場合がほとんどです。ビルドを行わない場合はユーザー登録の必要もありません。
+	</Card>
+	<Card title="個人制作の方" icon="pencil">
+		- フリーソフトを制作したい方にはFreeライセンスでも十分な場合が多いです。  
+		  ビルドの回数等の制限があるので、使い込みたい方はIndieライセンスの購入を検討してみてください。
+		- 収益化を考えている方は、Indieライセンスがお勧めです。Windows版のビルドが可能なので、Steamなどに向けてリリースもできます。
+	</Card>
+	<Card title="小規模チームで開発" icon="setting">
+		- チームで開発する場合でも、チーム人数分のライセンス購入は必要ありません。ビルドをする方の数だけライセンスを購入してください。
+		- スマートフォンのアプリ内広告やSteamのゲーム内購入など、収益化を多方面に展開するのであればProライセンスがお勧めです。
+		
+		*※ユーザーアカウントの複数人での使いまわしや一人での複数アカウント使用は規約違反となりますのでご注意ください。*
+	</Card>
+	<Card title="大規模な開発を持つ企業" icon="open-book">
+		- コンシューマー機(Switch,PlayStation5等)向けにゲームをリリースしたい。
+		- より高度な開発のためにネイティブコードへアクセスしたい。
+		- RPG-Coboのツールシステムを使い自社のタイトルを開発したい。
+
+		このようなご要望のために個別のご相談も受け付けております。どうぞお気軽にお問い合わせください！
+		<LinkCard title="コンタクトのページへ" href="contact" />
+	</Card>
+</CardGrid>

@@ -1,0 +1,100 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import { getDict} from "../lib/dict";
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+const D = getDict( lang);
+
+interface Props {
+	title: string;
+	callback: string;
+}
+
+const { title, callback } = Astro.props;
+---
+
+<dialog id="confirmdialog">
+  <div class="inner">
+    <div class="header">{title}</div>
+    <div class="body">
+      <slot />
+    </div>
+    <div class="footer">
+      <button class="button cancel" onclick={"window."+callback+"( 0); document.getElementById( 'confirmdialog').close();"}>{D("cancel")}</button>
+      <button class="button ok" onclick={"window."+callback+"( 1); document.getElementById( 'confirmdialog').close();"}>{D("ok")}</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+	window.tapclose = function( d){
+		d.addEventListener('click', (e) => {
+			const r = d.getBoundingClientRect();
+			const isInDialog = r.top <= e.clientY && e.clientY <= r.bottom && r.left <= e.clientX && e.clientX <= r.right;
+			if( !isInDialog) d.close();
+		});
+  	}
+</script>
+
+<style>
+	@layer starlight.components {
+		/* ダイアログボックスのスタイリング */
+		#confirmdialog {
+			width: 32em;
+			max-height: 50%;
+			border: none;
+			border-radius: 12px;
+			box-shadow: 0 0 24px 4px rgba(0, 0, 0, 0.4);
+			padding: 0;
+			background-color: var( --sl-color-gray-6);
+			position: fixed;
+			z-index: 10000;
+			margin: auto;
+		}
+		/* 背景 */
+		#confirmdialog::backdrop {
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+		/* ヘッダ */
+		#confirmdialog .header {
+			background-color: var( --sl-color-gray-5);
+			color: #fff;
+			font-weight: bold;
+			padding: 1em;
+			position: sticky;
+			top: 0;
+		}
+		/* ボディ */
+		#confirmdialog .body {
+		padding: 1em;
+		}
+		/* フッタ */
+		#confirmdialog .footer {
+		border-top: solid 1px var( --sl-color-gray-5);
+		text-align: right;
+		padding: 1em;
+		position: sticky;
+		bottom: 0;
+		}
+		/* ボタン */
+		#confirmdialog .button {
+		width: 8em;
+		height: 2.4em;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		}
+		#confirmdialog .button:hover {
+			opacity: 0.8;
+		}
+		#confirmdialog .button.cancel {
+			background-color: var( --sl-color-gray-4);
+			color: var( --sl-color-black);
+		}
+		#confirmdialog .button.ok {
+			background-color: var( --sl-color-text-accent);
+			color: var( --sl-color-black);
+		}
+	}
+</style>

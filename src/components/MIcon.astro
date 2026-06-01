@@ -1,0 +1,25 @@
+---
+const partmap = {
+	A:["f143","#FF0000"],
+	B:["f144","#2626FF"],
+	C:["f145","#00D800"],
+	D:["f146","#FF8000"],
+	E:["f147","#D900D9"],
+	F:["f148","#00CCDD"],
+	G:["f149","#B2B200"],
+	H:["f14a","#00B285"],
+	I:["f14b","#808DEE"],
+	J:["f14c","#698C00"],
+};
+
+let code = Astro.props.code;
+let style = "";
+
+let part = partmap[Astro.props.part];
+if( part){
+	code = part[0]; style = "color:"+part[1];
+}
+
+---
+
+<span class="micon" style={style}> &#x{code}; </span>

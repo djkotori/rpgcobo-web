@@ -1,0 +1,52 @@
+---
+import { promises as pfs } from 'fs'
+
+export async function getStaticPaths() {
+  let readdir = async ( path, prefix, list) => {
+    let a = await pfs.readdir( path);
+    for( let v of a){
+      let stat = await pfs.stat( path+"/"+v);
+      if( stat.isDirectory()){
+        await readdir( path+"/"+v, prefix+v+"/", list);
+      }else{
+        //  remove ".mdx"
+        if( v.endsWith( ".mdx") || v.endsWith( ".md")) v = v.slice( 0, v.lastIndexOf( "."));
+        list.push( { params: { path: prefix+v}});
+      }
+    }
+    return list;
+  };
+
+  const cdir = process.cwd() + "/src/content/docs/ja";
+  const list = await readdir( cdir, "", [{ params: { path: undefined}}]);
+  // console.log( list);
+
+  return list;
+}
+
+const { path } = Astro.params;
+
+---
+
+<div id="abc" path={path}>
+<script>
+  function userlang(){
+    const availmap = {"en":1, "ja":1};
+    var lang = navigator.language || navigator.userLanguage || "en";
+    if( !availmap[lang]){
+      if( lang.indexOf( "-") >= 0){
+        lang = lang.slice( 0, lang.indexOf( "-"));
+        if( !availmap[lang]) lang = "en";
+      }else{
+        lang = "en";
+      }
+    }
+    return lang;
+  }
+  let e = document.getElementById( "abc");
+  let path = e.getAttribute( "path") || "";
+  console.log( navigator.language, e, path);
+  console.log( "/" + userlang() + "/" + path);
+  location.href = "/" + userlang() + "/" + path;
+</script>
+</div>

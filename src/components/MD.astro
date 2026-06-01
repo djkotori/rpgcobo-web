@@ -1,0 +1,26 @@
+---
+import { getEntry, render } from 'astro:content';
+
+//	/src/assets/以下のパスを指定する。
+//	enとかで置き換え可能
+
+interface Props {
+   src: string;
+}
+
+const { src } = Astro.props;
+
+let mdpath = "/src/assets/" + src;
+
+const posts = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.md', { eager: true });
+let postref = posts[mdpath];
+if( !postref) {
+	console.log( posts);
+	throw new Error(`"${src}" does not exist in glob: "src/assets/**/*.md"`);
+}
+
+const post = await postref;
+const Content = post.Content;
+
+---
+<Content />

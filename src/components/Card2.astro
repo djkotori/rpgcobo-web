@@ -1,0 +1,97 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import type { StarlightIcon } from '@astrojs/starlight/components/Icons';
+import IMG from './IMG.astro';
+import IMGS from './IMGS.astro';
+import "@splidejs/splide/css"
+
+interface Props {
+	icon?: StarlightIcon;
+	title: string;
+	img: string;
+	mov: string;
+	rev: boolean;
+
+	imgs: Array<string>;
+}
+
+const { icon, title, img, mov, rev, imgs } = Astro.props;
+---
+
+<article class={"card2 "+(rev?"reverse":"")}>
+	<div class="left">
+		<p class="title">
+			<!-- {icon && <Icon name={icon} class="icon" size="1.333em" />} -->
+			<span set:html={title} />
+		</p>
+		<div class="body2"><slot /></div>
+	</div>
+	<div class="right">
+	{ imgs ?
+		<IMGS srcs={imgs} />
+		:
+		<IMG src={img} alt=""/>
+	}
+	</div>
+</article>
+
+<style>
+	@layer starlight.components {
+		.left {
+			width: 100%;
+			padding: 3.0em 2.0em;
+		}
+		.right {
+			width: 100%;
+aspect-ratio: 16 / 9;
+		}
+		.reverse {
+			flex-direction: row-reverse;
+		}
+		.title {
+			font-weight: 600;
+			font-size: var(--sl-text-h4);
+			color: var(--sl-color-white);
+			line-height: var(--sl-line-height-headings);
+			gap: 1rem;
+			align-items: center;
+			text-align: center;
+			margin-bottom: 1.6em;
+		}
+		.card2 {
+			--sl-card-border: var(--sl-color-purple);
+			--sl-card-bg: var(--sl-color-purple-low);
+			border: 1px solid var(--sl-color-gray-5);
+			border-radius: 16px;
+			overflow: hidden;
+			/* background-color: var(--sl-color-gray-7); */
+			/* padding: clamp(1rem, calc(0.125rem + 3vw), 2.5rem); */
+			margin-top: 2em;
+			gap: clamp(0.5rem, calc(0.125rem + 1vw), 1rem);
+			display: block;
+		}
+		.body2 {
+			margin: 0;
+			font-size: clamp(var(--sl-text-sm), calc(0.5rem + 1vw), var(--sl-text-body));
+		}
+		@media (min-width: 50em) {
+			.card2 {
+				display: flex;
+				min-height: 400px;
+			}
+			.left {
+				width: 53%;
+				padding: 3.0em 2.0em;
+				margin: auto 0;
+			}
+			.right {
+				width: 47%;
+				margin-top: 0;
+				object-fit:cover;
+			}
+			.title {
+				text-align: left;
+			}
+		}
+	}
+</style>

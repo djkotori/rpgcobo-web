@@ -1,0 +1,44 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/Footer.astro';
+import { default as M } from './MIcon.astro';
+import { getDict} from "../lib/dict";
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+const D = getDict( lang);
+
+---
+
+{
+lang ?
+<Default {...Astro.props}>
+  <slot />
+</Default>
+<footer class="footest">
+    RPG-Cobo 
+    <hr/>
+    <div style="text-align: center">
+      <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: left; margin: 0.5em 0;">
+      <div><a href="/termsofuse">{D("termsofuse")}</Link></div>
+      <div><a href="/privacypolicy">{D("privacypolicy")}</Link></div>
+      {lang=="ja" && <div><a href="/ecommerce">{D("ecommerce")}</Link></div>}
+      <div><a href="/authurs">{D("authurs")}</Link></div>
+      <div><a href="/contact">{D("contact")}</Link></div>
+      <div><a href="/faq">{D("faq")}</Link></div>
+      </div>
+      <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: left; margin: 0.5em 0;">
+      <div><a href="https://user.rpg-cobo.com" target="_blank"><M code="e879"/>{D("usersite")}</Link></div>
+      <div><a href="https://github.com/djkotori/rpgcobo-tool" target="_blank"><M code="e879"/>Github</Link></div>
+      <div><a href="https://discord.gg/aGbxf7GzZt" target="_blank"><M code="e879"/>Discord</Link></div>
+      <div><a href="https://x.com/RPG_Cobo" target="_blank"><M code="e879"/>X</Link></div>
+      <div><a href="https://supershark.jp" target="_blank"><M code="e879"/>{D("supershark")}</Link></div>
+      </div>
+    <hr/>
+      <div class="is-size-6">© 2026 djkotori / SuperShark, KK.</div>
+    </div>
+</footer>
+: <Default {...Astro.props}>
+  <slot />
+</Default>
+}

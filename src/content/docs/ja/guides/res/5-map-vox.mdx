@@ -1,0 +1,145 @@
+---
+title: マップボクセル
+description: マップボクセル
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+マップボクセルでは、マップを構成するブロックのデザイン、配色、当たり判定などが全て定義されています。
+
+
+アクティビティバーの「<M code="f089"/>リソース」から、「<M code="f11d"/>マップボクセル」を開いてみましょう。
+
+<div class="sspart">
+<SS src='docs/map-vox-1.png' alt=''/>
+
+##### <M part="A"/> ブロックカテゴリー選択
+キャラのモデルがリストになって表示されています。右ドラッグで表示を回転することが出来ます。  
+リソースエディターの共通操作として、リストのアイテムに対して「コピー」「ペースト」「ドラッグ＆ドロップでソート」ができます。
+
+##### <M part="B"/> リソースリスト
+選択されたブロックカテゴリー内のブロックをリスト表示します。
+
+##### <M part="C"/> プロパティ
+ブロックカテゴリーによって設定項目は大きく変わります。共通するのは、ボクセルモデルの指定とパレットです。
+
+##### <M part="D"/> プレビュー
+モデルやコリジョンをプレビューできます。
+</div>
+
+
+### <M code="f10d"/> ブロックのカテゴリーの紹介
+
+
+<CardGrid>
+	<Card title="基本">
+		基本的な色と形状のプリミティブなブロック。モック制作用。
+		<SS src='docs/map-vox-c1.png' alt=''/>
+	</Card>
+	<Card title="地面・床">
+		地形ブロックの「床」部分。地形ブロックは「床×壁」が合体して一つのブロックになる。
+		<SS src='docs/map-vox-c2.png' alt=''/>
+	</Card>
+	<Card title="地面・壁">
+		地形ブロックの「壁」部分。地形ブロックは「床×壁」が合体して一つのブロックになる。
+		<SS src='docs/map-vox-c3.png' alt=''/>
+	</Card>
+	<Card title="建築">
+		建築物の床／壁になるブロック。床と壁のモデルをそれぞれ指定する。
+		<SS src='docs/map-vox-c4.png' alt=''/>
+	</Card>
+	<Card title="カーペット">
+		床に敷く装飾用のブロック。
+		<SS src='docs/map-vox-c5.png' alt=''/>
+	</Card>
+	<Card title="水">
+		川や池などを作るためのブロック。縦に配置すると滝になる。
+		<SS src='docs/map-vox-c6.png' alt=''/>
+	</Card>
+	<Card title="フェンス">
+		囲いとして配置できる障害物ブロック。
+		<SS src='docs/map-vox-c7.png' alt=''/>
+	</Card>
+	<Card title="草花">
+		地面に植えられる草や花のブロック。
+		<SS src='docs/map-vox-ch.png' alt=''/>
+	</Card>
+</CardGrid>
+
+---
+
+<CardGrid>
+	<Card title="ドア">
+		開け閉めができるドア。
+		<SS src='docs/map-vox-c8.png' alt=''/>
+	</Card>
+	<Card title="ランプ">
+		発光するブロック。
+		<SS src='docs/map-vox-c9.png' alt=''/>
+	</Card>
+	<Card title="エクステリア">
+		主に屋外に設置する装飾や障害物のブロック。
+		<SS src='docs/map-vox-ca.png' alt=''/>
+	</Card>
+	<Card title="インテリア">
+		主に屋内に設置する装飾や障害物のブロック。
+		<SS src='docs/map-vox-cb.png' alt=''/>
+	</Card>
+	<Card title="柱">
+		縦か横に伸縮可能。ハシゴのタイプにすると昇り降りすることが出来る。
+		<SS src='docs/map-vox-cc.png' alt=''/>
+	</Card>
+	<Card title="坂・階段">
+		自由な大きさにできる坂・階段。
+		<SS src='docs/map-vox-cd.png' alt=''/>
+	</Card>
+	<Card title="屋根">
+		自由な大きさにできる坂・階段。
+		<SS src='docs/map-vox-ce.png' alt=''/>
+	</Card>
+	<Card title="自然物">
+		樹木や岩など自然がモチーフの設置ブロック。
+		<SS src='docs/map-vox-cf.png' alt=''/>
+	</Card>
+	<Card title="クラック">
+		床や壁に穴を開けたり日々を入れたりする装飾用の特殊ブロック。
+		<SS src='docs/map-vox-cg.png' alt=''/>
+	</Card>
+</CardGrid>
+
+
+### <M code="f10d"/> コリジョンを編集する
+「ドア」「ランプ」「エクステリア」「インテリア」などは、コリジョンの形状を自由に設定することが出来ます。プロパティの「コリジョン」のボタンを押すと、コリジョン編集ダイアログが表示されます。
+
+<div class="sspart">
+<SS src='docs/map-vox-2.png' alt=''/>
+
+##### <M part="A"/> サイズ、整列
+モデルがきれいに配置できるようにサイズと整列方法を指定できます。
+
+##### <M part="B"/> ペンの選択
+「<M code="e909"/>消去」「<M code="e146"/>配置」「<M code="e3ae"/>置き換え」から選びます。
+
+##### <M part="C"/> コリジョンの形状選択
+モデルの形状にうまく合わせ、またプレイヤーが引っかからないような形状を選びましょう。  
+**※右側の「<M code="e166"/><M code="e166"/>」ボタンで回転します。**
+
+##### <M part="D"/> 3Dキャンバス
+左クリックでコリジョンを配置／消去します。
+</div>
+
+### <M code="f10d"/> マップボクセルをデザインする
+マップボクセルはキャラボクセルと同様に、コンテキストメニューの「<M code="e745"/> ボクセルを編集」からボクセルを直接編集することが出来ます。
+
+編集してファイルを更新したら、ファイルメニュー「<M code="f053"/> RPG-Coboを再読み込み(Ctrl+F4)」を選ぶと変更が反映されます。
+
+<Aside type="caution">
+ドアや屋根など一部のブロックは、プログラムのルールに基づいた構造で作られています。
+voxを編集してこの構造が壊れるとブロックは正常に動作しなくなり、最悪の場合はツールが起動しなくなってしまうこともありえます。
+
+マップボクセルを編集する前には必ず「<M code="e623"/>プロジェクトのバックアップ」を行いましょう。
+</Aside>

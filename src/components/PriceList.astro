@@ -1,0 +1,82 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+import { imageSizeFromFile } from 'image-size/fromFile';
+import { getDict} from "../lib/dict";
+import { default as ConfirmDialog} from './ConfirmDialog.astro';
+
+//	/src/assets/以下のパスを指定する。
+//	enとかで置き換え可能
+
+const slug = Astro.params.slug;
+const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
+const D = getDict( lang);
+
+const userurl = import.meta.env.DEV ? "http://localhost:3000" : "https://user.rpg-cobo.com";
+
+---
+
+<div>
+<ConfirmDialog title={D("confirm")} callback='gotoPrice'>
+   {D( "goto_usersite")}
+</ConfirmDialog>
+
+<div class="planlist">
+
+	<div class="plan free">
+		<h2>{D( "license_free")}</h2>
+		<button id="free-license" class="price">{D("price_free")}</button>
+      <ul>{D("features_free",null,true).map( ( v)=>(
+         <li class={v.startsWith("*")?"star":""}> {v.startsWith("*")?v.slice(1):v} </li>
+      ))}</ul>
+	</div>
+
+	<div class="plan indie">
+		<h2>{D( "license_indie")}</h2>
+		<button id="indie-license" class="price">{D("price_prepare")}</button>
+      <ul>{D("features_indie",null,true).map( ( v)=>(
+         <li class={v.startsWith("*")?"star":""}> {v.startsWith("*")?v.slice(1):v} </li>
+      ))}</ul>
+	</div>
+
+	<div class="plan pro">
+		<h2>{D( "license_pro")}</h2>
+		<button id="pro-license" class="price">{D("price_prepare")}</button>
+      <ul>{D("features_pro",null,true).map( ( v)=>(
+         <li class={v.startsWith("*")?"star":""}> {v.startsWith("*")?v.slice(1):v} </li>
+      ))}</ul>
+	</div>
+</div>
+<p class="notice">
+	{D("license_notices").map( (v,i) => <span>{v}<br/></span>)}
+</p>
+<div id="priceparams" style="visibility: hidden;">{JSON.stringify({userurl,lang})}</div>
+<script>
+
+function pricestr( v, div){
+   let i = (v / div)|0, f = (v*div)|0;
+   let s = i.toLocaleString();
+   return div<=1 ? s : `${s}.${f}`;
+}
+
+window.gotoPrice = function( btn){
+   if( btn){
+      const prms = JSON.parse( document.getElementById( "priceparams")?.innerHTML);
+      window.open().location.href = prms.userurl;
+   }
+}
+
+const dialog = document.getElementById('confirmdialog');
+for( let id of ["free-license","indie-license","pro-license"]){
+   const d = document.getElementById( id);
+   d.addEventListener( "click", function( e) {
+      e.preventDefault();
+      const dialog = document.getElementById('confirmdialog');
+      dialog.showModal();
+   });
+}
+
+tapclose( dialog);
+
+</script>
+</div>
