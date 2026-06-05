@@ -1,5 +1,9 @@
 # rpgcobo-web
 
+![Logo Image](header.jpg)
+
+[⇒ Japanese](README.ja.md)
+
 A repository that manages RPG-Cobo's **Official website and Documentation**.  
 Built using Astro + Starlight, it includes guides, feature introductions, download pages, and more.
 

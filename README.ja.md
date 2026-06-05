@@ -1,5 +1,7 @@
 # rpgcobo-web
 
+![Logo Image](header.jpg)
+
 RPG-Cobo の **公式ウェブサイトおよびドキュメント** を管理するリポジトリです。  
 Astro + Starlight を使用して構築されており、ガイド・機能紹介・ダウンロードページなどを含みます。
 
