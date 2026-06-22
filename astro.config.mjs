@@ -83,16 +83,15 @@ export default defineConfig({
 					],
 				},
 				{
-					label: '困った時には', translations: { 'en': 'Get Started' },
+					label: '困った時には', translations: { 'en': 'Troubleshooting' },
 					autogenerate: { directory: 'help' },
 				},
 				{
 					label: '開発者の方向け', translations: { 'en': 'For Developers' },
 					collapsed: true,
 					items: [
-						{ label: 'プラグインでゲームやツールの拡張をしよう', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-						{ label: '最も簡単なプラグイン', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-						{ label: 'sakana言語について', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+						{ label: 'プラグインでゲームやツールの拡張をしよう', translations: { 'en': 'Example Guide' }, slug: 'devel/1-plugin-intro' },
+						{ label: 'sakana言語について', translations: { 'en': 'Example Guide' }, slug: 'devel/2-sakana-lang-specs' },
 						{ label: 'RPG-Coboのシステム概要', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
 						{ label: 'RPG-良く使うクラスや関数', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
 						{
@@ -108,6 +107,16 @@ export default defineConfig({
 						},
 					]
 				},
+				{
+					label: 'リファレンス', translations: { 'en': 'Reference' },
+					collapsed: true,
+					items: [
+						{
+							label: 'ネイティブAPI', translations: { 'en': 'Native API' },
+							autogenerate: { directory: 'reference/nativeapi' },
+						},
+					]
+				}
 			],
 			lastUpdated: true,
 			// editLink: {
