@@ -92,9 +92,10 @@ export default defineConfig({
 					items: [
 						{ label: 'プラグインでゲームやツールの拡張をしよう', translations: { 'en': 'Example Guide' }, slug: 'devel/1-plugin-intro' },
 						{ label: 'sakana言語について', translations: { 'en': 'Example Guide' }, slug: 'devel/2-sakana-lang-specs' },
-						{ label: 'RPG-Coboのシステム概要', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-						{ label: 'RPG-良く使うクラスや関数', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+						{ label: 'RPG-Coboのシステム概要', translations: { 'en': 'Example Guide' }, slug: 'devel/3-folder-structure' },
+						// { label: 'RPG-良く使うクラスや関数', translations: { 'en': 'Example Guide' }, slug: 'devel/4-common-classes-functions' },
 						{
+							
 							label: 'プラグイン開発実践編', translations: { 'en': 'Example Guide' },
 							items: [
 								{ label: 'キャラのパラメータを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
