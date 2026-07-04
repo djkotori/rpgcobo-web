@@ -15,9 +15,12 @@ const partmap = {
 let code = Astro.props.code;
 let style = "";
 
-let part = partmap[Astro.props.part];
+let part = partmap[Astro.props.part], c = Astro.props.c;
 if( part){
 	code = part[0]; style = "color:"+part[1];
+}
+if( c){
+	style = "color:"+c;
 }
 
 ---
