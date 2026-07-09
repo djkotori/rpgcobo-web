@@ -1,4 +1,5 @@
 [
-{"lang":"ja","title":"ベータテスト開催中！","icon":"🚀","media":"$HOME/2026/0605_beta_ja.ui"},
+{"lang":"ja","title":"第一回 RPG-Cobo 作品コンテスト","icon":"🏆","media":"$HOME/2026/0709_contest1.ui","rate":{"base":100}},
+{"lang":"ja","title":"ベータテスト開催中！","icon":"🚀","media":"$HOME/2026/0605_beta_ja.ui","rate":{"base":1}},
 {"lang":"en","title":"Join a BetaTest!","icon":"🚀","media":"$HOME/2026/0605_beta_ja.ui"}
 ]
