@@ -1,0 +1,104 @@
+---
+title: Visual Studio Code の開発環境の構築
+description: "プラグインの作り方について、Visual Studio Code の開発環境の構築の方法を解説します。"
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+プラグインを本格的に開発するためには、まず開発環境を整えておくべきでしょう。
+RPG-Coboのプラグインは、Visual Studio Code（VSCode）での開発を推奨しています。
+セットアップは非常に簡単なので、ぜひこの機会にVSCodeを導入してみましょう。
+
+***このページの解説では、VSCode が既にインストールされた状態を前提としています。まだインストールしていない場合は[こちら](https://code.visualstudio.com/)からダウンロードし、インストールしましょう。***
+
+### <M code="f10d"/> RPG-CoboのプロジェクトをVSCodeで開く
+---
+まず、Visual Studio Codeを起動し、RPG-Coboのプロジェクトフォルダをそのまま丸っとドラッグ&ドロップしましょう。
+
+<SS src='docs/vscode-1.png' alt=''/>
+
+そうすると、以下のように RPG-CoboのプロジェクトがVSCode上で開かれます。これが、標準的なRPG-Coboのプラグイン開発のためのVSCodeでの開発環境になります。
+
+<SS src='docs/vscode-2.png' alt=''/>
+
+### <M code="f10d"/> skファイルのシンタックスハイライトを有効にする
+---
+上の画像を見て気になることがあると思います。そう、開いている`load.sk`ファイルのシンタックスハイライトが効いていません…。
+
+これでは、RPG-Coboのプラグイン開発をする上で非常に不便です。そこで、RPG-Coboのプラグイン開発用のVSCode拡張機能をインストールしましょう！  
+VSCode機能拡張は、 [こちら ⇒ sakanavs-0.0.1.vsix](/sakanavs-0.0.1.vsix) からダウンロードしてください。
+
+そうしたら、VSCodeの拡張機能を開き、右上の「…」をクリックして「VSIXからインストール」を選択し、先ほどダウンロードした`sakanavs-0.0.1.vsix`ファイルを選択してください。
+
+<SS src='docs/vscode-3.png' alt=''/>
+
+これで、sakana言語のシンタックスハイライトが有効になりました！エディターの右下の言語モードが`{} Sakana`となっていることを確認してください。
+
+<SS src='docs/vscode-4.png' alt=''/>
+
+
+### <M code="f10d"/> VSCode での色々な開発テクニック
+---
+
+#### <M code="e0f0"/> まずは Git を初期化
+
+**このプロジェクトを Git で管理して、作業を効率化することを強くおすすめします。**
+バックアップにも最適なので、プラグインの開発をしない場合でも Git で管理することをおすすめします。
+
+VSCode 左側の3つめのアイコン「ソース管理 (Ctrl+Shift+G)」をクリックし、「リポジトリを初期化する」を選択してください。
+あとは、作業の節目節目で「<M code="e876"/> コミット」をクリックして変更を保存しましょう。
+
+#### <M code="e0f0"/> ターミナルから RPG-Cobo を起動する
+
+VSCodeの「ターミナル (Ctrl+@)」から ツールやデバッグの起動ができると、開発が非常に捗ります。
+
+- RPG-Cobo ツールの起動
+```
+.\rpgcobo.exe
+```
+
+- RPG-Cobo ゲームのデバッグを直接起動
+```
+.\rpgcobo.exe -testplay [options...]
+
+options:
+-slot <save slot idx>
+-map <map id>
+-battle <map id> <group id> [-enemy <enemy id>] [-skill <skill id>]
+```
+
+#### <M code="e0f0"/> project/plugin でプラグインを作成＆編集
+
+VSCodeのエクスプローラーで `project/plugin` フォルダから「新規ファイル」で `プラグイン名.plugsk` を作成して、プラグインの開発を始めましょう。  
+又は、`work/plugin-samples` フォルダにあるサンプルプラグインを `project/plugin` にコピーして編集をするのも良いでしょう。  
+<Aside>
+*サンプルプラグインは今後充実させていく予定です*
+</Aside>
+
+また、`project/plugin/plugin.json`を編集することで、デバッグしたいプラグインなどをテキストで有効化・無効化することができます。
+例えば、`myplugin.plugsk` を作成した場合、以下のように`plugin.json`を編集することで、有効化されます。
+
+```
+{
+	"rpgtools":{
+		"enable":true,
+		"lock":true,
+		"prop1":1234
+	},
+	"myplugin":{ "enable":true }
+}
+```
+
+#### <M code="e0f0"/> ツールのリロードは Ctrl+F4 で
+
+プラグインを修正した際に、RPG-Coboのツールを閉じて、また起動するのは面倒です。  
+そんなときは、RPG-Coboのツール上で、`Ctrl+F4` を押すとツールがリロードされ、プラグインなど全てが読み込みなおされます。  
+頻繁なトライアンドエラーの際に非常に便利なので、ぜひ覚えておきましょう。
+
+#### <M code="e0f0"/> GitHub Copilot を活用
+<Aside>
+AI によるプラグイン開発については、筆者もまだまだ勉強中でして、今後のアップデートでより詳しく解説していく予定です。
+</Aside>
+
