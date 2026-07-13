@@ -1,0 +1,176 @@
+---
+title: イベントコマンドを追加する
+description: "イベントコマンドを追加する をテーマに、RPG-Coboのプラグイン開発を細かく解説します"
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+RPG開発ツールのイベントコマンドは、ゲームの進行や演出を制御するための重要な機能です。
+RPG-Coboでは、イベントコマンドの追加や拡張もプラグインを通じて行うことができます。  
+このページでは、RPG-Coboのプラグイン開発において、イベントコマンドを追加する方法を詳しく解説します。
+
+### このページで解説するプラグインについて
+---
+以下の2つのサンプルプラグインを解説します。
+
+1. work/plugin-samples/distancecmd.plugsk : 2つのターゲットの座標間の距離を計算します。
+2. work/plugin-samples/randomcmds.plugsk : 子のコマンドリスト内のどれかのコマンドを一つランダムに実行します。
+
+
+### 1: distancecmd.plugsk
+---
+このイベントコマンドは、指定した2つのターゲット間の距離を計算し、指定した変数に格納します。  
+プロパティの定義`props`、コマンド情報関数`cmdinfo`、そして、コマンドの実行関数`exec`を定義している、とても一般的なイベントコマンドの例です。
+*※この中で`cmdinfo`は省略することが出来ます。*
+
+まずは、サンプルプラグインをそのまま見てみましょう(コメントは一部省略しています)。
+
+```js
+import PropertyType;
+import RPGPropertyType;
+
+pluginfo <- {
+	name : { "ja":"距離取得","en":"Get Distance"}
+	author : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"距離を取得するイベントコマンドを追加します。","en":"Adds an event command to get the distance."}
+	props : []
+}
+
+//	プラグインのロード時に呼ばれる関数。ここで、RPGSystem.eventcmdに新しいイベントコマンド定義を追加する。
+function loadPlugin( args, opt){
+
+	//	距離取得コマンドの定義を追加する
+	local who2list = [
+		{ lbl="$T.who_player", val=1 }
+		{ lbl="$T.who_event", val=2 }
+	];
+
+	RPGSystem.eventcmd .. {
+		category = 1							//	変数カテゴリ。変数の設定や配列処理などと同じカテゴリに入る
+		key = "excmd_distance"					//	※イベントコマンドで同じキーが存在してはいけない
+		name = { "ja":"距離取得","en":"Get Distance"}
+		tips = { "ja":"2つの対象間の距離を取得します。","en":"Get the distance between two targets."}
+		icon = "\ue41c"
+		color = (0xFF9326ff, 0xFFB973ff)
+		props = [
+			{ pid="from", lbl="$T.lbl_target 1", type=LIST, list=who2list, variable=1, }
+			{ pid="to", lbl="$T.lbl_target 2", type=LIST, list=who2list, variable=1, }
+			{ pid="retvar", lbl="$T.cmd_macro_retvar", type=VARIABLE, varbits=1|2, constbits=0 },
+		]
+		defval = { from=1, to=2, retvar="W" }
+		//	ツールのコマンドリストで表示される情報を返す関数
+		cmdinfo = @( cmd){
+			local info = sprintf( "%S ～ %S => %S", propstr( props, cmd, "from"), propstr( props, cmd, "to"), propstr( props, cmd, "retvar"));
+			return { info = info, };
+		}
+		//	このコマンドを実行する関数
+		exec = @( runner, cmd){
+			local t0 = runner.getWho3D( cmd.from), t1 = runner.getWho3D( cmd.to);	//	対象のそれぞれの3Dオブジェクトを取得。
+			local dist = t0.pos.hypot( t1.pos);		//	距離を計算する。hypotは2つのベクトルの距離を返す。
+			runner[cmd.retvar] = dist;	//	戻り値を指定された変数に格納する
+		}
+	}
+	return true;
+}
+```
+
+このコマンドは以下のようにコマンドリスト上に表示されます。
+<SS src='docs/eventcmd-1.png' alt=''/>
+
+
+#### イベントコマンドの実行
+
+`exec = @( runner, cmd)`関数は、イベントコマンドが実行されるときに呼ばれる関数です。
+`runner`は、イベントコマンドを実行するRPGEventRunnerクラスのインスタンスです。`runner`を通じて、ゲームの状態や変数にアクセスすることができます。  
+`cmd`は、イベントコマンドの定義に基づいて、プラグインマネージャーで設定されたプロパティの値が格納されたテーブルです。`cmd.from`や`cmd.to`などのプロパティを参照することで、
+ユーザーが設定した値を取得することができます。
+
+- コマンドの`exec`関数内では、まず、`runner.getWho3D( cmd.from)`と`runner.getWho3D( cmd.to)`を使って、指定された2つのターゲットの3Dオブジェクトを取得します。
+- その後、`t0.pos.hypot( t1.pos)`を使って、2つの3Dオブジェクトの位置ベクトル間の距離を計算します。`hypot`は、2つのベクトルの距離を返すVector3Dクラスの関数です。
+- 最後に、計算された距離を、`runner[cmd.retvar] = dist`のようにして、指定された変数に格納します。これにより、ユーザーはイベントコマンドの結果として距離を取得することができます。
+
+runnerオブジェクトからは、ワーク変数の`W,X,Y,Z`や、イベント変数`A,B,C,D`、その他の変数に直接アクセスすることができます。
+
+
+### 2: randomcmds.plugsk
+---
+このイベントコマンドは、子のコマンドリスト内のどれかのコマンドを一つランダムに実行します。  
+このコマンドの特徴となるのは、例えば条件分岐やループなどと同じように、子のコマンドリストを持っていることです。  
+そして、子のコマンドリスト内のどれかのコマンドを一つランダムに実行し、他のコマンドは実行されません。
+
+まずは、サンプルプラグインをそのまま見てみましょう(コメントは一部省略しています)。
+
+```js
+pluginfo <- {
+	name : { "ja":"ランダムコマンド","en":"Random Command"}
+	author : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"このコマンド以下のどれか一つのコマンドを実行","en":"Execute one of the following commands."}
+	props : []
+}
+
+//	プラグインのロード時に呼ばれる関数。ここで、RPGSystem.eventcmdに新しいイベントコマンド定義を追加する。
+function loadPlugin( args, opt){
+	RPGSystem.eventcmd .. {
+		category = 0							//	基本カテゴリ。条件分岐やループなどと同じカテゴリに入る
+		key = "excmd_randomcmd"					//	※イベントコマンドで同じキーが存在してはいけない
+		name = { "ja":"ランダムコマンド","en":"Random Command"}
+		tips = { "ja":"中にあるコマンドのいずれか1つをランダムで実行します。","en":"Randomly executes one of the commands inside."}
+		icon = "\ue043"
+		color = (0x00A3D9ff, 0x73DCFFff)
+		props = []								//	コマンドに対するパラメータは無し。子コマンドのブロックだけ。
+		defval = { cmdblocks = [[]] }			//	cmdblocksは、子コマンドのブロックの配列。ここでは1つの空のブロックをデフォルト値として入れている。
+		
+		//	このコマンドをプログラムとして展開する。
+		//	詳しくは、 RPGEventCompiler.parsecmd( cmd) を参照。ここで、コマンドの実行時に呼ばれるコードを生成する。
+		parsecode = @( cmd){
+			local n = length( cmd["cmdblocks"][0]);
+			push( "{ local rndi = rnd( %d);" % n).indent( 1).lf(); 
+			foreach( i, cb in cmd["cmdblocks"][0]){
+				push( "if( rndi==%d)" % i); parseblock( [cb], false);
+			}
+			indent( -1).push( "}").lf();
+		}
+	}
+	return true;
+}
+```
+
+このコマンドは以下のようにコマンドリスト上に表示されます。子のコマンドリストとして3つコマンドが追加されているのがわかります。
+<SS src='docs/eventcmd-2.png' alt=''/>
+
+
+#### イベントコマンド列からプログラムに展開する
+
+このイベントコマンドは、コマンド定義中に次の文があるため、子のコマンドリストを持つことができます。
+
+```js
+defval = { cmdblocks = [[]] }
+```
+
+そして、次の文で、コマンドの実行時に呼ばれるコードを生成しています。
+```js
+parsecode = @( cmd){
+	...
+}
+```
+
+RPG-Coboのイベントコマンドは、 RPGEventCompiler クラスによって、保存されたイベントコマンド列から、実行可能なskスクリプトを作成します。  
+この parsecode は動作結果として、以下のようなコードを生成します。ランダムで一つのコマンドを実行する仕組みは、こうなっていたのです。
+```js
+{
+	local rndi = rnd( 3);	//	ランダム生成関数で 0～2の整数を生成する
+	if( rndi==0){
+	//	子コマンドリストの0番目のコマンドを実行するコードがここに展開される
+	}
+	if( rndi==1){
+	//	子コマンドリストの1番目のコマンドを実行するコードがここに展開される
+	}
+	if( rndi==2){
+	//	子コマンドリストの2番目のコマンドを実行するコードがここに展開される
+	}
+}
+```
+

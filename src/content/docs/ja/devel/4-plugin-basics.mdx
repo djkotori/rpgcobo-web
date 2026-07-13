@@ -117,6 +117,13 @@ RPG-Coboの文字列情報の多くは、テーブルを指定することでロ
 
 ※`submenu`を指定することで、サブメニューを追加することもできます。
 
+##### <M code="e838"/><M code="e3f4"/><M code="e9e6"/><M code="ea2f"/> iconの文字コード <M code="e63e"/><M code="e323"/><M code="ea44"/><M code="e87d"/>
+RPG-Cobo のツールで使用されているアイコンフォントは、Google FontsのMaterial Iconsをベースにしています。`"\ue166"` のように、Unicodeのコードポイントを指定することで、アイコンを表示することができます。
+
+下記のURLから、Material Iconsの一覧を確認することができます。使いたいアイコンの`Code point`を確認し、`\u`の後にコードポイントを指定しましょう。
+
+https://fonts.google.com/icons?selected=Material+Icons+Outlined
+
 ### <M code="f10d"/> プラグイン処理を書くときの注意
 ---
 **システム全体に副作用のある処理は、`loadPlugin`関数内で実行されるようにする必要があります。絶対に関数外で実行しないでください。**  

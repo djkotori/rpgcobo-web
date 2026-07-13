@@ -89,31 +89,39 @@ export default defineConfig({
 				{
 					label: '開発者の方向け', translations: { 'en': 'For Developers' },
 					collapsed: true,
-					items: [
-						{ label: 'プラグインでゲームやツールの拡張をしよう', translations: { 'en': 'Expand your games and tools with Plugins' }, slug: 'devel/1-plugin-intro' },
-						{ label: 'sakana言語について', translations: { 'en': 'About the sakana language' }, slug: 'devel/2-sakana-lang-specs' },
-						{ label: 'RPG-Coboのフォルダ構造', translations: { 'en': 'RPG-Cobo Folder Structure' }, slug: 'devel/3-folder-structure' },
-						{ label: 'プラグインの作り方', translations: { 'en': 'How to create a plugin' }, slug: 'devel/4-plugin-basics' },
-						{ label: 'VSCodeの開発環境の構築', translations: { 'en': 'Setup for development in VSCode' }, slug: 'devel/5-vscode' },
-						// { label: 'RPG-良く使うクラスや関数', translations: { 'en': 'Example Guide' }, slug: 'devel/4-common-classes-functions' },
-						{
-							
-							label: 'プラグイン開発実践編', translations: { 'en': 'Example Guide' },
-							items: [
-								{ label: 'キャラのパラメータを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-								{ label: 'イベントコマンドを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-								{ label: 'UIを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-								{ label: '計算式や動作を変更する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-								{ label: 'ツールを拡張する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-								{ label: '色々な応用', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
-							]
-						},
-					]
+					autogenerate: { directory: 'devel' },
+					// items: [
+					// 	{ label: 'プラグインでゲームやツールの拡張をしよう', translations: { 'en': 'Expand your games and tools with Plugins' }, slug: 'devel/1-plugin-intro' },
+					// 	{ label: 'sakana言語について', translations: { 'en': 'About the sakana language' }, slug: 'devel/2-sakana-lang-specs' },
+					// 	{ label: 'RPG-Coboのフォルダ構造', translations: { 'en': 'RPG-Cobo Folder Structure' }, slug: 'devel/3-folder-structure' },
+					// 	{ label: 'プラグインの作り方', translations: { 'en': 'How to create a plugin' }, slug: 'devel/4-plugin-basics' },
+					// 	{ label: 'VSCodeの開発環境の構築', translations: { 'en': 'Setup for development in VSCode' }, slug: 'devel/5-vscode' },
+					// 	{
+					// 		label: 'プラグイン開発実践編', translations: { 'en': 'Practical Plugin Development' },
+					// 		items: [
+					// 			{ label: 'キャラのパラメータを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 			{ label: 'イベントコマンドを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 			{ label: 'UIを追加する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 			{ label: '計算式や動作を変更する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 			{ label: 'ツールを拡張する', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 			{ label: '色々な応用', translations: { 'en': 'Example Guide' }, slug: 'guides/notready' },
+					// 		]
+					// 	},
+					// ]
+				},
+				{
+					label: 'プラグイン開発実践編', translations: { 'en': 'Practical Plugin Development' },
+					collapsed: true,
+					autogenerate: { directory: 'plugdev' },
 				},
 				{
 					label: 'リファレンス', translations: { 'en': 'Reference' },
 					collapsed: true,
 					items: [
+						{
+							label: 'スクリプトAPI', translations: { 'en': 'Script API' },
+							autogenerate: { directory: 'reference/scriptapi' },
+						},
 						{
 							label: 'ネイティブAPI', translations: { 'en': 'Native API' },
 							autogenerate: { directory: 'reference/nativeapi' },

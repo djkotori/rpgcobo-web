@@ -1,0 +1,213 @@
+---
+title: UIを追加する
+description: "UIを追加する をテーマに、RPG-Coboのプラグイン開発を細かく解説します"
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+ゲームごとにユニークなUIを追加することは、ゲームの個性を出すために非常に効果的です。
+イベントコマンドを組み合わせて独自UIの表示や操作を実装することもできますが、プラグインを使えば、より簡単に凝った機能を持つUIを追加することができます。
+
+### このページで解説するプラグインについて
+---
+以下のサンプルプラグインを解説します。
+
+- work/plugin-samples/diceui : サイコロを振るダイアログを表示するUIを追加します。
+
+
+### diceui
+---
+このサンプルプラグインは、ダイスを振って1～6のいずれかをランダムで表示するダイアログのUIを追加します。
+追加されたUIは、イベントコマンドの「<M code="e1bd"/>プリセットUI」で表示させることが出来ます。
+結果のダイスの値は、システム変数RESULTに格納されます。
+
+このプラグインを有効化すると、UIが追加されるわけですが、実際にこのUIを表示するには以下のように「<M code="e1bd"/>プリセットUI」コマンドで、
+UIプロパティを「<M code="e8ef"/>ダイスダイアログ」に指定します。
+<SS src='docs/diceui-1.png' alt=''/>
+
+ダイスダイアログのプロパティは最小値と最大値の2つの数値です。初期値は6面ダイスを見立ててそれぞれ`1`と`6`になっています。
+<SS src='docs/diceui-2.png' alt=''/>
+
+このUIをゲーム上で表示すると、以下のような画面を見ることが出来ます。
+<SS src='docs/diceui-3.png' alt=''/>
+
+
+### プラグインの構造
+---
+
+このプラグインは、今までのプラグインと違いフォルダ型の構造をしたプラグインです。
+`diceui/plugin.sk`にプラグイン定義とロード関数が書かれており、`diceui/dialog_dice.ui`にUIリソースが書かれています。
+
+それでは`diceui/plugin.sk`をそのまま見てみましょう(コメントは一部省略しています)。
+
+```js
+import PropertyType;
+
+local lbl_dice = { "ja":"ダイスダイアログ","en":"Dice Dialog"};
+
+pluginfo <- {
+	name : lbl_dice
+	author : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"ダイスを振って数値をランダムに表示します。","en":"Roll a dice and display a random number."}
+	props : []
+}
+
+local srcdir = dirname( callee().getSourceName());	//	このソースのフォルダパス
+
+//	プラグインのロード時に呼ばれる関数。ここで、RPGSystem.uiに新しいUI定義を追加する。
+function loadPlugin( args, opt){
+	//	UI定義を追加する
+	RPGSystem.ui ..
+	{
+		key = "dialog_dice"
+		lbl = lbl_dice
+		type = "dialog"					//	mainmanu, submenu, choose, dialog, message, info, debug, misc, 
+		icon = ("\ue8ef",0xffcc00ff)	//	プラグインで追加したことを強調するために色を変えている
+		
+		props = [	//	「プリセットUI」で指定するパラメータ
+			{ pid="minval", lbl="MIN VAL", type=SCALAR, range=(0,9999), }
+			{ pid="maxval", lbl="MAX VAL", type=SCALAR, range=(0,9999), }
+		]
+
+		defval = { minval = 1, maxval = 6 }	//	デフォルト値。ダイスは1～6の範囲
+
+		//	UI表示の実行関数。
+		uifunc = @( prms){
+			local minval = prms["minval"] ?? defval["minval"], maxval = (prms["maxval"] ?? defval["maxval"]);
+			local rndval(){
+				return ::rnd( minval, maxval+1);
+			}
+			local oldc = gpui.backupCursor();	//	ダイアログ表示時には必要。元のカーソルを保存
+			playSound( "SE005");
+			local val = ptr( rndval());			//	valはダイスの値をptrでラップ。
+			local view = RPGMain.showView({
+				...defval,
+				uipath = srcdir.."/dialog_dice.ui"	//	プラグインフォルダ内の dialog_dice.ui を指定する
+				layer = "message"				//	ダイスを振るUIはメッセージレイヤーに表示する
+				action = "show"					//	表示時に"show"アクションを実行する
+				modal = true,					//	modalじゃない場合は、背後のUIのボタンなども押すことが出来る
+				// focus = "btn"				//	初期カーソルフォーカス。これには不要
+				...prms,
+				binds = {	//	bindsで、ui内のビュー名とそれに対応する値を紐づける。 @() で式を与えると値が同期される
+					num = @() string( ~val)		//	numビューのテキストに、valの値を文字列化して表示する
+				},
+			});
+			//	ダイスを回すUIイベントループを開始する。
+			local x = RPGMain.uiLoop( {
+				"click" : @( e){				//	クリック、ボタン押下時のイベントハンドラ
+					playSound( "SE001");
+					sleep( 500);
+					return "owari";				//	returnで値を返すことでuiLoopは終了する
+				}
+				"idle" : @( e){					//	毎フレーム呼ばれるイベントハンドラ
+					val << rndval();
+				}
+			});
+			//	終了処理。UIを閉じて、元のカーソルに戻す。システム変数RESULTにダイスの値を格納する。
+			view.actionAndDie( "hide");
+			view.waitAction();
+			gpui.restoreCursor( oldc);			//	元のカーソルに戻す。これしないとカーソルが迷子になる
+			rpgvar.RESULT = ~val;				//	システム変数RESULTにダイスの値を格納する
+			return rpgvar.RESULT;
+		}
+	};
+	return true;
+}
+```
+
+`RPGSystem.ui .. {...}`という風に新しいUI定義を追加することで、ゲームに新しいUIを追加することができます。
+
+それではUI定義の中身を詳しく見ていきましょう。`key` や`lbl`、`icon`などの基本情報は、今までのプラグインと同じです。
+
+- `props = [ ... ]`で、このUIに必要なプロパティを定義します。ここでは、ダイスの最小値と最大値の2つの数値をプロパティとして定義しています。
+- `defval = { minval = 1, maxval = 6 };`で、propsで定義しているプロパティのデフォルト値を定義します。
+- `uifunc = @( prms){ ... }`で、このUIを表示するための関数を定義します。`prms`には、propsで定義したプロパティの値が格納されたテーブルが渡されます。
+  - `RPGMain.showView({ ... })`で、`dialog_dice.ui`のUIを表示します。色々と表示用のパラメータを指定していますが、コメントの解説を参考にしてください。
+  - `RPGMain.uiLoop({ ... })`で、UIのイベントループを開始します。ここでは、クリックやボタン押下時のイベントハンドラと、毎フレーム呼ばれるイベントハンドラを定義しています。
+
+### uifunc の処理の流れ
+---
+もう少し詳しく`uifunc( prms)`関数の処理の流れを解説します。
+1. `prms`から取る最小値・最大値からランダムで数値を返す `rndval()`関数を定義します。
+```js
+local minval = prms["minval"] ?? defval["minval"], maxval = (prms["maxval"] ?? defval["maxval"]);
+local rndval(){
+	return ::rnd( minval, maxval+1);
+}
+```
+2. UI表示の前に、現在のカーソル位置を保存します。これはUI表示時にカーソル状態が変化する場合に必要です。
+```js
+local oldc = gpui.backupCursor();	//	ダイアログ表示時には必要。元のカーソルを保存
+playSound( "SE005");
+```
+3. `local val = ptr( rndval())`で、ランダム値を格納するポインタを作成します。これは、表示用でもあり結果取得用でもあります。  
+   *※sakana言語の仕様として、外側の関数で定義した変数は内側の関数からは変化を反映できません。そこで、`ptr()`でラップすることで、内側の関数からも値を変更できるようにしています。*
+```js
+local val = ptr( rndval());			//	valはダイスの値をptrでラップ。
+```
+3. `RPGMain.showView({ ... })`で、ダイスを振るUIを表示します。
+  - `uipath`にプラグインフォルダ内の`dialog_dice.ui`を指定しています。
+  - `layer = "message`で、UIを表示するレイヤーを指定しています。ここでは、メッセージレイヤーに表示するようにしています。
+  - `modal = true`で、UIが表示されている間は背後のUIのボタンなどを押せないようにしています。
+  - `binds = {...}`で、UI内のビュー名とそれに対応する値を紐づけています。ここでは、UI内の`num`ビューに、`val`の値を文字列化して表示する関数を指定して`val`値が同期されるようにしています。
+```js
+local view = RPGMain.showView({
+	...defval,
+	uipath = srcdir.."/dialog_dice.ui"	//	プラグインフォルダ内の dialog_dice.ui を指定する
+	layer = "message"				//	ダイスを振るUIはメッセージレイヤーに表示する
+	action = "show"					//	表示時に"show"アクションを実行する
+	modal = true,					//	modalじゃない場合は、背後のUIのボタンなども押すことが出来る
+	// focus = "btn"				//	初期カーソルフォーカス。これには不要
+	...prms,
+	binds = {	//	bindsで、ui内のビュー名とそれに対応する値を紐づける。 @() で式を与えると値が同期される
+		num = @() string( ~val)		//	numビューのテキストに、valの値を文字列化して表示する
+	},
+});
+```
+4. `RPGMain.uiLoop({ ... })`で、イベント処理を受け付けるループを開始します。ここでは、クリックやボタン押下時のイベントハンドラと、毎フレーム呼ばれるイベントハンドラを定義しています。  
+   イベントハンドラは他にも`select` `action` `back`などがあります。ソース内のUIのイベントハンドラを参考にしてください。
+```
+//	ダイスを回すUIイベントループを開始する。
+local x = RPGMain.uiLoop( {
+	"click" : @( e){				//	クリック、ボタン押下時のイベントハンドラ
+		playSound( "SE001");
+		sleep( 500);
+		return "owari";				//	returnで値を返すことでuiLoopは終了する
+	}
+	"idle" : @( e){					//	毎フレーム呼ばれるイベントハンドラ
+		val << rndval();
+	}
+});
+```
+5. UIの終了処理を行います。UIを閉じて、元のカーソルに戻し、システム変数RESULTにダイスの値を格納します。
+```js
+//	終了処理。UIを閉じて、元のカーソルに戻す。システム変数RESULTにダイスの値を格納する。
+view.actionAndDie( "hide");
+view.waitAction();
+gpui.restoreCursor( oldc);			//	元のカーソルに戻す。これしないとカーソルが迷子になる
+rpgvar.RESULT = ~val;				//	システム変数RESULTにダイスの値を格納する
+return rpgvar.RESULT;
+```
+
+<Aside type="tip">
+RPG-Cobo のUI処理は、非常に直線的に記述することができるため、とても見通しが良いコードになります。  
+UIの表示やイベント処理の流れを、上から順番に追っていくことができます。
+</Aside>
+
+### dialog_dice.ui を作成する
+---
+`.ui`ファイルを作る方法はいくつかありますが、ここでは既存のUIをコピーしてきて改造する方法を取ります。  
+`project/resource/ui/dialog_choices.ui`をコピーして、`project/plugin/diceui/dialog_dice.ui`として保存してください。
+
+そして、RPG-Coboのツールで`dialog_dice.ui`を編集します。過程は省略しますが、ダイスのUIに必要画像やラベルを追加して、ダイスの値を表示するラベルを`num`という名前にしてください。
+<SS src='docs/diceui-4.png' alt=''/>
+
+##### UIの画像素材の場所
+
+`project/resource/ui/uiimg`をファイルビューで開いてください。ここには、RPG-Coboのツールで使用されているUIの画像素材が格納されています。  
+ここのファイル一覧から UIエディターに対してドラッグアンドドロップすることで、画像をUIに追加することが出来ます。
+
+UIの編集については、[画面デザイン](../../guides/res/7-ui)を参照してください。
