@@ -27,7 +27,11 @@ const { icon, title, img, mov, rev, imgs } = Astro.props;
 		<div class="body2"><slot /></div>
 	</div>
 	<div class="right">
-	{ imgs ?
+	{ 
+		mov ?
+		<video src={mov} autoplay loop muted playsinline></video>
+		:
+		imgs ?
 		<IMGS srcs={imgs} />
 		:
 		<IMG src={img} alt=""/>
@@ -44,6 +48,10 @@ const { icon, title, img, mov, rev, imgs } = Astro.props;
 		.right {
 			width: 100%;
 aspect-ratio: 16 / 9;
+		}
+		.right video {
+		height: 100%;
+		object-fit: cover;
 		}
 		.reverse {
 			flex-direction: row-reverse;
