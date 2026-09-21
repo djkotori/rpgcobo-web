@@ -1,0 +1,42 @@
+---
+title: Set Up Battles
+description: "Explains RPG-Cobo map production and related setup points with the theme of setting up battles."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+
+Let's set up battles with the enemies that appear on the map.
+
+If you click "Encounters settings" from "Edit" in the title menu, or click the "Encounters settings" button in the selection tool panel, the "Encounters settings" dialog appears.
+
+<div class="sspart">
+<SS src='docs/battle-1.png' alt=''/>
+
+##### <M part="A"/> Encounter group list
+Add enemies that appear on this map in groups.
+
+##### <M part="B"/> Properties
+Edit battle-specific settings such as encounter rate, whether escape is possible, and BGM.
+
+##### <M part="C"/> Enemy list
+Place the enemies that appear in this battle.
+
+##### <M part="D"/> Encounter range
+You can paint and specify the appearance area of this encounter group.
+
+##### <M part="E"/> Encounter conditions
+If conditions are specified, encounters happen only when the conditions are met.
+</div>
+
+### <M code="f10d"/> Tips for grouping encounters
+- To add randomness to enemy combinations, keep it to about 2 to 3 groups.
+- On large field maps, separate enemy groups by encounter range.
+- For bosses and fixed enemies, set encounter rate to 0 so they do not appear in random encounters.
+
+### <M code="f10d"/> Battle test
+You can actually test battles against the enemy group with the "<M code="e1c4"/> Battle test" button at the lower left of the dialog.
+You can choose a save slot, open the menu, change equipment, and repeatedly test battles.
+

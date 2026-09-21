@@ -1,0 +1,48 @@
+---
+title: Build an Athletic Course with Moving Terrain
+description: "Explains RPG-Cobo event production and presentation settings with the theme of building athletic courses with moving terrain."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+When you combine map assets with events, you can create something called "moving terrain."  
+You can add dynamic movement to maps, such as floors that move up, down, left, and right, drawbridges, and elevators.  
+[Click here for how to use map assets](../../map/5-map-asset)
+
+### <M code="e8af"/> Make map assets into moving terrain
+First, open the "<M code="ea09"/> Map asset" editor and select one of the assets that looks suitable as a platform. (Be careful, because very large assets may make processing heavy.)  
+Then, in the properties, find the item called "Place as event" and check it ON.  
+That's all you need to prepare!
+
+<SS src='docs/movingobj-1.png' alt=''/>
+
+### <M code="f10d"/> Add moving terrain in the map editor
+From the map editor, select the "<M code="e82f"/> Event tool." Then from the right-click menu,
+choose "<M code="e01e"/> Place event" => "<M code="f235"/> Moving terrain" to place moving terrain.
+Moving terrain events have properties like the image below. Select the one you set in map assets earlier for the "model," and create movement with the character presentation tool.
+
+<SS src='docs/movingobj-2.png' alt=''/>
+
+### <M code="f10d"/> Move moving terrain with the character presentation tool
+
+The character presentation tool can add detailed movement to moving terrain just like it does for humanoid characters.  
+One thing that makes moving terrain different from humanoid characters is that movement actions can be given in detail for position, rotation, easing (which lets you vary the pace of movement), and more.
+
+<SS src='docs/movingobj-3.png' alt=''/>
+
+
+### <M code="f10d"/> Moving terrain can also be used in custom events
+To move or rotate moving terrain in different directions under various conditions, set the custom event model to moving terrain.  
+Alternatively, you can also move moving terrain from another custom event using the character presentation tool.
+
+
+<Aside type="caution">
+If you save/load while a stage with moving terrain is running, the timing of the moving terrain will become out of sync.  
+During athletic stages, make sure you change the stage settings so that saving is disabled with "<M code="e8b8"/> Change stage settings."
+
+<SS src='docs/movingobj-4.png' alt=''/>
+</Aside>
+

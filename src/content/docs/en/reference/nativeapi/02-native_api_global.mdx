@@ -1,0 +1,261 @@
+---
+title: "Native API: Global"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Global."
+---
+
+This document is a reference for the global API of SakanaGL defined in `ssapi_global.cpp`.
+
+## Contents
+
+- [Time functions](#time-functions)
+- [Environment information functions](#environment-information-functions)
+- [System control functions](#system-control-functions)
+- [Garbage collection functions](#garbage-collection-functions)
+- [Interval/timer functions](#intervaltimer-functions)
+- [Addon/permission](#addonpermission)
+- [Frame control](#frame-control)
+- [Basic classes](#basic-classes)
+  - [StringBuffer](#stringbuffer-class)
+  - [SortTable](#sorttable-class)
+  - [MessageQueue](#messagequeue-class)
+  - [WorkerThread](#workerthread-class)
+  - [future](#future-class)
+  - [bitvec](#bitvec-class)
+  - [SKProfiler](#skprofiler-class-windows-only)
+
+---
+
+## Time functions
+
+### skGetTime([baseTime])
+Gets the current time in milliseconds.
+- **Arguments**:
+  - `baseTime` - (optional) get time relative to a base time
+- **Return value**: integer (milliseconds)
+- **Description**: If no argument is given, returns elapsed time since application startup
+
+### skSleep(milliseconds)
+Sleeps for the specified time. **This method does not hand off processing to other threads, and all of the sk runtime sleeps. In general, you should not use it.**
+- **Arguments**:
+  - `milliseconds` - sleep time in milliseconds, 1 ms by default
+- **Return value**: none
+- **Description**: Blocks the thread and waits for the specified time
+
+---
+
+## Environment information functions
+
+### skGetBinBaseDir()
+Gets the binary base directory.
+- **Return value**: string (directory path)
+
+### skGetAddonDir()
+Gets the addon directory.
+- **Return value**: string (directory path)
+
+### skGetCacheDir()
+Gets the cache directory.
+- **Return value**: string (directory path)
+
+### skGetDataDir()
+Gets the data directory.
+- **Return value**: string (directory path)
+
+### skGetDocumentDir()
+Gets the documents directory.
+- **Return value**: string (directory path)
+
+### skGetCurrentDir()
+Gets the current directory.
+- **Return value**: string (directory path)
+
+### skGetOSName()
+Gets the OS name.
+- **Return value**: string (OS name)
+
+### skGetOSVersion()
+Gets the OS version.
+- **Return value**: string (version information)
+
+### skGetHostName()
+Gets the host name.
+- **Return value**: string (host name)
+
+### skGetProcessID()
+Gets the process ID.
+- **Return value**: integer (process ID)
+
+### skGetVersion()
+Gets the SakanaGL version.
+- **Return value**: integer (version number)
+
+### skGetCodebase()
+Gets the codebase path.
+- **Return value**: string (codebase path)
+
+### skGetMainSK()
+Gets the main script filename.
+- **Return value**: string (main script name)
+
+### skGetLanguage()
+Gets the system language.
+- **Return value**: string (language code)
+
+### skGetWorkerID()
+Gets the worker thread ID.
+- **Return value**: integer (worker ID, main thread is 0)
+
+### skGetSystemInfo()
+Gets system information.
+- **Return value**: table
+  - `cpuname` - CPU name
+  - `apname` - application name
+  - `cores` - number of cores
+  - `cpuload` - CPU load (%)
+  - `totalmem` - total memory (KB)
+  - `freemem` - free memory (KB)
+  - `processmem` - process memory (KB)
+
+---
+
+## System control functions
+
+### skExit([exitCode], [message])
+Exits the application.
+- **Arguments**:
+  - `exitCode` - (optional) exit code
+  - `message` - (optional) exit message
+- **Return value**: suspension flag
+- **Description**: Stops application execution and begins shutdown processing
+
+### skRestart([argsArray])
+Restarts the application.
+- **Arguments**:
+  - `argsArray` - (optional) array of new startup arguments
+- **Return value**: none
+- **Note**: You cannot include `"-main"` in the array
+
+### skCatchSignal(signal1, signal2, ...)
+Catches signals.
+- **Arguments**: variable-length arguments of signal numbers
+- **Return value**: none
+
+---
+
+## Garbage collection functions
+
+### skSetGCLevel([level])
+Sets the garbage collection level.
+- **Arguments**:
+  - `level` - (optional) GC level (0-2, default: maximum level)
+- **Return value**: none
+
+### skCollectGarbage([generation])
+Runs garbage collection.
+- **Arguments**:
+  - `generation` - (optional) GC generation (0-2, default: all generations)
+- **Return value**: none
+- **Description**: Frees memory by explicitly running GC
+
+---
+
+## Interval/timer functions
+
+### setInterval(closure, milliseconds)
+Repeatedly runs a function at the specified interval (JavaScript-compatible).
+- **Arguments**:
+  - `closure` - function to run
+  - `milliseconds` - interval in milliseconds
+- **Return value**: integer (interval ID)
+- **Description**:
+  - The function is called as `closure(deltaTime, ...)`
+  - If it returns `undefined`, it stops automatically
+
+### setTimeout(closure, milliseconds)
+Runs a function once after the specified time (JavaScript-compatible).
+- **Arguments**:
+  - `closure` - function to run
+  - `milliseconds` - wait time in milliseconds
+- **Return value**: integer (timer ID)
+
+### clearInterval(intervalID)
+Stops an interval or timeout (JavaScript-compatible).
+- **Arguments**:
+  - `intervalID` - interval/timer ID
+- **Return value**: boolean (whether it succeeded)
+
+### executeInterval(deltaTime)
+Runs registered intervals.
+- **Arguments**:
+  - `deltaTime` - elapsed time (milliseconds)
+- **Return value**: none
+- **Description**: Call this inside the frame loop to process intervals
+
+### getIntervals()
+Gets information about currently registered intervals.
+- **Return value**: array
+  - Each element is a tuple `[closure, id, isLoop, time]`
+
+---
+
+## Addon/permission
+
+### skLoadAddon(addonName)
+Loads an addon.
+- **Arguments**:
+  - `addonName` - addon name (string)
+- **Return value**: boolean (whether it succeeded)
+- **Description**: Requires permission
+
+### skSetPermissionMap(permissionTable, templateArgs)
+Sets the permission map.
+- **Arguments**:
+  - `permissionTable` - permission definition table
+  - `templateArgs` - template arguments (directory info, etc.)
+- **Return value**: none
+- **Description**:
+  - Can be called only once from boot.sk
+  - Used for subsequent permission checks
+
+### skGetPermission(category, target, [defaultValue])
+Gets a permission.
+- **Arguments**:
+  - `category` - category (string)
+  - `target` - target (string)
+  - `defaultValue` - (optional) default value (default: -1)
+- **Return value**: integer (permission value)
+
+---
+
+## Frame control
+
+### skGetFrameFlag()
+Gets the frame flag.
+- **Return value**: integer (flag value)
+
+### skSetFrameFlag(flag)
+Sets the frame flag.
+- **Arguments**:
+  - `flag` - flag value (integer)
+- **Return value**: none
+
+### skSetTemporalAllocator(memorySize)
+Sets the size of the temporal allocator.
+- **Arguments**:
+  - `memorySize` - memory size (bytes, max 256 MB)
+- **Return value**: none
+
+---
+
+## Basic classes
+
+### StringBuffer class
+
+A buffer class for building strings efficiently.
+
+#### Constructor
+
+```sk
+StringBuffer()
+```
+

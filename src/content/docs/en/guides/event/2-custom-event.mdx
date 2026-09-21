@@ -1,0 +1,148 @@
+---
+title: Make a Custom Event
+description: "Explains RPG-Cobo event production and presentation settings with the theme of making a custom event."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+[Previous page](/guides/map/3-event) explained that common basic events are provided as template events, so they can be created with one touch.  
+However, once you start creating game mechanisms and presentations, you will quickly notice that they are not enough.  
+**What if you want to make them move exactly the way you want? Make a custom event!**
+
+### <M code="f10d"/> How to create a custom event
+
+There are two ways to create a custom event.
+1. On the canvas, choose "<M code="e01e"/> Place event" => "<M code="e01e"/> Custom event" from the context menu
+2. Select a placed template event and choose "Convert to custom event" from the context menu
+
+In this page, we will create a custom event using method 1.
+
+### <M code="f10d"/> Custom event editing screen
+
+Let's look at the custom event editing screen. A custom event editor is shown that covers the entire map editor, as in the image.
+
+<div class="sspart">
+<SS src='docs/custom-event-1.png' alt=''/>
+
+##### <M part="A"/> Command list
+Line up the commands that define what happens when the event is executed.  
+The command list supports common editing operations. You can drag to select a range, and you can copy and paste between events.
+
+##### <M part="B"/> Overall event properties
+Specify the properties for the entire event.
+
+##### <M part="C"/> Page list
+Events can have multiple pages. One page is selected depending on the page selection conditions.  
+By switching pages based on conditions, you can easily express complex states.
+
+***The following are the properties for the selected page.***
+
+##### <M part="D"/> Movement action
+Specify how the event moves. Each movement action has more detailed settings.
+There are many movement actions such as "Stop," "Wander," and "Chase."
+
+##### <M part="E"/> Trigger condition
+Specify the condition under which this event becomes active. When triggered, the command list for this page starts executing.
+Examples include "Inspect," "Touch," and "Auto run."
+
+##### <M part="F"/> Parallel execution
+If this is ON, the event can run at the same time as other events are being executed.  
+However,
+
+##### <M part="G"/> Page selection conditions
+Set the conditions for this page to be selected. You can set up to three conditions, and this page is selected when all of them are satisfied.  
+During selection, pages with larger page numbers have higher priority.
+</div>
+---
+
+### <M code="f10d"/> Editing the command list
+
+Try adding a command from the right-click context menu on the command list by choosing "<M code="e150"/> Insert command (Space key)." A long list of commands will appear.
+
+<SS src='docs/custom-event-2.png' alt='' minscale={0.8}/>
+
+If you are familiar with RPG development, you can probably guess what each command does. We cannot introduce every command, so here we will briefly present representative ones.
+
+|Type|Command|Description|
+|---------|----------|---------|
+|General processing|<M code="eb26"/> Branch|Specifies a condition and runs the following processing if it is met.|
+|Variable processing|<M code="ea5f"/> Set variable|Performs calculations and stores the result in a variable.|
+|Player / party|<M code="f109"/> Gain / lose item|Gains or loses items.|
+|Screen display / input|<M code="e0b7"/> Message|Displays a dialogue window and shows a conversation.|
+|Scene control|<M code="e539"/> Move map|Moves the map or current position. A command with the same effect as a portal.|
+|Operation / presentation|<M code="eae9"/> Animation|Plays an animation on an event or player.|
+|Battle processing|<M code="f06e"/> End battle|Forcibly ends the battle by specifying victory, defeat, or cancellation.|
+
+The added commands can be edited by double-clicking them or choosing "<M code="e745"/> Edit command" from the right-click context menu.  
+### <M code="e838"/> Let's try adding an event command that shows a conversation.
+
+<Steps>
+1. For command insertion, select "<M code="e0b7"/> Message" in the screen display/input category. A popup window like the one below appears, so enter the conversation text.<SS src='docs/custom-event-3.png' alt=''/>
+
+2. Click outside the popup to finish editing, and the command is now added to the command list as shown below.<SS src='docs/custom-event-4.png' alt=''/>
+
+3. If you actually debug and talk to this event, you can confirm that the conversation appears as shown below.<SS src='docs/custom-event-5.png' alt=''/>
+</Steps>
+
+### <M code="e8af"/> What are multiple pages used for?
+An event can have multiple pages, and you can switch pages depending on the situation to change its appearance and behavior.
+The pages are lined up as <M code="f124"/><M code="f125"/><M code="f126"/>..., and you can set conditions for each page. Then the page with the highest number that matches the conditions is selected.
+##### How can this page system be used?
+Let's use a treasure chest as an example to explain page usage.
+A treasure chest has two states: "contains an item" and "empty after the item is taken." These become two pages.
+
+|Page|Page content|Page selection condition|Trigger condition|Executed event commands|
+|---------|----------|---------|------|------|
+|<M code="f124"/>|Item not yet obtained|None|Inspect (near)|Gain item, set variable A = ON|
+|<M code="f125"/>|Item already obtained|When variable A = ON|None|None|
+
+The variable used for the page change condition is **variable A**. (*See the explanation about variables below.*)
+- When variable A = OFF (initial state), page 1 is selected. On page 1, the command list is executed when the nearby inspect button is used. (*See here for the command list.*)
+  This command list adds the item and sets variable A = ON.
+- Once variable A = ON, the selection condition for the higher-priority page 2 is satisfied, and the event changes to page 2.
+- On page 2 there are no commands to execute, so no more items can be taken from this treasure chest.
+
+
+### <M code="f10d"/> What are variables?
+
+
+The variables available in RPG-Cobo event commands are as follows.
+
+|Variable type|Variable name|Overview|
+|------------------|------------|-------|
+|Work variables|W X Y Z|Temporary variables used during event processing (not saved)|
+|Event variables|A B C D|Variables saved per event|
+|Global variables|G000 ~ G999|Variables that can be read and written by all events|
+|System variables|MONEY PTIME MAPID…|Variables that can obtain the state of the game system, such as money, play time, and the current map ID|
+|Button state|BTN_UP BTN_LEFT BTN_A…|Variables used to check whether buttons are being pressed|
+
+The "variable A" mentioned in the [multiple page usage section](#multiple-pages-use) above was the event variable A. Since this is saved per event,
+if you change the A value of a treasure chest event, that state will be saved permanently, and even if you resume from save data, the chest will remain empty.
+
+
+If you want to assign a value to a variable, use the "<M code="ea5f"/> Set variable" command.
+
+<div class="sspart">
+<SS src='docs/custom-event-6.png' alt=''/>
+|||
+|-------|-------|
+|Assignment target|The variable to assign to|
+|Operation|Choose from =, +, -, ×, ÷, or %. If = is selected, the right-hand side is assigned as is; if + is selected, it is added to the destination.|
+|Right-hand value|In addition to variables, you can enter numbers and strings.|
+</div>
+
+#### Try using variables
+
+- 
+
+
+
+
+### Continued on the next page!
+
+On the next page, we will continue with more practical examples of how to make full use of custom events.
+

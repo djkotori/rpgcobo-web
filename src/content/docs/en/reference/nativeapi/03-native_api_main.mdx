@@ -1,0 +1,264 @@
+---
+title: "Native API: OS System"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: OS System."
+---
+
+This document is a reference for the main-thread-only API of SakanaGL defined in `core/api/ssapi_main.cpp`.
+
+It includes APIs for handling system events such as windows, keyboard input, gamepads, mouse, touch, and sensors.
+
+---
+
+## Contents
+
+1. [Global functions](#global-functions)
+2. [Classes](#classes)
+   - [Event](#event)
+   - [IMString](#imstring)
+   - [FileDialog](#filedialog)
+   - [WebView](#webview)
+   - [MoviePlayer](#movieplayer)
+   - [Gamepad](#gamepad)
+
+---
+
+## Global functions
+
+### System information
+
+#### `skGetSystemFlags()`
+```
+int skGetSystemFlags()
+```
+Gets the system flags.
+
+**Return value**: system flags (integer)
+
+---
+
+### Event processing
+
+#### `skPeekEvent(event)`
+```
+bool skPeekEvent(Event event)
+```
+Gets one event from the event queue.
+
+**Arguments**:
+- `event` (Event): event object (results are stored here)
+
+**Return value**: `true` if an event was obtained, `false` if the queue is empty
+
+**Description**: The retrieved event is removed from the queue.
+
+#### `skPeekEvents(env, callback, event)`
+```
+void skPeekEvents(object env, closure callback, Event event)
+```
+Processes all events in the event queue.
+
+**Arguments**:
+- `env` (object): environment object for the callback
+- `callback` (closure): callback in the form `function(env, event)`
+- `event` (Event): event object to reuse
+
+**Description**: Calls the callback for every event in the queue. Stops if an error occurs.
+
+---
+
+### Screen and window management
+
+#### `skSupportsDisplaySize(width, height)`
+```
+bool skSupportsDisplaySize(int width, int height)
+```
+Checks whether the specified screen size is supported.
+
+**Arguments**:
+- `width` (int): width
+- `height` (int): height
+
+**Return value**: `true` if supported
+
+#### `skCreateScreen(title, width, height, screentype)`
+```
+bool skCreateScreen(string title, int width, int height, int screentype)
+```
+Creates a window.
+
+**Arguments**:
+- `title` (string): window title
+- `width` (int): width
+- `height` (int): height
+- `screentype` (int): screen type (fullscreen, windowed mode, and so on)
+
+**Return value**: `true` if successful
+
+#### `skGetScreenSize(array)`
+```
+array skGetScreenSize(array result)
+```
+Gets the current screen size.
+
+**Arguments**:
+- `result` (array): array to store the result
+
+**Return value**: `[width, height, dpiX, dpiY, screentype]` array
+
+#### `skGetDisplaySize(array)`
+```
+array skGetDisplaySize(array result)
+```
+Gets the display size.
+
+**Arguments**:
+- `result` (array): array to store the result
+
+**Return value**: `[width, height, dpiX, dpiY, refreshRate, rotation]` array
+
+#### `skDisposeScreen()`
+```
+bool skDisposeScreen()
+```
+Disposes the window.
+
+**Return value**: `true` if successful
+
+#### `skMinimizeScreen(minimize)`
+```
+int skMinimizeScreen(bool minimize)
+```
+Minimizes or restores the window.
+
+**Arguments**:
+- `minimize` (bool): `true` to minimize, `false` to restore
+
+**Return value**: operation result code
+
+#### `skMoveScreen(params)`
+```
+int skMoveScreen(table params)
+```
+Changes the position or size of the window.
+
+**Arguments**:
+- `params` (table): parameter table
+  - `flags` (int): operation flags (`MOVESCREEN_MINIMIZE`, `MOVESCREEN_RESTORE`, and so on)
+  - `x` (int): X coordinate
+  - `y` (int): Y coordinate
+  - `w` (int): width
+  - `h` (int): height
+  - `name` (string): display name (optional)
+
+**Return value**: operation result code
+
+---
+
+### Rendering
+
+#### `skBeginRender()`
+```
+int skBeginRender()
+```
+Starts rendering.
+
+**Return value**: result code
+
+#### `skEndRender()`
+```
+int skEndRender()
+```
+Ends rendering.
+
+**Return value**: result code
+
+#### `skFlipScreen()`
+```
+bool skFlipScreen()
+```
+Displays the framebuffer on the screen (double buffering).
+
+**Return value**: `true` if successful
+
+**Description**: If preflip functions are registered, they are executed.
+
+#### `skSkipFlipScreen()`
+```
+void skSkipFlipScreen()
+```
+Runs preflip functions even when flipping is skipped.
+
+**Description**: Use this when preflip processing still needs to run even if the frame is skipped.
+
+---
+
+### Input devices
+
+#### `skIsKeyPressed(keycode)`
+```
+bool skIsKeyPressed(int keycode)
+```
+Checks whether a specified key is pressed.
+
+**Arguments**:
+- `keycode` (int): key code
+
+**Return value**: `true` if the key is pressed
+
+#### `skSetCursorVisible(visible)`
+```
+void skSetCursorVisible(bool visible = true)
+```
+Sets whether the cursor is visible.
+
+**Arguments**:
+- `visible` (bool): `true` to show, `false` to hide (default: `true`)
+
+#### `skSetCursorType(type)`
+```
+void skSetCursorType(int type = 0)
+```
+Sets the cursor type.
+
+**Arguments**:
+- `type` (int): cursor type (0: standard, 1: hand, 2: text, and so on)
+
+#### `skGetMousePos(array)`
+```
+array skGetMousePos(array result)
+```
+Gets the current mouse position.
+
+**Arguments**:
+- `result` (array): array to store the result
+
+**Return value**: `[x, y]` array
+
+#### `skSetMousePos(x, y)`
+```
+void skSetMousePos(float x, float y)
+```
+Sets the mouse cursor position.
+
+**Arguments**:
+- `x` (float): X coordinate
+- `y` (float): Y coordinate
+
+#### `skGetModifiers()`
+```
+int skGetModifiers()
+```
+Gets the modifier keys currently pressed.
+
+**Return value**: bit mask of modifier keys (Shift, Ctrl, Alt, and so on)
+
+---
+
+### Application state
+
+#### `skIsForeProcess()`
+```
+bool skIsForeProcess()
+```
+...
+

@@ -1,0 +1,152 @@
+---
+title: Frequently Asked Questions (FAQ)
+description: "An FAQ page that brings together common questions and answers about RPG-Cobo."
+template: splash
+---
+
+import { Card, CardGrid, LinkCard, Tabs, TabItem } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+
+<Tabs>
+
+
+<TabItem label="License" icon="star">
+
+#### <M code="f0f9"/> Is RPG-Cobo free?
+🅰 Yes, it is free!
+
+---
+
+#### <M code="f0f9"/> Is RPG-Cobo open source?
+🅰 The RPG-Cobo tool, game runtime, and assets are all published as open source.  
+RPG-Cobo also uses some third-party programs, fonts, and music, but all of them are either open source or covered by redistribution sublicenses, so you can use and distribute them freely with confidence.
+
+---
+
+#### <M code="f0f9"/> What is a license?
+🅰 A license is required when you perform a "build" to distribute an RPG you made with the tool. **If you register as a user, a Free license is automatically granted.**
+
+---
+
+#### <M code="f0f9"/> Can I upgrade from an Indie license to a Pro license after purchasing?
+🅰 Yes. You can upgrade to a Pro license by paying the price difference.
+
+---
+
+#### <M code="f0f9"/> Are there any restrictions on distributing or selling the games I make?
+🅰 None at all. Even with a Free license, you are free to sell your games!
+
+---
+
+#### <M code="f0f9"/> Can I use RPG-Cobo assets in third-party tools?
+🅰 Of course, you can use them for free!
+Just note that when distributing them, you must include the Apache 2 license notice. Simply bundle LICENSE.txt and NOTICE.txt with the package you distribute.
+
+---
+
+</TabItem>
+
+<TabItem label="About features" icon="star">
+
+#### <M code="f0f9"/> Can I make games other than RPGs with RPG-Cobo?
+🅰 RPG-Cobo is currently a game development tool specialized for RPGs.  
+That said, genres such as visual novels and sandbox-style games can be made perfectly well using RPG-Cobo's standard features. In other words, as an advanced development environment, RPG-Cobo can be a strong option.  
+In addition, genres with systems similar to the base one, such as action RPGs, should be relatively easy to modify with plugins.
+
+---
+
+#### <M code="f0f9"/> What languages are supported?
+- **Languages that can be localized:** Japanese, English, Simplified Chinese, Traditional Chinese, Korean, German, French, Spanish, Portuguese, Russian, Indonesian, Vietnamese  
+  *This can be added or changed easily in the configuration files.*
+- **Tool UI languages:** Japanese, English  
+  *More tool UI languages are planned for the future.*
+
+---
+
+#### <M code="f0f9"/> Can I use assets I already own?
+🅰 RPG-Cobo can load common image and audio assets. It also supports animated playback by splitting images into vertical and horizontal segments, so existing images such as "moving monsters" can be imported without problems.
+- Images: png, jpg, webp
+- BGM and voice: ogg *You can convert from mp3, m4a, wav, and flac using the tool's import feature*
+- Sound effects: ogg, wav *same as above*
+- 3D models: supported export from Blender
+
+---
+
+#### <M code="f0f9"/> Which gamepads are supported?
+We recommend controllers that support X-Input, but other controllers can also be used. Support by platform is as follows.
+- Browser: controllers compatible with the HTML5 Gamepad API
+- Windows: X-Input and HID controllers (can be added in the tool)
+- Android: controllers supported by the OS
+- iOS: controllers supported by the OS
+
+---
+
+#### <M code="f0f9"/> Does it have network play?
+🅰 Not at the moment, but the game engine has excellent real-time communication capabilities.  
+We plan to support network play in future updates or through plugins.
+
+---
+
+#### <M code="f0f9"/> Are there any additional graphics or sound assets?
+At present, there are no asset sets beyond the standard fantasy RPG assets, but we are planning themes such as the following.
+- Modern, sci-fi, Japanese-style
+
+---
+
+#### <M code="f0f9"/> Where can I find plugins?
+At present, there is no official place for distributing user-made plugins.  
+We plan to first open a plugin submission channel on Discord and also set up a dedicated plugin showcase page on this website. (as of March 2026)
+
+---
+
+</TabItem>
+
+<TabItem label="When something goes wrong" icon="star">
+
+#### <M code="f0f9"/> The tool will not start
+Your PC may not meet the system requirements.
+- Make sure you are connected to the internet properly.
+- If you are using an older PC, check whether your graphics card driver is up to date.
+  RPG-Cobo is designed to run on a wide range of smartphones, but old graphics drivers may cause problems or missing features.
+- Your version of Windows may be outdated. Try updating through Windows Update.
+
+---
+
+#### <M code="f0f9"/> The tool stopped launching while I was working on a project with it
+In rare cases, data edited during game development can become inconsistent and cause an error when the tool starts.
+Try restoring from an automatic backup from the project menu in the portal app.  
+For more details, see [When you run into trouble => Tool problems](./help/1-help-tool).
+
+---
+
+#### <M code="f0f9"/> The tool stopped launching after a version upgrade
+When upgrading a project's tool version from the portal app, always make a "full backup" (selected by default).
+Because this creates a complete backup including the tool itself, restoring from it will return you to the original state with certainty.  
+For more details, see [When you run into trouble => Tool problems](./help/1-help-tool).
+
+---
+
+#### <M code="f0f9"/> The exported game does not work properly on a specific device
+Android in particular varies greatly in stability depending on the device and OS version. Please note that exported games will not work perfectly on every device.
+
+We accept reports of device-specific issues in the Discord #bug-report channel. It is difficult to prepare environments that reproduce every problem, so
+we generally cannot respond immediately, but users who have experienced the same symptoms in the community may be able to offer advice such as workarounds.
+
+For more details, see [When you run into trouble => Issues with built games](./help/2-help-builtrpg).
+
+---
+
+#### <M code="f0f9"/> The game runs slowly
+If you find yourself thinking, "The tool and sample games run smoothly, but the game I am making is somehow very slow...", check whether you are running any of the following "high-load processing" tasks.
+- Dozens of events moving around on screen
+- Frequently displaying large effects
+- Running dozens of parallel events at the same time
+- Placing large numbers of detailed models, such as trees, on the map
+
+For improvement ideas, see [When you run into trouble => Issues with built games](./help/2-help-builtrpg).
+
+---
+
+</TabItem>
+</Tabs>
+

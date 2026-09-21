@@ -1,0 +1,146 @@
+---
+title: Map Voxels
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of map voxels."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+Map voxels define everything about the blocks that make up a map: their design, color scheme, collision, and more.
+
+
+Open "<M code="f089"/> Resources" from the activity bar and then "<M code="f11d"/> Map voxels."
+
+<div class="sspart">
+<SS src='docs/map-vox-1.png' alt=''/>
+
+##### <M part="A"/> Block category selection
+The character models are shown in a list. You can rotate the display by dragging with the right mouse button.  
+As a common operation in the resource editor, you can "copy," "paste," and "sort by drag and drop" for list items.
+
+##### <M part="B"/> Resource list
+Displays the blocks in the selected block category as a list.
+
+##### <M part="C"/> Properties
+The settings vary greatly depending on the block category. What they all share are the voxel model assignment and the palette.
+
+##### <M part="D"/> Preview
+You can preview the model and collision.
+</div>
+
+
+### <M code="f10d"/> Introducing block categories
+
+
+<CardGrid>
+	<Card title="Basic">
+		Primitive blocks with simple colors and shapes. For mockups.
+		<SS src='docs/map-vox-c1.png' alt=''/>
+	</Card>
+	<Card title="Ground / Floor">
+		The floor part of a terrain block. A terrain block becomes a single block by combining "floor + wall."
+		<SS src='docs/map-vox-c2.png' alt=''/>
+	</Card>
+	<Card title="Ground / Wall">
+		The wall part of a terrain block. A terrain block becomes a single block by combining "floor + wall."
+		<SS src='docs/map-vox-c3.png' alt=''/>
+	</Card>
+	<Card title="Buildings">
+		Blocks used as floors and walls for buildings. Specify the floor and wall models separately.
+		<SS src='docs/map-vox-c4.png' alt=''/>
+	</Card>
+	<Card title="Carpet">
+		Decorative blocks placed on floors.
+		<SS src='docs/map-vox-c5.png' alt=''/>
+	</Card>
+	<Card title="Water">
+		Blocks for making rivers and ponds. Placing them vertically creates a waterfall.
+		<SS src='docs/map-vox-c6.png' alt=''/>
+	</Card>
+	<Card title="Fence">
+		Obstacle blocks that can be placed as enclosures.
+		<SS src='docs/map-vox-c7.png' alt=''/>
+	</Card>
+	<Card title="Flowers and plants">
+		Blocks for grass and flowers that can be placed on the ground.
+		<SS src='docs/map-vox-ch.png' alt=''/>
+	</Card>
+</CardGrid>
+
+---
+
+<CardGrid>
+	<Card title="Door">
+		A door that can be opened and closed.
+		<SS src='docs/map-vox-c8.png' alt=''/>
+	</Card>
+	<Card title="Lamp">
+		A glowing block.
+		<SS src='docs/map-vox-c9.png' alt=''/>
+	</Card>
+	<Card title="Exterior">
+		Decorative and obstacle blocks mainly placed outdoors.
+		<SS src='docs/map-vox-ca.png' alt=''/>
+	</Card>
+	<Card title="Interior">
+		Decorative and obstacle blocks mainly placed indoors.
+		<SS src='docs/map-vox-cb.png' alt=''/>
+	</Card>
+	<Card title="Column">
+		Can stretch vertically or horizontally. If set to the ladder type, you can climb up and down.
+		<SS src='docs/map-vox-cc.png' alt=''/>
+	</Card>
+	<Card title="Slope / Stairs">
+		Slopes and stairs that can be any size.
+		<SS src='docs/map-vox-cd.png' alt=''/>
+	</Card>
+	<Card title="Roof">
+		Roofs that can be any size.
+		<SS src='docs/map-vox-ce.png' alt=''/>
+	</Card>
+	<Card title="Natural objects">
+		Placement blocks based on nature such as trees and rocks.
+		<SS src='docs/map-vox-cf.png' alt=''/>
+	</Card>
+	<Card title="Crack">
+		A special decorative block for putting holes or cracks into floors and walls.
+		<SS src='docs/map-vox-cg.png' alt=''/>
+	</Card>
+</CardGrid>
+
+
+### <M code="f10d"/> Edit collision
+You can freely set the collision shape for blocks such as "Door," "Lamp," "Exterior," and "Interior." Press the "Collision" button in the properties to open the collision editor dialog.
+
+<div class="sspart">
+<SS src='docs/map-vox-2.png' alt=''/>
+
+##### <M part="A"/> Size and alignment
+You can specify the size and alignment method so the model is positioned neatly.
+
+##### <M part="B"/> Pen selection
+Choose from "<M code="e909"/> Erase," "<M code="e146"/> Place," and "<M code="e3ae"/> Replace."
+
+##### <M part="C"/> Collision shape selection
+Choose a shape that fits the model well and does not cause the player to get stuck.  
+**Rotate using the "<M code="e166"/><M code="e166"/>" button on the right.**
+
+##### <M part="D"/> 3D canvas
+Left-click to place/remove collisions.
+</div>
+
+### <M code="f10d"/> Design map voxels
+Like character voxels, map voxels can be edited directly from the context menu with "<M code="e745"/> Edit voxel."
+
+After editing and updating the file, choose "<M code="f053"/> Reload RPG-Cobo (Ctrl+F4)" from the file menu to reflect the changes.
+
+<Aside type="caution">
+Some blocks such as doors and roofs are made with structures based on program rules.
+If editing the vox file breaks this structure, the block may no longer work correctly, and in the worst case the tool may fail to launch.
+
+Always make a "<M code="e623"/> project backup" before editing map voxels.
+</Aside>
+

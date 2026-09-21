@@ -1,0 +1,115 @@
+---
+title: Map Creation Techniques
+description: "Explains RPG-Cobo map creation and related setup points with the theme of map creation techniques."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+
+This page explains how to actually build maps by making full use of the map editor.  
+Here we will use the map in the image below as material and build it using various tools.
+
+<SS src='docs/mapedit-1.png' alt=''/>
+
+<Aside>
+Because explaining map editor operations in text can be hard to understand, this page uses videos.
+</Aside>
+
+### <M code="f10d"/> Basic 3D canvas controls
+Before using the tools, learn the basic controls of the map editor's 3D canvas.  
+**These controls are shared with the other 3D canvases in RPG-Cobo as well.**
+
+|Function|Control| | |
+|--|--|--|--|
+|Rotate canvas|Right mouse drag| |Shift + two-finger trackpad pan|
+|Move canvas|Middle mouse drag|Shift + right mouse drag|Two-finger trackpad pan|
+|Zoom canvas|Mouse wheel| |Two-finger trackpad pinch|
+|Focus|Middle mouse click|F key| |
+|Eyedrop block|Alt + left mouse click| | |
+
+### <M code="e564"/> Use the terrain tool to add elevation
+First, create height differences in the terrain to roughly shape the passable and impassable areas.
+
+<video src="/mov/mapedit-tutorial1.mp4" controls/>
+
+-------VIDEO1
+
+### <M code="f119"/> Paint terrain with the pen tool
+The pen tool lets you paint terrain onto the map with the feel of using a paint program.  
+
+##### 1. Paint various terrain features
+Try the pen tool's three basic modes: "<M code="e909"/> Erase," "<M code="e146"/> Attach," and "<M code="f119"/> Paint."  
+You can draw terrain as easily as drawing a picture.
+
+<video src="/mov/mapedit-tutorial2-1.mp4" controls/>
+
+##### 2. Fill the ground
+Use "<M code="e91c"/> Fill" to quickly fill in ground such as grasslands or deserts that define the map.
+It is a very convenient feature that can completely change the atmosphere of the map all at once.
+
+<video src="/mov/mapedit-tutorial2-2.mp4" controls/>
+
+##### 4. Quickly create the shape of a building
+The convenient mode for quickly creating the rough structure of buildings and walls is the "<M code="e02e"/> Box" mode.
+
+<video src="/mov/mapedit-tutorial2-3.mp4" controls/>
+
+### <M code="f084"/> Use the water tool to make seas and rivers
+Water is very effective for adding accents to a map design. It also automatically turns into a waterfall when placed against a wall.
+
+<video src="/mov/mapedit-tutorial3.mp4" controls/>
+
+### <M code="ea63"/> Use the nature tool to grow lots of trees
+Adding trees greatly improves the quality of a map. The nature tool lets you place trees and rocks easily with drag and drop.
+
+<video src="/mov/mapedit-tutorial4.mp4" controls/>
+
+### <M code="e8a7"/> Use the asset tool to place buildings
+The asset tool is a very convenient tool for placing prebuilt structures like buildings all at once.  
+Even maps with many buildings like a town can be made very easily with this asset tool.
+
+<video src="/mov/mapedit-tutorial5.mp4" controls/>
+
+### <M code="effe"/> <M code="ead2"/> Use the exterior and interior tools to place doors and lamps
+To add artificial decorations to outdoor maps, use the "<M code="effe"/> Exterior tool" (or the "<M code="ead2"/> Interior tool" for indoor maps).  
+Doors and lamps are especially useful blocks with functionality. Place them while thinking about the flow of movement through the map.
+
+<video src="/mov/mapedit-tutorial6.mp4" controls/>
+
+### <M code="e62a"/><M code="f1a1"/><M code="f201"/> Use the column, slope, and roof tools to place columns, stairs, and roofs
+The "<M code="e62a"/> Column tool," "<M code="f1a1"/> Slope tool," and "<M code="f201"/> Roof tool" are very powerful tools that can change their shape according to their characteristics.
+
+<video src="/mov/mapedit-tutorial7.mp4" controls/>
+
+### <M code="f1f6"/><M code="e3e9"/><M code="f205"/><M code="e3ad"/> Finish with the other tools
+We will also use the tools we have not used yet, such as the "<M code="f1f6"/> Fence tool," "<M code="e3e9"/> Carpet tool," "<M code="f205"/> Flower tool," and "<M code="e3ad"/> Crack tool," to adjust the appearance.
+
+<video src="/mov/mapedit-tutorial8.mp4" controls/>
+
+### <M code="e3c2"/> Use the selection tool effectively
+With the selection tool, you can select a range on the canvas and use a variety of editing functions such as rearranging map objects or copying them.
+
+<video src="/mov/mapedit-tutorial9.mp4" controls/>
+
+### <M code="f10d"/> Try changing the weather
+To display weather, first click the "<M code="e40b"/>" button among the buttons in the top bar (show weather and background) to turn it ON.
+
+This will display the weather and background set on the map.
+Then use the "Weather" setting in the "<M code="e3c2"/> Selection tool" panel to change it.
+
+<video src="/mov/mapedit-tutoriala.mp4" controls/>
+
+
+### <M code="f10d"/> Finished!!
+We used all kinds of features and completed a very attractive map! Save it (Ctrl+S), then from the canvas context menu choose "<M code="f06a"/> Debug from here" to walk around and test the finished map.
+
+<SS src='docs/mapedit-2.png' alt=''/>
+
+---
+
+Did you see how easy it is to make maps in RPG-Cobo?
+Now it's your turn to challenge yourself with map creation!
+

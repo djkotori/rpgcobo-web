@@ -1,0 +1,261 @@
+---
+title: "Native API: Image and Font"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Image and Font."
+---
+
+This document is a reference for SakanaGL's image processing and font-related APIs defined in `core/api/ssapi_image.cpp`.
+
+It provides functions for image loading, encoding and decoding, font processing, text rendering, bitmap operations, and emoji support.
+
+---
+
+## Contents
+
+1. [Global functions](#global-functions)
+2. [Classes](#classes)
+   - [RGBAImage](#rgbaimage)
+   - [KTXImage](#ktximage)
+   - [Font](#font)
+   - [FontAttribute](#fontattribute)
+   - [FontMetrics](#fontmetrics)
+   - [TextBox](#textbox)
+   - [Bitmap](#bitmap)
+   - [BitmapRasterizer](#bitmaprasterizer)
+   - [Emoji](#emoji)
+
+---
+
+## Global functions
+
+### `skLoadImage(buffer[, option])`
+
+Loads an image from a byte buffer.
+
+**Arguments**:
+- `buffer` (ByteBuffer): buffer containing image data
+- `option` (string, optional): load options
+
+**Return value**: `RGBAImage` or `KTXImage` object
+
+**Description**:
+- Supports formats such as PNG, JPEG, WebP, and KTX.
+- The image format is detected automatically from the binary data.
+- On successful load, the buffer position moves to the end of the image data.
+- If the image contains metadata, it is stored in the returned object's `metadata` field as a `ByteBuffer`.
+
+**Example**:
+```javascript
+local imgData = FileRef("image.png").load();
+local image = skLoadImage(imgData);
+print("Image size: " .. image.width .. "x" .. image.height);
+```
+
+---
+
+## Classes
+
+### RGBAImage
+
+RGBA image class. Each pixel is represented by 32 bits (8 bits × 4 channels).
+
+#### Inheritance
+
+`TexImage` ← `RGBAImage`
+
+#### Constructor
+
+```javascript
+RGBAImage(width, height[, fillColor])
+RGBAImage(width, height, buffer)
+RGBAImage(transfer)
+```
+
+**Arguments**:
+- `width` (int): image width (1 to 8192)
+- `height` (int): image height (1 to 8192)
+- `fillColor` (int, optional): initial fill color (RGBA format)
+- `buffer` (ByteBuffer, optional): initial pixel data
+- `transfer` (Transfer): transfer object
+
+**Description**: The size must be in the range 1 to 8192.
+
+#### Fields
+
+- `width` (int, read-only): image width
+- `height` (int, read-only): image height
+- `depth` (int, read-only): image depth (usually 1, or the layer count for 3D textures)
+- `dpi` (float): DPI (resolution)
+- `metadata` (ByteBuffer, read-only): image metadata
+
+#### Methods
+
+##### `setSize(width, height[, depth])`
+Changes the image size.
+
+**Arguments**:
+- `width` (int): new width (1 to 8192)
+- `height` (int): new height (1 to 8192)
+- `depth` (int, optional): depth (default: 1)
+
+**Description**: Existing pixel data is discarded.
+
+##### `clear(color[, x, y, w, h])`
+Clears the entire image or a specified region.
+
+**Arguments**:
+- `color` (int): clear color (RGBA format)
+- `x, y, w, h` (int, optional): clear region
+
+**Example**:
+```javascript
+img.clear(0xff0000ff);           // clear whole image to red
+img.clear(0x00ff00ff, 10, 10, 50, 50);  // clear a portion
+```
+
+##### `draw(srcImage, dx, dy[, op])`
+##### `draw(srcImage, sx, sy, sw, sh, dx, dy[, op])`
+Draws another image.
+
+**Arguments**:
+- `srcImage` (RGBAImage): source image
+- `sx, sy, sw, sh` (int): source rectangle
+- `dx, dy` (int): destination coordinates
+- `op` (int, optional): draw operation mode (default: 0)
+
+**Draw modes**:
+- `0`: normal copy
+- other modes are implementation dependent
+
+##### `hasAlpha()`
+Checks whether the image contains an alpha channel (transparency).
+
+**Return value**: bool
+
+**Description**: Returns `false` if all pixel alpha values are 255.
+
+##### `premultAlpha()`
+Performs premultiplied alpha processing.
+
+**Description**: Multiplies RGB values by alpha in advance (for faster compositing).
+
+##### `swapEndian()`
+Swaps the endianness of the pixel data.
+
+**Description**: Reverses the byte order (RGBA ↔ ABGR).
+
+##### `encodePNG([buffer])`
+Encodes the image as PNG.
+
+**Arguments**:
+- `buffer` (ByteBuffer, optional): destination buffer
+
+**Return value**: `ByteBuffer` containing PNG image data
+
+**Example**:
+```javascript
+local pngData = img.encodePNG();
+FileRef("output.png").save(pngData);
+```
+
+##### `encodeJpeg([quality[, buffer]])`
+Encodes the image as JPEG.
+
+**Arguments**:
+- `quality` (int, optional): quality (1 to 100, default: 80)
+- `buffer` (ByteBuffer, optional): destination buffer
+
+**Return value**: `ByteBuffer` containing JPEG image data
+
+##### `encodeWebp([quality[, buffer]])`
+Encodes the image as WebP.
+
+**Arguments**:
+- `quality` (int, optional): quality (1 to 100, default: 80)
+- `buffer` (ByteBuffer, optional): destination buffer
+
+**Return value**: `ByteBuffer` containing WebP image data
+
+##### `texture2d(u, v)`
+Performs 2D texture sampling (bilinear interpolation).
+
+**Arguments**:
+- `u` (float): U coordinate (0 to 1, wrap mode)
+- `v` (float): V coordinate (0 to 1, wrap mode)
+
+**Return value**: sampled color (int, RGBA format)
+
+**Description**: Coordinates should be specified in the range 0 to 1; values outside the range are wrapped.
+
+##### `getRow(y, array)`
+Gets the pixel data for the specified row into an array.
+
+**Arguments**:
+- `y` (int): row number
+- `array` (array): destination array
+
+**Return value**: the argument `array`
+
+**Description**: The array size is automatically adjusted to `width`.
+
+##### `setRow(y, array)`
+Sets the pixel data for the specified row from an array.
+
+**Arguments**:
+- `y` (int): row number
+- `array` (array): pixel data array
+
+**Return value**: the argument `array`
+
+##### `filter(kernel, kernelWidth, dstImage)`
+Applies a convolution filter.
+
+**Arguments**:
+- `kernel` (array): kernel array
+- `kernelWidth` (int): kernel width
+- `dstImage` (RGBAImage): destination image for the result
+
+**Return value**: `dstImage`
+
+**Description**:
+- Kernel height is calculated as `kernel.length / kernelWidth`.
+- Output image size becomes `(width - kernelWidth + 1) x (height - kernelHeight + 1)`.
+- Zero elements in the kernel are skipped (for speed).
+
+##### `load(buffer)`
+Loads raw pixel data from a byte buffer.
+
+**Arguments**:
+- `buffer` (ByteBuffer): pixel data
+
+**Return value**: self
+
+**Description**: The image size must be set in advance.
+
+##### `store(buffer)`
+Stores raw pixel data into a byte buffer.
+
+**Arguments**:
+- `buffer` (ByteBuffer): destination buffer
+
+**Description**: Writes `width * height * depth * 4` bytes of data.
+
+#### Index access
+
+```javascript
+img[index]          // Get pixel (1D index)
+img[index] = color  // Set pixel
+```
+
+**Description**: The index is calculated as `y * width + x`.
+
+#### Call operator
+
+```javascript
+img(x, y)            // Get pixel (clamped when out of range)
+img(x, y, default)   // Get pixel (returns default when out of range)
+```
+
+**Arguments**:
+- `x, y` (int): pixel coordinates
+- `default` (int, optional): default value when out of range
+

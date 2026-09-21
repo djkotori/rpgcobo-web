@@ -1,0 +1,212 @@
+---
+title: Add UI
+description: "A detailed guide to RPG-Cobo plugin development, using the theme of adding UI."
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+Adding unique UI for each game is very effective for giving a game its own personality.
+You can also implement custom UI display and interaction by combining event commands, but using plugins makes it much easier to add polished UI with more sophisticated functions.
+
+### About the plugin explained on this page
+---
+We will explain the following sample plugin.
+
+- work/plugin-samples/diceui : Adds a UI that shows a dialog for rolling a die.
+
+
+### diceui
+---
+This sample plugin adds a dialog UI that rolls a die and randomly displays a number from 1 to 6.
+The added UI can be displayed with the event command "<M code="e1bd"/> Preset UI".
+The resulting die value is stored in the system variable RESULT.
+
+When you enable this plugin, the UI is added. To actually display it, specify the UI property as "<M code="e8ef"/> Dice Dialog" in the "<M code="e1bd"/> Preset UI" command as shown below.
+<SS src='docs/diceui-1.png' alt=''/>
+
+The dice dialog has two numeric properties: minimum value and maximum value. The default values are `1` and `6`, representing a six-sided die.
+<SS src='docs/diceui-2.png' alt=''/>
+
+When you display this UI in the game, you can see a screen like the one below.
+<SS src='docs/diceui-3.png' alt=''/>
+
+
+### Plugin structure
+---
+
+Unlike the previous plugins, this plugin has a folder-based structure.
+The plugin definition and load function are written in `diceui/plugin.sk`, and the UI resource is written in `diceui/dialog_dice.ui`.
+
+Let's look at `diceui/plugin.sk` as-is (some comments are omitted).
+
+```js
+import PropertyType;
+
+local lbl_dice = { "ja":"ダイスダイアログ","en":"Dice Dialog"};
+
+pluginfo <- {
+	name : lbl_dice
+	author : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"ダイスを振って数値をランダムに表示します。","en":"Roll a dice and display a random number."}
+	props : []
+}
+
+local srcdir = dirname( callee().getSourceName());	// Path to the folder containing this source
+
+// Function called when the plugin loads. Here we add a new UI definition to RPGSystem.ui.
+function loadPlugin( args, opt){
+	// Add the UI definition
+	RPGSystem.ui ..
+	{
+		key = "dialog_dice"
+		lbl = lbl_dice
+		type = "dialog"					// mainmanu, submenu, choose, dialog, message, info, debug, misc, 
+		icon = ("\ue8ef",0xffcc00ff)	// Change the color to emphasize that it was added by a plugin
+		
+		props = [	// Parameters specified in "Preset UI"
+			{ pid="minval", lbl="MIN VAL", type=SCALAR, range=(0,9999), }
+			{ pid="maxval", lbl="MAX VAL", type=SCALAR, range=(0,9999), }
+		]
+
+		defval = { minval = 1, maxval = 6 }	// Default value. Dice range is 1 to 6.
+
+		// UI display function.
+		uifunc = @( prms){
+			local minval = prms["minval"] ?? defval["minval"], maxval = (prms["maxval"] ?? defval["maxval"]);
+			local rndval(){
+				return ::rnd( minval, maxval+1);
+			}
+			local oldc = gpui.backupCursor();	// Needed when showing a dialog. Save the current cursor
+			playSound( "SE005");
+			local val = ptr( rndval());			// Wrap the die value in ptr.
+			local view = RPGMain.showView({
+				...defval,
+				uipath = srcdir.."/dialog_dice.ui"	// Specify dialog_dice.ui inside the plugin folder
+				layer = "message"					// Show the dice UI on the message layer
+				action = "show"					// Execute the "show" action when displayed
+				modal = true,					// If it is not modal, buttons in the UI behind it can also be pressed
+				// focus = "btn"					// Initial cursor focus. Not needed here
+				...prms,
+				binds = {		// Bind a value to a view name inside the UI. Using @() to provide an expression keeps the value synchronized.
+					num = @() string( ~val)			// Convert val to a string and display it in the num view
+				},
+			});
+			// Start the UI event loop for rolling the die.
+			local x = RPGMain.uiLoop( {
+				"click" : @( e){				// Event handler for clicks and button presses
+					playSound( "SE001");
+					sleep( 500);
+					return "owari";					// Returning a value ends uiLoop
+				}
+				"idle" : @( e){					// Event handler called every frame
+					val << rndval();
+				}
+			});
+			// Cleanup. Close the UI, restore the original cursor, and store the die value in system variable RESULT.
+			view.actionAndDie( "hide");
+			view.waitAction();
+			gpui.restoreCursor( oldc);			// Restore the original cursor. Without this, the cursor gets lost
+			rpgvar.RESULT = ~val;				// Store the die value in system variable RESULT
+			return rpgvar.RESULT;
+		}
+	};
+	return true;
+}
+```
+
+By adding a new UI definition with `RPGSystem.ui .. {...}`, you can add a new UI to the game.
+
+Let's look at the UI definition in more detail. Basic information such as `key`, `lbl`, and `icon` is the same as in previous plugins.
+
+- `props = [ ... ]` defines the properties needed for this UI. Here, we define the minimum and maximum die values as the two properties.
+- `defval = { minval = 1, maxval = 6 };` defines the default values for the properties defined in props.
+- `uifunc = @( prms){ ... }` defines the function used to display this UI. `prms` receives a table containing the property values defined in props.
+  - `RPGMain.showView({ ... })` displays the `dialog_dice.ui` UI. It specifies various display parameters, so refer to the comments for guidance.
+  - `RPGMain.uiLoop({ ... })` starts the UI event loop. Here we define event handlers for clicks/button presses and for every frame.
+
+### Flow of uifunc
+---
+Let's go through the flow of the `uifunc( prms)` function in a little more detail.
+1. Define the `rndval()` function, which returns a random number based on the minimum and maximum values from `prms`.
+```js
+local minval = prms["minval"] ?? defval["minval"], maxval = (prms["maxval"] ?? defval["maxval"]);
+local rndval(){
+	return ::rnd( minval, maxval+1);
+}
+```
+2. Before showing the UI, save the current cursor position. This is necessary if the cursor state changes when the UI is displayed.
+```js
+local oldc = gpui.backupCursor();	// Needed when showing a dialog. Save the current cursor
+playSound( "SE005");
+```
+3. Create a pointer to hold the random value using `local val = ptr( rndval())`. This is used both for display and for obtaining the result.  
+   *Note: in sakana language, a variable defined in an outer function cannot be updated from an inner function. Wrapping it with `ptr()` makes it possible to change the value from inside the inner function.*
+```js
+local val = ptr( rndval());			// Wrap the die value in ptr.
+```
+3. Display the dice UI with `RPGMain.showView({ ... })`.
+  - `uipath` specifies `dialog_dice.ui` inside the plugin folder.
+  - `layer = "message"` specifies the layer on which the UI will be displayed. Here it is shown on the message layer.
+  - `modal = true` prevents buttons in the UI behind it from being pressed while the UI is displayed.
+  - `binds = {...}` links view names in the UI to their corresponding values. Here, the `num` view in the UI is bound to a function that converts `val` to a string so that `val` stays synchronized.
+```js
+local view = RPGMain.showView({
+	...defval,
+	uipath = srcdir.."/dialog_dice.ui"	// Specify dialog_dice.ui inside the plugin folder
+	layer = "message"				// Show the dice UI on the message layer
+	action = "show"				// Execute the "show" action when displayed
+	modal = true,					// If it is not modal, buttons in the UI behind it can also be pressed
+	// focus = "btn"				// Initial cursor focus. Not needed here
+	...prms,
+	binds = {	// Bind a value to a view name inside the UI. Using @() to provide an expression keeps the value synchronized.
+		num = @() string( ~val)			// Convert val to a string and display it in the num view
+	},
+});
+```
+4. Start the loop that receives UI events with `RPGMain.uiLoop({ ... })`. Here we define event handlers for clicks/button presses and for every frame.  
+   Other event handlers include `select`, `action`, and `back`. Refer to the UI event handlers in the source.
+```js
+// Start the UI event loop for rolling the die.
+local x = RPGMain.uiLoop( {
+	"click" : @( e){				// Event handler for clicks and button presses
+		playSound( "SE001");
+		sleep( 500);
+		return "owari";				// Returning a value ends uiLoop
+	}
+	"idle" : @( e){					// Event handler called every frame
+		val << rndval();
+	}
+});
+```
+5. Perform the cleanup. Close the UI, restore the original cursor, and store the die value in system variable RESULT.
+```js
+// Cleanup. Close the UI, restore the original cursor, and store the die value in system variable RESULT.
+view.actionAndDie( "hide");
+view.waitAction();
+gpui.restoreCursor( oldc);			// Restore the original cursor. Without this, the cursor gets lost
+rpgvar.RESULT = ~val;				// Store the die value in system variable RESULT
+return rpgvar.RESULT;
+```
+
+<Aside type="tip">
+RPG-Cobo's UI processing can be written in a very straight line, which makes the code easy to follow.  
+You can trace the flow of UI display and event handling from top to bottom.
+</Aside>
+
+### Creating dialog_dice.ui
+---
+There are several ways to create a `.ui` file, but here we will use the method of copying an existing UI and modifying it.  
+Copy `project/resource/ui/dialog_choices.ui` and save it as `project/plugin/diceui/dialog_dice.ui`.
+
+Then edit `dialog_dice.ui` in the RPG-Cobo tool. Although the process is omitted here, add the images and labels needed for the dice UI and name the label that displays the die value `num`.
+<SS src='docs/diceui-4.png' alt=''/>
+
+##### Where the UI image assets are stored
+
+Open `project/resource/ui/uiimg` in the file view. This folder contains the image assets used by the RPG-Cobo tool for UI.
+You can add images to the UI by dragging and dropping them from this file list into the UI editor.
+
+For more about editing UI, see [Screen Design](../../guides/res/7-ui).

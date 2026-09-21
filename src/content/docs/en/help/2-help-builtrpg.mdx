@@ -1,0 +1,161 @@
+---
+title: Issues with Built Games
+description: "Troubleshooting and points to check regarding issues with built RPG-Cobo games."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+
+
+
+## The built game will not run
+
+### <M code="e65f"/> Check browser-side errors (WebGL)
+---
+If the game was exported for WebGL, first check whether the game is being loaded correctly in your web browser and on the web server where it was uploaded.
+For browser debugging, you can track problems by opening the developer tools (F12) in each browser.
+- Browser issues
+  - You may be using an unsupported browser. Try the latest versions of Chrome, Edge, Safari, or Firefox.
+  - Games built for WebGL run at about half the speed and use about twice the memory compared to native apps, so performance is lower.
+    In particular, on smartphones, the game may not run because there is not enough memory.
+- Server issues (when you run your own server)
+  - Broken links may be preventing the game from loading. If you select "Network" in the developer tools, you can check whether the files were loaded.
+  - Depending on the server configuration, the Content-Type for `sakanagl.wasm` may not be returned as `application/wasm`, which causes WebAssembly initialization to fail.
+  - Because RPG-Cobo uses cutting-edge web technologies such as SharedBuffer and AudioWorklet, special browser-security-related handling (cross-origin isolation) is required. 
+    <Aside>
+      **Note: If you are not familiar with web servers or cannot change the server configuration, turn on "Use Service Worker" when building the game.**
+    </Aside>
+    - Do not place html, js, and wasm on separate servers; keep them in the same folder.
+    - Add the following two response headers to the html, js, and wasm files (the setup method differs for each web server).  
+      Cross-Origin-Embedder-Policy : require-corp  
+      Cross-Origin-Opener-Policy : same-origin  
+
+### <M code="e65f"/> Check the logs
+---
+Built games also output logs in the same way as during debugging. When the built game does not run, check whether errors are being output to the logs.
+
+- WebGL: Open "Console" from the browser developer tools (F12)
+- Windows: Run the following command in the folder containing the game's exe
+```dos
+.\rpgexe.exe -log log.txt
+```
+- Android: Output goes to logcat
+- iOS: Output appears in the console during Xcode debug execution
+
+### <M code="e65f"/> Check which environment is crashing
+---
+Native code may be crashing and causing the game to terminate unexpectedly. In that case, valid logs are often not available.
+
+Only the Windows version has a mechanism that outputs stack trace logs when it crashes, so it is efficient to debug first on Windows until the crash no longer occurs, and then debug on the other OS versions.
+
+## The built game is slow
+
+### <M code="e65f"/> FPS guidelines
+---
+In particular, when running the WebGL version on a mid-range smartphone, performance may not be sufficient and the FPS may drop significantly.  
+The following are rough FPS guidelines when running the game on a low-to-mid performance machine.
+- For a comfortable experience, it is important to have roughly 30 FPS or higher.
+- Even on heavy maps, try to keep the FPS from dropping below 20 by paying attention to map and event design.
+- During heavy effects (such as large explosions), it should be acceptable if the FPS temporarily drops below 20.
+
+### <M code="e65f"/> Adjust the rendering settings
+---
+In most cases where FPS drops because the GPU is not powerful enough, lowering the rendering resolution in the display settings will help.  
+Try adjusting the "Rendering Quality" in the game's "Video Settings" tab under the "Config" menu.
+
+### <M code="e65f"/> Check the polygon count in the map editor
+---
+RPG-Cobo's voxel rendering is extremely fast, but high-resolution voxel drawing produces a very large number of polygons, which becomes a major cause of FPS drops.  
+In the map editor, you can visually check which areas have higher polygon density. Reconsider the map shape in places like the following, where polygon density becomes high.
+
+- Large numbers of trees placed
+- Extremely large height differences
+
+#### Forest maps are best viewed in quarter view
+Tree models use a very large number of polygons. They can use several times as many polygons as buildings.
+In other words, maps like forests tend to become very heavy to display.
+
+So how should you make a forest-like map?  
+Try the following steps.
+
+1. Check the "<M code="e883"/>" button at the top of the canvas. This previews back-face culling in the map settings.
+2. From the selection tool, set the property "Backface Culling" to "back, bottom, and right faces." This reduces the polygon count by about 17% (1/6).
+<SS src='docs/anim-mapcull.webp' alt=''/>
+3. Set the map camera settings as follows.
+
+
+This makes the display during gameplay an angled view (quarter view). There is not much visual discomfort.
+
+--------VIDEO
+
+This technique is effective not only for forests, but for any complex map or any map with heavy processing. If a map looks natural in quarter view, consider using it.
+
+### <M code="e65f"/> Reduce the weight of effects
+---
+
+Displaying many large-area particles can impose more rendering load than expected.
+
+--------IMG
+
+Note that it is lighter to display many small particles than a few very large particles.
+
+
+### <M code="e65f"/> Do not crowd moving events on screen
+---
+Placing many moving events on screen at the same time can become a problem on mid-range smartphones with weaker CPUs.
+- Rendering load for characters
+- Collision processing when moving (events that do not move are not affected)
+
+To improve these issues, it is important not to crowd events inside the camera range.
+
+## The built game behaves strangely
+
+### <M code="e65f"/> Images do not appear
+---
+
+#### Check image size
+Using very large images can cause issues such as images appearing on the development PC but not on smartphones.
+
+It is better to keep images at 4096x4096 or smaller, and preferably within 2048x2048 if possible.
+If an image is extremely wide for animation purposes, split it vertically and horizontally.
+
+#### Check the image format
+As long as you are using common png and webp files, image format problems will not occur, but
+for environment-map cubemap textures we use the image format ***ktx***, and unsupported GPU formats will not display.
+
+If you use the standard RPG-Cobo ktx files or convert them to cubemaps using RPG-Cobo's import feature, you will not have problems with unsupported GPU formats.  
+Only be careful when preparing ktx files yourself.
+
+#### Tool-only images are placed in the UI
+Images for the tool UI are not exported to built games, so do not use tool images in the game's UI.  
+Specifically, be careful not to place images beginning with the following paths inside the game UI.
+- /plugin/rpgtools/img
+- /skstudio/img
+
+### <M code="e65f"/> Sound files do not play
+---
+#### Check the WAV format
+RPG-Cobo supports ogg and wav audio, but wav files have many internal formats, and the following major formats can be played in RPG-Cobo.
+- Unsigned 8bit PCM
+- Signed 16bit PCM
+- Microsoft ADPCM
+
+Other formats, such as Signed 24bit PCM or 32bit float PCM for high-resolution audio, cannot be played and must be converted.
+
+### <M code="e65f"/> Sound sometimes cuts out or has noise
+---
+When the sound playback load becomes too high, the processing may not keep up and the audio may cut out or become noisy, in which case you need to lighten the sound playback processing.
+
+#### Adjust the quality of ogg or wav files
+Check the sampling rate of the ogg or wav files you are using. If they are set to something extremely high such as 96,000 Hz,
+ogg playback in particular will place a very heavy processing load on the game. Convert them to 44,100 Hz or 48,000 Hz.
+
+*RPG-Cobo internally processes sound at 44,100 Hz. So playing ogg or wav files above this frequency will not improve sound quality.*
+
+
+{/* #### Increase the buffer size
+Increasing the buffer size can improve sudden noise issues.
+On the other hand, it can slightly increase latency in sound playback (depending on the environment), so keep that in mind. */}
+
+

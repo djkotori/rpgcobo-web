@@ -1,0 +1,53 @@
+---
+title: Manage Tool Versions
+description: "Explains practical operation and application techniques in RPG-Cobo with the theme of managing tool versions."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+
+### <M code="f10d"/> Use the portal app to upgrade project versions
+
+The portal app automatically downloads the latest version of the tool when it starts.  
+However, the tools already embedded in projects created before that are not automatically upgraded.  
+
+To raise the tool version of a project, follow these steps.
+
+<Steps>
+1. Open the right-click menu for the project you want to upgrade and choose "<M code="e028"/> Upgrade tools (vx.x.x)."  
+  
+    <SS src='docs/manageproj-1.png' alt=''/>
+2. A dialog like the one in the image appears, so continue with the "Confirm" button. (*Full backup is described later.*)
+  
+    <SS src='docs/manageproj-2.png' alt=''/>
+3. Full backup processing and project version upgrade begin.  
+   *Note: If there are files that cannot be updated automatically during processing (called conflicts), you will be asked whether it is okay to overwrite them.
+   In this case, there is a high chance of issues after the upgrade, so be careful.*
+4. When the upgrade is complete, it will be displayed as below, and the tool version on the right side of the project will be updated.
+  
+    <SS src='docs/manageproj-3.png' alt=''/>
+</Steps>
+
+
+### <M code="f10d"/> Restore a project from full backup
+
+Upgrading the tool version generally improves it because it adds features and fixes bugs.  
+On the other hand, upgrading the embedded tool version in a project you have already created can sometimes cause the opposite effect: **a project that used to work may stop working, or in the worst case the tool may fail to start.**  
+In particular, be careful if you are modifying program code or if a plugin has not yet caught up with the new version.
+
+By restoring from a full backup, **you can completely revert a problematic upgrade.**  
+Select the problematic project and run it from the right-click menu under "<M code="e8d7"/> Backup operations" => "<M code="e8d7"/> Undo upgrade."
+
+<SS src='docs/manageproj-4.png' alt=''/>
+
+### <M code="f10d"/> Specify the tool version when creating a new project
+
+You can also specify the tool version when creating a new project.  
+In most cases, using the latest tool is recommended, but in some cases there may be features that behave worse in the new version,
+so you may want to specify an older version.
+
+<SS src='docs/manageproj-5.png' alt=''/>
+

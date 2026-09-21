@@ -1,0 +1,79 @@
+---
+title: Change Conversation with Conditions
+description: "Explains RPG-Cobo event production and presentation settings with the theme of changing conversation with conditions."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+Let's create a more practical event that changes its dialogue by combining custom commands.
+
+### <M code="f10d"/> Case 1: An event whose message changes after the second time and later
+
+- The first time you talk to them, they say "Nice to meet you."
+- From the second time onward, they say "We meet again."
+
+This event is very simple, but it includes important processing such as using branch conditions and manipulating variables.
+
+<Steps>
+1. Insert the "<M code="eb26"/> Branch" command from the general processing category.
+2. In the branch settings, set the condition to "A Event variable = ON" (this is already the default state) and turn ON the checkbox for the else case. This lets you write the processing that runs when the condition is not matched.
+
+3. Hover the cursor over the image position and insert a command, then choose the screen display/input "<M code="e0b7"/> Message" command. Enter "Nice to meet you."
+
+4. Hover the cursor over the image position and add another "<M code="e0b7"/> Message" command. Enter "We meet again."
+
+5. Insert the variable processing command "<M code="ea5f"/> Set variable" on the line below.
+
+6. Click the button for "assignment target variable" and a popup for selecting variables opens. Choose the "A Event variable" item.
+
+7. The "right-hand value" can take many kinds of values. It initially shows a numeric input, but if you press "<M code="e0bc"/>" you can change the type.
+   This time, set it to "<M code="e9f6"/> ON/OFF" and choose ON.
+
+8. That completes it! The finished command list will look like the one below.
+</Steps>
+
+However, this event still feels a bit basic. You can make it better by adding the following ideas. Please try them.
+- Add the operation/presentation command "<M code="ea66"/> Face each other" at the beginning of the command list. Talking while facing each other gives the conversation a better feeling.
+- Play a greeting animation before the conversation.
+- If you use a camera motion to zoom in a little, you can create the feeling that a special conversation is starting.
+
+### <M code="f10d"/> Case 2: An event whose attitude changes with choices
+
+- The first time you talk to them, they say "Do you like me?"
+- Let the player choose "Yes" or "No" in a choice
+  - If "Yes" is chosen, they say "I'm happy, thank you!"
+  - If "No" is chosen, they say "That's terrible, I'll cry..."
+  - Even after talking again, the same line repeats
+
+This event uses the essential dialogue feature of RPGs, "choices," and branches by switching pages. The explanation is a little long, so we will keep it brief.
+
+<Steps>
+1. Enter "Do you like me?" with the "<M code="e0b7"/> Message" command.
+2. Add the screen display/input "<M code="e9bd"/> Choice" command. At the point you add it, there are already two choices, "Yes" and "No," so no changes are needed this time.
+3. In the "Yes" branch, set A to 1 with "<M code="ea5f"/> Set variable."
+4. Add the general processing "<M code="e5dd"/> Jump to page" below it. Set the jump destination page to <M code="f125"/>.
+5. In the "No" branch, add commands to assign 1 to A and jump to page <M code="f126"/>.
+6. This completes page <M code="f124"/>!
+7. Next, create page <M code="f125"/>. Press the "<M code="e5d2"/>" button on the right side of the page list and select "<M code="e146"/> Add page." A new page is added.
+8. When you switch to page <M code="f125"/>, the command list is empty. Add the message command "I'm happy, thank you!" here.
+9. Don't forget to set the page selection conditions. Set "number of conditions = 1" and set the condition to A = 1.
+10. As with steps 7 to 9, make page <M code="f126"/> display "That's terrible, I'll cry...". Set the page selection condition to A = 2.
+</Steps>
+
+This event can also be adapted to many different situations just by changing the line.
+- Give the player an item when they press "Yes." Use the player/party processing "<M code="f109"/> Gain / lose item" command.
+- Start a battle when they press "No."
+- If you change the animation on page <M code="f125"/><M code="f126"/>, you can change the waiting animation depending on the choice.
+
+
+
+### <M code="f10d"/> Event processing still has more depth
+
+As we have explained so far, you can realize many different situations using custom events.  
+RPG-Cobo's guide will continue to focus on custom event explanations in the future as well.  
+If you still do not fully understand after reading this far, please check back occasionally for updates to the page!
+

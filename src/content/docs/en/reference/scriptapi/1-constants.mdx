@@ -1,0 +1,261 @@
+---
+title: "Script API: Constant List"
+description: "An API reference that summarizes the list of constants used in RPG-Cobo."
+---
+
+This document lists the `enum` and `const` values extracted from `.sk` files under RPG-Cobo's `project` directory.
+
+***This document does not include constants defined in the RPG-Cobo tools or SKStudio.***
+
+## system/ui/SKViewProperty.sk
+
+### enum PropertyType
+
+Constants that represent property types. They are frequently used in RPG-Cobo's property system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| HEADER | -1 | A header used to separate property lists and make them easier to read |
+| NOEDITOR | 0 | This property type is not editable |
+| SCALAR | 1 | Numeric type |
+| VEC2 | 2 | 2D vector numeric type |
+| VEC3 | 3 | 3D vector numeric type |
+| STRING | 4 | String type |
+| BOOL | 5 | Boolean type |
+| LIST | 6 | Type for selecting from a list |
+| RGB | 7 | Color without alpha |
+| RGBA | 8 | Color with alpha |
+| PATH | 9 | String type that indicates a path |
+| LANGSTRING | 11 | String type that can be specified per language |
+| CHECKBITS | 13 | List where each item can be checked as a bit field |
+| PROPERTYLIST | 14 | Can contain another list of properties |
+| SCRIPT | 15 | String type that indicates a script |
+| CUSTOMBUTTON | 16 | A button that runs a custom function |
+| BOOL1 | 17 | Space-saving BOOL type |
+| ROT_HEAD | 18 | HEAD rotation type |
+| ROT_HPB | 19 | HPB rotation type |
+| TEXTSTYLE | 100 | Type that specifies font, size, and style |
+| ALIGN_STRETCH | 103 | View shape stretch type |
+| VEC2_PIVOT | 104 | 2D vector type that specifies a pivot |
+| PATHLIST | 105 | Type that can specify multiple paths |
+| CAMERA | 106 | Type that represents camera coordinate information |
+| SOUNDID | 107 | Type that represents a sound ID |
+| BIT8 | 202 | Specifies an 8-bit bit mask |
+
+
+## src/rpg/RPGConstants.sk
+
+### enum RPGPropertyType
+
+Constants that represent property types. They are frequently used in RPG-Cobo's property system.
+This `RPGPropertyType` defines RPG-Cobo-specific property types, while `PropertyType` defines generic types.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| NAME_ICON | 1001 | Type that specifies name and icon at the same time |
+| LIST_SCALAR | 1002 | Type that specifies a list and a numeric value at the same time |
+| DATAID | 1003 | Type that specifies a database ID |
+| DATAIDS | 1004 | Type that specifies multiple database IDs |
+| RESID | 1005 | Type that specifies a resource ID |
+| RESID_PREVIEW | 1006 | Resource ID type with preview |
+| VARIABLE | 1007 | Type that specifies literals such as numbers and strings, or a variable |
+| REQUIREMENTS | 1008 | Type that specifies multiple conditions |
+| EXPCURVE | 1009 | Type that specifies an experience curve |
+| PORTAL | 1012 | Type that specifies a destination for map movement |
+| GRAPHIC | 1013 | Type that selects images, voxels, and similar assets |
+| VOXEL_PARTS | 1014 | Type that specifies a vox file and its parts together |
+| PALETTEMAP | 1015 | Type for replacing palette colors |
+| MESSAGE | 1016 | Type for entering dialogue text |
+| ENEMYGROUP | 1017 | Type for placing an enemy group |
+| GAMETITLE | 1018 | Type that specifies game title, icon, and similar data |
+| UIPOSITION | 1019 | Type that specifies the position of UI display |
+| ANIME_INLINE | 1020 | Type that displays animation settings inline in a property |
+| ANIME_POPUP | 1021 | Type that sets animation in popup form |
+| ANIMEMAP | 1023 | Type that specifies animation mapping |
+| PLACEASSET | 1024 | Type that specifies map asset placement |
+
+### enum CollisionGroupID
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| G_VIEW | 0x7F | Collision group for display |
+| G_CHARA | 0x100 | Collision group for characters |
+| G_OBJECT | 0x200 | Collision group for objects |
+| G_EVENT | 0x400 | Collision group for events |
+| G_STAGE | 0x800 | Collision group for stages |
+| G_WATER | 0x1000 | Collision group for water (currently unused) |
+| G_GIZMO | 0x8000 | For tools |
+
+### enum ControlID
+
+Constants used in controller input to determine actions from input buttons.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| CTRL_STOP | 1 | Control for stop |
+| CTRL_MOVE | 2 | Control for movement |
+| CTRL_DASH | 3 | Control for dash |
+| CTRL_JUMP | 4 | Control for jump |
+| CTRL_SEARCH | 5 | Control for inspect (talk) |
+| CTRL_MENU | 6 | Control for menu |
+| CAM_ROTATE | 100 | Control for camera rotation |
+| CAM_ROLL | 102 | Control for camera roll |
+| CAM_ZOOM | 103 | Control for camera zoom |
+| CAM_TARGET | 104 | Control for camera target |
+| CAM_RESET | 107 | Control for camera reset |
+| CAM_POV | 108 | Control for viewpoint |
+
+### enum VarType
+
+Constants indicating the type of a global variable. Used in RPG-Cobo's event variable system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| VAR_NONE | 0 | Global variables with this type cannot be used |
+| VAR_BOOL | 1 | ON, OFF |
+| VAR_INT | 2 | Integer type |
+| VAR_FLOAT | 3 | Floating-point type |
+| VAR_STRING | 4 | String type |
+| VAR_SCRIPT | 5 | Type that gets a value by running a script. Cannot be set |
+| VAR_ANY | 6 | Can contain tables and arrays, but not objects that cannot be serialized |
+
+### enum EventTriggerType
+
+Constants that indicate conditions for an event to trigger execution of its command list. Used in RPG-Cobo's event system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| TRG_NONE | 0 | Does not trigger |
+| TRG_SEARCH_S | 1 | Nearby inspect (talk) button |
+| TRG_SEARCH_L | 2 | Distant inspect (talk) button |
+| TRG_CONTACT | 3 | Player and event touched |
+| TRG_REACH | 4 | Player approached within a certain distance of the event |
+| TRG_INSIDE | 5 | Player fully entered the area |
+| TRG_SPAWN | 6 | Trigger once on spawn |
+| TRG_ALWAYS | 7 | Keep triggering always |
+
+### enum DamageResultType
+
+Constants that indicate damage results. Used in RPG-Cobo's battle system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| DMG_NONE | 0 | Success. There was no attack action. This counts as success and additional effect options will trigger. |
+| DMG_HIT | 1 | Success. Damage was applied |
+| DMG_HEAL | 2 | Success. Healing was applied |
+| DMG_CRITICAL | 3 | Success. Critical hit applied |
+| DMG_SKIP | 4 | Failure. The attack was skipped |
+| DMG_MISS | 5 | Failure. The attack missed |
+| DMG_SHIELD | 6 | Failure. Additional effect options do not trigger. However, damage may still be applied. |
+
+### enum CommandTargetType
+
+Constants that indicate the target of a battle command. Used in RPG-Cobo's battle system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| TGT_NONE | 0 | No target specified |
+| TGT_ENEMY_SINGLE | 1 | Single enemy |
+| TGT_ENEMY_RANDOM | 2 | Random single enemy |
+| TGT_ENEMY_R3 | 3 | Enemy group within a 3m radius of the specified enemy |
+| TGT_ENEMY_R6 | 4 | Enemy group within a 6m radius of the specified enemy |
+| TGT_ENEMY_LINE | 5 | Enemy group on the horizontal line from the specified enemy |
+| TGT_ENEMY_COLUMN | 6 | Enemy group on the vertical line from the specified enemy |
+| TGT_ENEMY_ALL | 7 | All enemies |
+| TGT_PARTY_SINGLE | 8 | Single ally |
+| TGT_PARTY_SINGLE_NOTME | 9 | Single ally (not self) |
+| TGT_PARTY_COLUMN | 10 | Ally group on the vertical line from the specified ally |
+| TGT_PARTY_ALL | 11 | *Group specification may already put other targets into the array when the command targets enemies?* |
+| TGT_PARTY_ALL_NOTME | 12 | Single ally (not self) |
+| TGT_MYSELF | 13 | *Group specification may already put other targets into the array when the command targets enemies?* |
+| TGT_ANY_SINGLE | 14 | Single enemy or ally |
+| TGT_ANY_RANDOM | 15 | Random single enemy or ally |
+| TGT_ANY_ALL | 16 | All enemies and allies |
+
+### enum DamageType
+
+Constants that indicate the type of skill damage. Used in RPG-Cobo's battle system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| NO_DAMAGE | 0 | No damage |
+| HP_DAMAGE | 1 | Damage to HP |
+| HP_HEAL | 2 | HP recovery |
+| MP_DAMAGE | 3 | Damage to MP |
+| MP_HEAL | 4 | MP recovery |
+| TP_DAMAGE | 5 | Damage to TP |
+| TP_HEAL | 6 | TP recovery |
+
+### enum SkillFlag
+
+Constants that indicate skill characteristics as bit flags. Used in RPG-Cobo's battle system.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| FLAG_NORMAL_SKILL | 0 | Indicates a normal attack. If this flag is not set, it is a special move |
+| FLAG_TARGET_ALT | 1 | Automatically switch to another target if the attack target is already defeated |
+| FLAG_AVOIDABLE | 2 | Evasion option enabled |
+| FLAG_SHIELDABLE | 3 | Shield option enabled |
+| FLAG_REFLECTABLE | 4 | Reflection option enabled |
+| FLAG_DRAINABLE | 5 | Absorption option enabled |
+| FLAG_COUNTERABLE | 6 | Counter enabled |
+| FLAG_BACKUPABLE | 7 | Cover enabled |
+| FLAG_NOOP_BOSS | 8 | Has no effect on bosses |
+| FLAG_NOOP_ALIVE | 9 | Has no effect on living enemies |
+
+### enum AnimationPart
+
+Constants that indicate which range to play during animation playback.
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| ST_EN | 0 | Play from start to end |
+| ST_MD | 1 | Play from start to middle |
+| MD_EN | 2 | Play from middle to end |
+| EN_ST | 3 | Play in reverse from end to start |
+| ST | 4 | Starting pose |
+| MD | 5 | Middle pose |
+| EN | 6 | Ending pose |
+
+### const values
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| ON | true | In RPG-Cobo variable types, indicates ON |
+| OFF | false | In RPG-Cobo variable types, indicates OFF |
+| FLOORANGLE | 0.68 | Constant indicating the slope angle of a floor that can be climbed as a slope |
+
+
+## plugin/rpgtools/common/AccountActivity.sk
+
+Constants indicating RPG-Cobo account status. When ACCOUNT_VALID is active, account-authenticated operations such as builds are available.
+
+### enum AccountState
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| ACCOUNT_NONE | 0 | When not logged in |
+| ACCOUNT_VALID | 1 | Account is valid |
+| ACCOUNT_UNAVAIL | 2 | State where the server has not been checked |
+| ACCOUNT_INVALID | -1 | Token was read but has been invalidated |
+| ACCOUNT_LOADERROR | -2 | An error occurred in rpgcobo.auth, for example because the PC configuration changed |
+
+## src/vox/VoxelConstants.sk
+
+### const values
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| VOX_SCALE | 0.0625 | Specifies how many meters one voxel is |
+| VALUE_BLOCKWORLD | 5900 | Serialization ID for BlockWorld |
+
+### enum BlockFlagID
+
+| Constant | Value | Meaning |
+| --- | --- | --- |
+| BLK_SOLID | 1 | The block has collision |
+| BLK_PLANT | 2 | PLANT normally has no collision |
+| BLK_LIQUID | 4 | Water block. In the current specification, it is no-entry |
+| BLK_BARRIOR | 8 | Has collision without visible geometry |
+| BLK_SOLIDFB | 16 | Has collision as a free block |
+

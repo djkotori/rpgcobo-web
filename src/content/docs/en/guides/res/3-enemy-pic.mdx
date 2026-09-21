@@ -1,0 +1,80 @@
+---
+title: Enemy Picture
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of enemy picture."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+
+Characters use voxels, but enemies are made from images.
+This was mainly done to prioritize ease of asset creation.
+There are also already huge collections of image assets for existing tools. These can also be imported into RPG-Cobo.
+
+Let's open "<M code="f089"/> Resources" and then "<M code="f11c"/> Enemy picture." A list of character models will be displayed.
+
+<div class="sspart">
+<SS src='docs/enemy-pic-1.png' alt=''/>
+
+##### <M part="A"/> Resource list
+The character models are shown in a list.
+
+##### <M part="C"/> Picture
+Select the model to use from the folder where character models are stored.
+
+##### <M part="D"/> Animation split
+Settings for splitting the image evenly vertically and horizontally for animation.
+
+##### <M part="E"/> Scale
+The list of colors used by the model is shown as a palette. You can easily make color variants by changing this palette.
+
+##### <M part="F"/> Color correction
+Specifies the shape and size of the character hitbox on the stage. It may be best not to change the default settings for standard humanoid characters.
+
+##### <M part="G"/> Flip horizontally
+You can flip the image when it faces the opposite direction.
+
+##### <M part="H"/> Position adjustment
+Set the center point, attack point, and ground point of the image.
+
+##### <M part="H"/> Animation
+It is partly cut off by scrolling, but just like character voxels, you can define animations.
+</div>
+
+
+### <M code="f10d"/> Animation method
+Enemy pictures are still images, but you can express animation by splitting the image evenly vertically and horizontally.
+
+<SS src='docs/enemy-pic-2.png' alt=''/>
+
+After loading the image, set the "Animation UV" property to match the image division. In this image, it is divided into four parts horizontally, so set Animation UV to "4,1."
+
+---IMG---
+
+To animate it in battle, you need to edit the animation in the "Animation" property.
+Click the button on the right with "<M code="e5d2"/>" and choose "⊕ Add" to add an item to the animation list, then configure it as follows:
+- ID = stand (all lowercase)
+- Type = Animation
+- Start = 0, End = 4, Speed = 10, Loop = ON
+
+
+---IMG---
+
+
+
+
+### <M code="f10d"/> Load original enemy images
+
+Enemy images can be imported in either of the following two ways.
+1. Put the images into the folder opened with "<M code="e89e"/> Open resource folder" and reload RPG-Cobo.
+2. Drag and drop images from Explorer onto the list.
+
+Method 1 is easy if you already have many images, because you only need to copy files.
+**However, please be careful about the image size and format.**
+32-bit PNG files with alpha are extremely large and inefficient. Convert them to WebP!
+
+Method 2 is more recommended because it also converts to the optimal image format when you drop files.
+

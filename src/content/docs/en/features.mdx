@@ -1,0 +1,156 @@
+---
+title: Feature Overview
+description: "A clear introduction to RPG-Cobo's main features and characteristics, organized around the production workflow."
+template: splash
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { default as Card2 } from '/src/components/Card2.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
+import IMGS from '/src/components/IMGS.astro';
+
+### RPG-Cobo has everything you need to create RPGs
+- You can create full-scale 3D RPGs that run on any OS and can be played in any language.
+- No programming knowledge is required! Anyone can easily create highly flexible RPGs.
+- It is open source, so both games and the tool itself can be freely modified.
+
+## <M code="f11e"/> Map Editor
+One of RPG-Cobo's biggest strengths is its map editor. It is packed with features that let you create beautiful HD-2D-style maps with incredible efficiency.
+
+<Card2 title="Create advanced 3D maps with simple operations" icon="pencil" rev={false} imgs={["feature/map1.png","feature/map2.png","feature/map3.png"]}>
+- With the ease of assembling blocks, you can create 3D maps surprisingly easily.
+- Thanks to highly expressive voxel assets, you can create attractive and original maps using only the included default assets.
+- Change the time of day or weather a little, and the map instantly takes on a dreamlike atmosphere. Realistic rendering and pixel art come together.
+</Card2>
+
+<Card2 title="The foundation of maps is 3D blocks" icon="pencil" rev={true} imgs={["feature/block1.png","feature/block2.png","feature/block3.png"]}>
+- Terrain blocks and building blocks are mysterious blocks that connect organically. They change shape to match the blocks around them, so the tedious task common in older tools of "switching between different map chips depending on angle and connection point" is completely unnecessary.
+- Door blocks can open and close, lamp blocks can light up, ladder blocks can be climbed, and more. Blocks come with many kinds of functions.
+- Several hundred rich block assets, ranging from small to large, are included by default.
+</Card2>
+
+<Card2 title="Convenient automatic map generation" icon="pencil" rev={false} mov="/mov/mapgen.mp4">
+- Building a vast RPG map entirely by hand from scratch is a huge job. RPG-Cobo includes a feature for automatically generating high-quality maps.
+- Three generation rules are available: "world maps," "cave maps," and "dungeon maps." And of course, more generation rules will keep being added!
+- Auto-generated maps can be freely edited in the map editor. You can use the automatically generated map as a base and build your own original map on top of it.
+</Card2>
+
+## <M code="e82f"/> No-code event system
+You do not need to learn programming. By simply lining up commands in the event editor, you can easily create game mechanics and story scenes!
+
+<Card2 title="Complex instructions edited visually" icon="pencil" rev={true} imgs={["feature/event1.png","feature/event2.png",]}>
+- Even commands with many settings, such as starting battles or moving between maps, can be edited easily through an intuitive settings panel.
+- In addition to the full set of commands needed to make an RPG, such as "get item" or "add party member," we also provide many commands that make games more interesting, such as commands that dramatically change a map.
+</Card2>
+
+<Card2 title="Place frequently used events with ease" icon="pencil" rev={false} img="feature/event3.png">
+- A rich selection of template events is available, such as treasure chests containing items, villagers who talk, and doors that open under certain conditions.
+- Symbol encounters are supported out of the box. They can be used together with random encounters, so they work for ordinary enemies, bosses, and any other case.
+</Card2>
+
+<Card2 title="Character presentation tool" icon="pencil" rev={true} img="feature/event4.png">
+- A tool for editing and easily previewing the presentations of many characters on a map.
+- Just place paths and actions on the canvas! Creating presentation work, often the most tedious part of RPG development, becomes easy and enjoyable.
+</Card2>
+
+
+## <M code="f120"/> Database
+In RPG-Cobo, all the data in the game, including characters, items, and rules, can be edited visually right inside the tool.
+
+<Card2 title="Flexible and intuitive database editing" icon="pencil" rev={true} img="feature/db1.png">
+- Parameters such as stat growth by player level and starting equipment can all be set easily through graphical operations.
+- Enemy behavior patterns can be configured in detail.
+- You can define multiple "jobs" that greatly change the player's traits. Job levels can also be assigned, giving you plenty of room for customization.
+- Equipment slots, job slots, attributes, races, status ailments, and more can all be freely customized.
+</Card2>
+
+## <M code="f089"/> Resources
+RPGs absolutely need a rich set of resources, such as graphics and sound.  
+RPG-Cobo's first goal is to make it easy for anyone to create high-quality 3D designs, so it includes many convenient features for adding and managing resources.
+
+<Card2 title="Design characters" icon="pencil" rev={true} img="feature/charavox1.png">
+- The biggest hurdle when designing a 3D game is usually 3D modeling. RPG-Cobo makes that much easier by using voxel models.
+- Dozens of character models are included by default. You can use these characters as they are, or easily modify the models to create new characters.
+- A powerful palette system makes it easy to add **color variations** of characters.
+- Characters come with more than 400 built-in animations. Adding and editing these animations is also easy.
+</Card2>
+
+<Card2 title="Design map objects" icon="pencil" rev={false} img="feature/mapvox1.png">
+- Map 3D models use the same voxel model system as characters.
+- Covers everything needed to build RPG maps, from doors and lights to furniture and roofs. Just copy and replace the palette to create your own unique block.
+- When making a game, you need more than just design; you also need collision settings. RPG-Cobo lets you create them easily with a dedicated collision editor.
+</Card2>
+
+<Card2 title="Design the game screen" icon="pencil" rev={true} img="feature/ui1.png">
+- The UI editor built into RPG-Cobo has expressive power that surpasses UI editing tools in other game engines.
+- A powerful UI animation system is included. You can edit animations while checking detailed parameters in the editor.
+- You can apply as many different effects as you like to each UI element.
+- Sprite sheet support lets you combine many image assets into a single texture. Everything can be edited inside the editor, including 9-slice settings.
+- 800 icons and more than 3,000 emoji can be embedded directly into text labels. Of course, icons can also be replaced with your own originals.
+</Card2>
+
+<Card2 title="Dramatic effects for battles" icon="pencil" rev={false} img="feature/efx1.png">
+- The integrated effect editor makes it easy to create magic and skill effects.
+- You can change the size, playback speed, and color of existing effects to add them as completely different ones.
+- Created effects can also be placed on the map as events.
+</Card2>
+
+## <M code="f06a"/> Powerful and easy-to-use debugging features
+<Card2 icon="pencil" rev={true} mov="/mov/hotreload.mp4">
+- **Hot reload is built in.** Changes to maps, events, and databases can be reflected in real time while you play the game. Development efficiency improves dramatically.
+- In addition to debugging the entire game, you can also debug individual parts such as maps, battles, events, and skills. You can freely debug any part of the game in any situation.
+</Card2>
+
+## <M code="e80b"/> Release to the whole world
+
+<Card2 title="Release on a variety of platforms" icon="pencil" rev={false} img="feature/build1.png">
+- RPGs you create can be exported not only to Windows, but also to web browsers, iPhone, and Android.
+- In addition to keyboard and mouse support, gamepad and touch controls are fully supported. Your RPG will play comfortably on any platform.
+</Card2>
+
+<Card2 title="Reach the world with AI translation" icon="pencil" rev={true} img="feature/trans1.png">
+There are users all over the world waiting for the RPGs you create, not just in Japan!  
+With AI-powered automatic translation and a translation workflow fully integrated into the tool, RPG-Cobo makes localization possible even if you cannot read or write other languages.  
+Why not start by supporting Japanese and English? That alone should dramatically increase your potential audience.
+</Card2>
+
+
+## <M code="e65f"/> Make the core UI even easier to use
+Having lots of features alone does not make a tool great. **Usability directly affects production efficiency.**
+RPG-Cobo is built with careful attention to its UI and aims to provide the best environment for making RPGs.
+
+- Extremely fast startup time. It is also very light to run, so even opening multiple projects at once does not put a heavy load on the system.
+- Very smooth UI operation. Annoying factors such as sluggishness and poor usability have been completely eliminated, letting you focus on your work.
+- Fully compatible with laptop operation. Two-finger touchpad input feels even better than using a mouse.
+- Smart integration with development tools such as git and Visual Studio Code. This is a serious development environment we recommend not only for beginners but also for professional developers.
+
+## <M code="e898"/> Open source
+
+All of the many features introduced so far are **fully open source, with the programs published on GitHub.**
+The source code and resources for both the tool and the game can be freely modified and extended under the Apache 2 license, and you can publish them to the world on multiple platforms.  
+If you are a programmer, you could even use RPG-Cobo as the core game engine to create a completely different game genre.
+
+## <M code="ef48"/> Game engine
+
+RPG-Cobo uses a library called SakanaGL™ for the native code of its game engine.  
+The source code is not publicly available, but it is free software that you can use and redistribute without charge.
+
+- Advanced rendering technologies such as physically based rendering, a hybrid shader that can use deferred and forward rendering at the same time, screen-space global illumination, and ambient occlusion...  
+	These techniques are highly tuned, so even mid-range smartphones can run the game smoothly at a comfortable FPS.
+- Fast multi-thread optimized voxel-to-polygon conversion. Thanks to incremental rendering, map loading time is almost zero.
+- The physics engine uses the proven Bullet Physics and adds further speed and functionality.
+- Supported image formats include PNG and JPEG, plus WebP and KTX1/2.
+- Fully compliant with UTF-8 and fully functional in multibyte language environments. It also supports fast rendering of CJK fonts and emoji. Emoji can also be entered through IME.
+- A feature-rich sound engine with true 3D sound, realistic reverberation through convolution reverb, and support for streaming multiple Ogg Vorbis tracks at the same time.
+- A UI rendering system that can flexibly handle screens with a wide variety of resolutions and aspect ratios.
+- A UI system that centrally handles input from all devices.
+- Movie playback support. Direct rendering to textures is possible, and compositing with the game screen or projection onto 3D surfaces is handled quickly.
+- Socket communication over TCP, UDP, and TLS 1.3, plus HTTP support. A relay server feature is also included.
+- A fast, high-function embedded scripting language. It is 3 times faster than Python 3.12.3 and 25% faster than Lua 5.4.1.
+- Support for Z-Standard, which offers high speed and a strong compression ratio.
+- Fine-grained permission control over access to files, networks, and system calls. This helps prevent the execution of malicious programs such as viruses and malware.
+- Multi-platform support that works in any environment. It runs on PCs, smartphones, game consoles, headless server environments, and embedded devices.
+- Very small binary size. It also has no dependency libraries. The Windows version is only 4.8 MB, and the browser version's wasm and js together are only 4.6 MB uncompressed.
+

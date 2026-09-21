@@ -1,0 +1,60 @@
+---
+title: Create a Project
+description: "Explains the basic steps from installation to initial setup for RPG-Cobo."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import IMGS from '/src/components/IMGS.astro';
+
+
+### <M code="f10d"/> Create a project in the RPG-Cobo Portal app
+
+When you open the **RPG-Cobo Portal app** you installed on the [previous page](../1-install), the following screen appears.  
+
+1. Select the "Project" menu at the top of the screen.
+2. Click the "<M code="e147"/> New Project" button.
+
+<center style="width:1026px;max-width:100%;aspect-ratio:1026/769;margin:0 auto;">
+	<IMGS srcs={["docs/make-project-1-0.png","docs/make-project-1-1.png","docs/make-project-1-2.png"]} />
+</center>
+
+---
+
+3. When the new project dialog appears, enter the required information and press the "Confirm" button.
+
+<div class="sspart">
+<SS src='docs/make-project-2.png' alt=''/>
+
+##### <M part="A"/> Project name
+Enter the name of your new RPG project. It can be any name, because you can change it later.
+
+##### <M part="B"/> Project language
+Specify the main language used in this RPG.
+
+##### <M part="C"/> Project path
+Specify where you want the project folder to be created.
+
+##### <M part="D"/> Project template
+Choose the template that is closest to the RPG you want to make.
+<Aside>
+At the moment, only a fantasy RPG template is available. We plan to add templates for Japanese-style, modern, and sci-fi settings in the future.  
+You can also add user-created templates from the "<M code="e8b8"/> Preferences (Ctrl+,)" menu.
+</Aside>
+
+##### <M part="E"/> Tool version
+The latest tool version is selected automatically, so you do not need to change this.
+
+</div>
+
+---
+
+Your RPG-Cobo project has now been created!  
+**Now double-click the created project and start making your RPG right away!**
+
+<SS src='docs/make-project-3.png' alt=''/>
+

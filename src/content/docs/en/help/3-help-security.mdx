@@ -1,0 +1,91 @@
+---
+title: RPG-Cobo Security
+description: "Troubleshooting and points to check regarding RPG-Cobo security."
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+
+RPG-Cobo includes powerful security features so that users can create games with peace of mind, **especially so that the plugin system can be used safely.**
+
+Tools with a typical plugin system (*for example Unity, Blender, Visual Studio Code, and so on*) do not have effective means to prevent malicious code such as malware from running,
+so when installing plugins, **the user is left to decide for themselves whether "this plugin is safe."**
+
+In that respect, RPG-Cobo's plugins are designed to be built in with very strong security.  
+This page explains how RPG-Cobo's security works and how to configure the security restrictions.
+
+### <M code="e65f"/> Security risks caused by malicious plugins
+---
+
+The items below are risks that can occur if a malicious plugin is executed on the user's PC.  
+Confidential data leaks, data corruption, PC takeover, and other highly dangerous outcomes for users can occur with insecure plugins.
+
+1. Running a malicious external process.
+2. Arbitrary network communication. Information on the PC or the user's personal information can be sent externally.
+3. Arbitrary file writes and deletions. Executables can be rewritten to plant attack code, or important user files can be deleted or encrypted.
+
+
+### <M code="e65f"/> Why do security risks happen?
+---
+
+The main reason malicious plugins create security risks is that plugins can freely access OS resources.  
+In existing tool plugin systems, there are no restrictions on the resources plugins can access, so they can freely perform dangerous operations on the user's PC.
+
+For example, Blender runs plugins as Python scripts, but Python's core system modules such as `os`, `subprocess`, and `socket` cannot restrict access to resources on the user's PC.
+If a malicious plugin were to run on the user's PC, Blender itself would have no way to prevent dangerous operations against that PC.
+
+Similarly, Unity runs plugins through .NET, and Visual Studio Code through Node.js, so resource access cannot be restricted.
+
+
+### <M code="e65f"/> How RPG-Cobo's security works
+---
+
+RPG-Cobo **imposes strict native-level access restrictions on the resources accessed from the tool (files, networks, code execution, and so on).**
+
+By default, all code including plugins is subject to the following restrictions.
+
+- Restriction on external code execution
+  - No code other than executable files under `/$ProjectDir/rpg-cobo.exe` and `/$ProjectDir/tools` can be run.
+- Restriction on file I/O
+  - Files with the extensions `exe`, `dll`, `bat`, `ps1`, and `psm1` cannot be written.
+  - Nothing can be written outside `/$ProjectDir` and the shared data folder.
+  - All files can be read.
+- Network communication restrictions (IP)
+  - TCP/UDP connections are allowed only to localhost (127.0.0.1).
+  - TCP/UDP server binding is allowed only to localhost or private IPs (127.0.0.1, 192.168.x.x, 172.16.x.x).
+- Network communication restrictions (https)
+  - HTTPS communication is allowed only for the following server names:  
+    `rpg-cobo.com` `*.rpg-cobo.com` `*.googleapis.com` `translate.google.com` `*.3c9(...)0cc.r2.cloudflarestorage.com`
+- Restrictions on displaying web pages
+  - Web browsers can be displayed only for the URLs below.  
+    `https://rpg-cobo.com/**` `https://*.rpg-cobo.com/**` `https://github.com/djkotori/**` `http://localhost:*/**` `http://192.168.*.*:*/**` `http://172.16.*.*:*/**` `file://$cdir/**/*.html` `dir://**`
+- Restriction on native addons
+  - Only the native addons provided by the RPG-Cobo tool can be used.  
+    ***Native addons extend RPG-Cobo's native code. In general, users cannot create native addons themselves.***
+
+These access restrictions prevent malicious plugins from performing dangerous operations on the user's PC even if they are executed there.
+
+### <M code="e65f"/> How to relax the security restrictions
+---
+
+RPG-Cobo has strong security, but when developing a full-scale game you may want to loosen these restrictions.  
+For example, you may want to create a plugin that performs network communication, or one that accesses files on the user's PC.
+
+If you understand the security risks involved, the way to relax RPG-Cobo's security restrictions is as follows.
+
+<Steps>
+1. Open "<M code="e8b8"/> Preferences (Ctrl+,)" from the "<M code="e8b8"/>" on the activity bar.
+2. In the "Tool Security" section, the default setting is " **Lv2: [Recommended] Network and file security enabled** ".  
+    
+    <SS src='docs/help-security-1.png' alt=''/>  
+    This security level has three tiers, as follows.  
+    - Lv0: All access restrictions removed : ***Danger! All access becomes possible.***
+    - Lv1: Network access restrictions removed : Risk of information leakage.
+    - Lv2: Network and file security enabled (recommended)
+3. A confirmation dialog appears when changing the setting.  
+    Select "Yes" here to relax the security restrictions.  
+    When relaxing the security restrictions, **make sure you only use plugins you trust.**
+</Steps>
+
+

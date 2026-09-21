@@ -1,0 +1,83 @@
+---
+title: Expand Games and the Tool with Plugins
+description: "Explains RPG-Cobo's developer-facing features and how to extend them, with the theme of expanding games and the tool through plugins."
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+
+RPG-Cobo is provided as open source, so you can freely modify the code to change how games work or extend the tool.
+Also, all code is written in `sk` script, so there is no need to build anything; you can see the results immediately by editing the source code directly.
+
+Directly editing the engine's source is the easiest and most straightforward approach, but it also has many drawbacks and is not recommended. For example, if a source file that was changed during an RPG-Cobo version upgrade has been modified,
+git cannot always merge it cleanly, and in the worst case the game or tool may no longer start.
+
+## Extend functionality with plugins
+
+By implementing plugins, you can safely extend functionality without directly changing the source code of the game or tool.  
+Another major benefit is that you can add multiple plugins made by other people and efficiently extend your game.
+
+||Source modification|Plugin|
+|-|---|---|
+|Ease of implementation|◎|〇|
+|Compatibility with version upgrades|×|〇|
+|Extensibility|×|〇|
+
+## How to manage plugins
+
+Select File menu => Plugin Manager to display the plugin manager dialog.
+
+<div class="sspart">
+<SS src='docs/plugin-intro-1.png' alt=''/>
+
+
+</div>
+
+
+1. Plugins for each project are stored in `/$ProjectDir/project/plugin`.
+2. Sample plugins are included in `/$ProjectDir/work/plugin-samples`. Copy the hello.pluginsk file inside and add it to the plugin folder.  
+3. After adding it, reload the tool (Ctrl+F4) and the added plugin will appear in the plugin manager.
+
+Then select the added plugin in the list and enable it from the dropdown menu in the upper right.
+
+In addition to enabling and disabling, you can configure properties for each plugin.
+
+When you change plugin settings, the tool reloads and the changes are applied.
+
+
+## The simplest plugin
+
+You can make a plugin with just one file. Here is the simplest possible plugin.  
+*Always save files in UTF-8.*
+
+```JavaScript
+//hello.plugsk
+
+pluginfo <- {
+	name : { "ja":"こんにちはプラグイン","en":"Hello Plugin"}
+	auther : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"最も簡単なプラグインの例です。","en":"The simplest plugin example."}
+	props : [
+		{ pid:"message", lbl:"Hello message", type:PropertyType.STRING, defval="RPG-Cobo" }
+	]
+}
+
+function loadPlugin( args, opt){
+	printf( "--------------- Hello %S! ---------------\n", opt.message);
+	return true;
+}
+```
+
+This plugin does not really add any functionality; it simply prints a string to the console when the plugin is loaded.  
+Even so, it represents the minimum structure needed to implement a plugin in RPG-Cobo.
+
+- pluginfo table:
+	This embeds the plugin's registration information in a table. In this plugin, the properties name, auther, ver, desc, and props are defined, but there are many other possible properties.
+	For details, please refer to the reference: plugin structure specification.
+- loadPlugin function:
+	This function runs when the enabled plugin is loaded. Inside this function you can change the behavior of existing processing, add definitions, or add hooks to extend the program's behavior.
+
+*Note: the props property inside pluginfo does not need to be defined if you do not need it, but defining it allows you to set properties that affect the plugin's behavior from the plugin manager UI.*
+

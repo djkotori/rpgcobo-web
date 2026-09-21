@@ -1,0 +1,150 @@
+---
+title: BGM, Sound Effects, and Voice
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of BGM, sound effects, and voice."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+In RPG-Cobo, playable sounds are divided into three types: BGM, sound effects, and voice.  
+This page is a quick overview, but it will explain how to handle all three types of sounds at once.
+
+## BGM
+
+Open "<M code="f089"/> Resources" from the activity bar and then "<M code="f11d"/> BGM."
+
+<div class="sspart">
+<SS src='docs/sound-1.png' alt=''/>
+
+##### <M part="A"/> BGM list
+The list of BGMs. The left side of each item is a play button; press it to play the BGM.
+
+##### <M part="B"/> Properties
+Set the BGM file and loop points here.
+
+</div>
+
+### <M code="f10d"/> How to add BGM
+You can add BGM in two ways in RPG-Cobo.
+1. Drag and drop music files from Explorer. This method lets you import from mp3, m4a, and similar formats and convert them to ogg.
+  <SS src='docs/sound-2.png' alt=''/>
+2. In the BGM list, choose "<M code="e89e"/> Open resource folder" from the right-click menu. The folder containing the BGMs opens, so copy the ogg files there and reload RPG-Cobo (Ctrl+F4).
+  <SS src='docs/sound-3.png' alt=''/>
+  <Aside type="tip"> *This method can only add ogg files, but it is convenient if you want to add dozens of songs at once.*</Aside>
+
+Added BGMs can be selected in the "File" property.
+
+### <M code="f10d"/> How to set loop points
+To loop a BGM at any position, set the "end position" and "loop position" in the properties. (The start position can basically remain 0.)  
+The end position is the turnaround point for the loop, and the loop position is where the track rewinds.  
+Each value is a sample count. For example, in a 44100 Hz BGM, 44100 equals one second.
+
+### <M code="f10d"/> How to play a jingle that does not loop
+In RPG-Cobo, all BGMs are played as looping sounds.  
+If you want a sound that does not loop, you can force it by adding silence to the end of the BGM and adjusting the loop position so that the silence keeps playing.
+
+
+## Sound effects
+
+Open "<M code="f089"/> Resources" from the activity bar and then "<M code="e7f4"/> Sound effects."
+
+<div class="sspart">
+<SS src='docs/sound-4.png' alt=''/>
+
+##### <M part="A"/> Sound effect list
+The list of sound effects. The left side of each item is a play button; press it to play the sound effect.
+
+##### <M part="B"/> Properties
+Set the file, volume, mute group, and other settings for the sound effect.  
+If you set a mute group, sound effects in the same group will not play at the same time.
+
+##### <M part="D"/> 3D sound check
+Click here to check how the 3D sound will play.  
+In the menu at the upper right of the panel, you can switch reverb (echo).
+</div>
+
+### <M code="f10d"/> How to add sound effects
+Just like BGM, sound effects can be added by drag and drop or by adding them directly to the folder.
+
+
+### <M code="f10d"/> Be careful with audio formats!
+There are some things to watch out for when adding sound effects.  
+**Common WAV files (16-bit, 44.1 kHz) are abnormally large and should basically not be used.** In other words, it is like using BMP files for images: there is no benefit and it only makes the game heavier.
+
+When importing sound effects, choose the format based on the following guidelines.
+- ADPCM is the first choice. It can be compressed to one quarter of the original size and plays back quickly, but depending on the sound it may have noticeable noise (especially for smooth sounds).
+  Also, for sounds longer than a few seconds, ogg is better.
+- If the sound is longer than 2 seconds and will not play frequently, choose ogg. Ogg is very compact and sounds good, but avoid it if you need to play many sounds at once because CPU load will rise significantly.
+- If compression formats are not usable because of noise or load issues, make the sound effect smaller by lowering the frequency to 22.05 kHz or making it mono.
+
+During import, you can listen to the conversion result and also check the converted file size.
+
+
+### <M code="f10d"/> How to configure 3D sound
+
+Let's make the added sound effect a 3D sound. Set the "3D sound" property to "<M code="e7f7"/> NORMAL."  
+By using 3D sound, you can create the feeling that the sound effect is coming from the 3D space where it was played.  
+You can check the sound by clicking various places in the canvas of "3D sound check" at the bottom right of the screen.
+
+
+## Voice
+
+Open "<M code="f089"/> Resources" from the activity bar and then "<M code="e029"/> Voice."
+
+<div class="sspart">
+<SS src='docs/sound-5.png' alt=''/>
+
+##### <M part="A"/> Voice actor list
+A list of voice actors set per character. One voice actor can have voices for multiple languages.
+
+##### <M part="B"/> Voice language tab
+You can switch the language of the voice actor being edited. You can also add languages from the "<M code="e5d2"/>" button on the right.
+
+##### <M part="C"/> Properties
+Properties for the selected voice actor and language. For the voice model, you can select a model for AI-based automatic speech synthesis.
+
+##### <M part="D"/> Voice list
+Voice list for the selected voice actor and language. You can play voices and add or remove voices.
+</div>
+
+### <M code="f10d"/> How to add AI voice (TTS voice)
+RPG-Cobo can generate voice from text using AI-based automatic speech synthesis models.  
+You can add a voice by going to the upper right of the voice list, choosing "<M code="e5d2"/>" => "<M code="e91f"/> Add TTS voice."
+
+<SS src='docs/sound-6.png' alt=''/>
+- **Key** is the string specified when playing the voice. By assigning rules to the voice key, you can play it at the desired timing in battle and other scenes.
+- **Speaking style** is where you enter how the voice model should perform the line.
+- **Text** is the sentence you want the voice model to speak.  
+- With the **Voice generation** button, you can generate the voice. If you do not like the generated voice, press it many times to regenerate.
+- The **<M code="e91f"/> Play** button lets you preview the generated voice.
+
+<Aside>
+Creating AI voices requires a Google AI Studio API key. Access Google AI Studio from the link below and obtain an API key.  
+[https://aistudio.google.com/](https://aistudio.google.com/)  
+
+Even on the free plan, there is a daily limit on the number of generations, but it is still sufficient for regular use.
+</Aside>
+
+### <M code="f10d"/> How to add recorded voice (audio voice)
+Voice, like sound effects and BGM, can also be added by drag and drop or by adding files directly to the folder.
+***All voices are converted to ogg.***
+
+From the upper right of the voice list, choose "<M code="e5d2"/>" => "<M code="e029"/> Add audio voice" from the submenu,
+then select the added voice file to add it as an audio voice.
+
+
+### <M code="f10d"/> How to play voice during battle
+
+Voices can be played with the event command "<M code="e029"/> Play voice."  
+So how do you play battle voices? Open the player "P000: Shiren" and look at the options list.
+There is an option called "<M code="eb8e"/> Voice playback." This is the option used to play voices during battle.
+
+<SS src='docs/sound-7.png' alt=''/>
+
+By using a **wildcard** such as `BTL_ATTACK*` shown in the image, you can randomly play a voice whose key matches.  
+In the example above, voice keys such as `BTL_ATTACK1`, `BTL_ATTACK2`, and `BTL_ATTACK3` all match.  
+By giving the voice key a rule, you can make battle voices feel lively.
+

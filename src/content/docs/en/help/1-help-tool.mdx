@@ -1,0 +1,101 @@
+---
+title: Tool Problems
+description: "Troubleshooting and points to check regarding RPG-Cobo tool problems."
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+
+
+
+## How to recover when the tool no longer starts
+
+### <M code="e65f"/> Restore from a backup
+---
+RPG-Cobo automatically makes one backup per day (with the default settings).
+Using "Restore from backup" lets you return the project to its state before the problem occurred.
+- If you restore from within the tool => choose "Restore from backup" from the File menu
+- If you restore from the portal app => choose "Restore from backup" from the context menu of the project list
+
+*If the tool still does not start even after restoring from backup, there may be an issue with files inside the tool.
+In that case, please try the methods below.*
+
+### <M code="e65f"/> Create a project from a backup
+---
+In the portal app, you can use "Import from backup" to restore a project that was backed up while the tool was cleanly installed.
+
+### <M code="e65f"/> Revert the tool version upgrade
+---
+After updating the tool from the portal app, the tool may stop starting normally or may develop operational problems.
+In this case, you can roll back the upgrade.
+
+From the project list context menu in the portal app, select "Revert tool version."
+This restores the full backup taken at the time of the upgrade and returns you completely to the state before the upgrade.
+
+*The "Revert tool version" menu will disappear after a certain period of time. This is because old full backups are deleted.*
+
+### <M code="e65f"/> Copy / ZIP the entire project folder
+---
+You can make a manual backup by copying or zipping the entire project folder.  
+An RPG-Cobo project contains all functions and data, including the tool's exe, inside the project folder, so a full backup can be made just by copying the folder.  
+It is also a very good idea to use a full-copy backup at milestones in game development progress.
+
+## How to investigate when the tool no longer starts
+
+### <M code="e65f"/> Record the problem logs in the system console
+---
+If an error or other problem occurs while using the tool or during debugging,
+you can display the system console by selecting "<M code="eb8e"/> Toggle System Console (Ctrl+@)" from the View menu.
+
+When reporting a problem, copying the output of this console makes it easier to find a solution.
+
+
+### <M code="e65f"/> Disable plugins
+---
+If an added plugin is causing a problem, disabling it in the plugin manager may resolve the issue.  
+*However, disabling a plugin can also cause problems in return.*
+For example, events created with a plugin that adds event commands may no longer be editable if that plugin is disabled, and errors may also occur when opening the editor.
+
+- If the tool starts:   
+  You can disable individual plugins from the "Plugin Manager (Ctrl+Shift+,)".
+- If the tool does not start:   
+   Plugin settings are stored in project/plugin/plugins.json.
+   You can disable a plugin by changing the relevant `"enable":true` entry for the plugin you are using to `"enable":false`.
+
+### <M code="e65f"/> Start the tool in safe mode
+---
+If the tool will not start, try launching it in safe mode.
+From the project list in the portal app, choose "Safe Start" from the context menu.
+- Do not load plugins
+- Start with all tabs closed
+
+After starting in safe mode, you can investigate whether you can change plugin states or open editors.
+
+
+## Build failed
+
+### <M code="e65f"/> Restore from a backup
+---
+RPG-Cobo automatically makes one backup per day (with the default settings).
+
+
+
+
+## Introduce git for version control
+---
+RPG-Cobo projects are already prepared so that git management is easy from the moment they are created.
+Let's introduce git so you can manage development more flexibly and precisely!
+
+### Set up a git environment in VS Code
+---
+Operating git from the command line is very difficult. I also cannot use it comfortably at all.
+Install Visual Studio Code to make git easier to use.
+
+https://vscode.dokyumento.jp/docs/sourcecontrol/quickstart
+
+
+### Turn off automatic backups
+
+If you are using git for version control, the project's default automatic backups may no longer be necessary.
+It is fine to set the automatic backup option under "<M code="e8b8"/> Preferences (Ctrl+,)" to "Turn off automatic backup."

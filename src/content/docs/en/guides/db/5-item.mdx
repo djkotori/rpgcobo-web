@@ -1,0 +1,69 @@
+---
+title: Items, Weapons, and Armor
+description: "Explains RPG-Cobo database settings and editing steps with the theme of items, weapons, and armor."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+
+This page gives a quick overview of items, weapons, and armor all at once.
+If you have been able to work with the database up to the previous pages, both should be easy to understand.
+
+### <M code="f10d"/> Items
+
+Let's open "I001: Medicinal Herb."  
+**Note: As you can see from the item editing fields, they are almost the same as the skill editing fields. The item effect system is exactly the same as the skill system.**
+
+<div class="sspart">
+<SS src='docs/item-1.png' alt=''/>
+
+##### <M part="A"/> Name, icon, description
+Set the item's name, icon, and description. Usually the name and icon are shown together. The description is shown on the item use screen.
+
+##### <M part="B"/> Basic properties
+
+- Price: The selling price of this item
+- Maximum hold count: The maximum number of this item the player can carry
+- Item type: Either "Normal item" or "Key item." If you choose key item, it becomes an important story item and is added to a dedicated item list so it is not lost or discarded.
+- Consumption type: Whether the item is consumed when used. You can also specify a probability of consumption.
+
+##### <M part="C"/> Skill type <M part="D"/> Properties for each skill type <M part="E"/> Options
+These editing fields are the same as [Database => Skills](../4-skill).
+
+<Aside>
+If the skill type is set to "Cannot use," the item cannot be used.
+</Aside>
+
+</div>
+
+
+
+### <M code="f10d"/> Weapons and armor
+Weapons and armor are separated into different databases. The editing fields for weapons and armor are very simple, so we will only cover the necessary points.
+
+<div class="sspart">
+<SS src='docs/item-2.png' alt=''/>
+
+##### <M part="A"/> Model (weapons and shields only)
+Specify the model shown when the weapon is swung in battle.
+
+##### <M part="B"/> Equip type
+You can equip it if the equip type specified here is included in the player's equipable types.
+
+##### <M part="C"/> Exclusive equipment flag
+If this flag is set, only characters with that flag can equip it.  
+For example, if you specify "Hero equipment" as the exclusive equipment flag, only the hero can equip it.  
+To give a player an exclusive equipment flag, add the option "<M code="e7af"/> Equipment flag settings" to the player or job.
+
+##### <M part="D"/> Basic skill (weapons only)
+Specifies the skill used when the "Attack" command is executed with this weapon.
+
+##### <M part="E"/> Options
+The options granted when this equipment is equipped.
+
+</div>
+
+

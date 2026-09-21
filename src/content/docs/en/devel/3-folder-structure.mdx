@@ -1,0 +1,263 @@
+---
+title: RPG-Cobo Folder Structure
+description: "Explains the RPG-Cobo folder structure and how it is used for developer-facing features and extensions."
+---
+
+import { FileTree } from '@astrojs/starlight/components';
+
+
+An RPG-Cobo project has the following folder structure to organize game source code, data, resources, tools, and documentation.
+
+## Folder Structure
+
+<FileTree>
+- addon/  Native extension DLLs
+- docs/
+- project/  Root of source and data
+  - conf/
+  - data/
+  - plugin/
+    - rpgtools/
+      - common/
+      - dbeditor/
+      - mapeditor/
+      - pm/
+      - reseditor/
+      - shader/
+      - voxeditor/
+  - resource/
+  - src/
+    - rpg/          Core logic of the RPG game system
+      - action/
+      - battle/
+      - setting/
+      - ui/
+    - shader/
+    - vox/
+  - system/
+    - 3d/
+    - asset/
+    - baselib/
+    - exlib/
+    - shader/
+    - shadermod/
+    - sound/
+    - ui/
+- tools/  Development helper scripts and external tools
+- util/
+  - etc/
+  - skstudio/  Integrated development environment skstudio
+  - sxtool/
+- work/
+  - blender_rpgcobo/
+  - img/
+  - mot/
+  - plugin-samples/
+</FileTree>
+
+---
+
+## Files at the project root
+
+| File | Description |
+|---|---|
+| `rpgcobo.exe` | RPG-Cobo tool executable |
+| `sakanagl.dll` | Native library for the game engine `SakanaGL` used by RPG-Cobo |
+| `boot.sk` | Engine startup entry point (this file is not actually used. It is provided as a source reference.) |
+| `LICENSE` / `NOTICE.txt` | License information |
+| `README.md` / `README.ja.md` | Project description (English / Japanese) |
+
+---
+
+## Folder Descriptions
+
+### `/addon`
+
+Stores DLL plugins loaded by RPG-Cobo at runtime. It includes engine extension modules such as `skstudio.dll` (tool utilities) and `voxengine.dll` (voxel rendering engine).
+
+---
+
+### `/docs`
+
+Stores project documentation.
+
+| Folder | Description |
+|---|---|
+| `docs/ja/` | Japanese documentation. Includes sakana language specifications, native API references, plugin explanations, and more |
+
+---
+
+### `/project`
+
+The game project itself. Source code and data under this folder define the game's behavior.
+
+#### `/project/conf`
+
+Project configuration files. Stores load order settings (`load.conf`) and the system dictionary (`sysdict.json`).
+
+#### `/project/data`
+
+Stores the game's database as JSON files. Contains game content data such as maps, characters, items, skills, enemies, and quests.
+
+| Example file | Content |
+|---|---|
+| `map.json` | Properties and event definitions for all maps |
+| `player.json` | Player information |
+| `enemy.json` | Enemy data |
+| `skill.json` | Skill data |
+| `item.json` / `weapon.json` / `armor.json` | Items, weapons, and armor |
+| `setting.json` | System settings |
+| `macro.json` | Event macros |
+| `gvar.json` | Global game variable definitions |
+| `type.json` | Type and attribute definitions |
+
+#### `/project/plugin`
+
+Stores plugins used by RPG-Cobo. Plugins are modules that provide game feature extensions and additional editor functions, and are implemented in the sakana language.
+
+`/project/plugin/rpgtools` contains the standard plugins bundled with RPG-Cobo and provides the various editor functions used for game development.
+
+| Folder | Description |
+|---|---|
+| `rpgtools/common/` | Utilities shared by all editors (activity management, plugin dialogs, property editing, resource previews, etc.) |
+| `rpgtools/dbeditor/` | Database editor. UI for editing JSON data such as characters, skills, items, enemies, equipment, and settings |
+| `rpgtools/mapeditor/` | Map editor. Map editing features such as block placement, event placement, map properties, and encounter settings |
+| `rpgtools/reseditor/` | Resource editor. Registration and management of resources such as BGM, SE, voice, images, voxels, effects, and UI |
+| `rpgtools/pm/` | Static assets such as polygon models and images used within plugins |
+
+#### `/project/resource`
+
+Stores resource files used by the game, such as images, audio, fonts, voxel models, and motions.
+
+| Example folder | Content |
+|---|---|
+| `bgm/` | BGM files |
+| `efx/` | Effect data |
+| `enemy_pic/` | Enemy character images |
+| `event_pic/` | Images used in events |
+| `font/` | Font data |
+| `ibltex/` | IBL (environment light) textures |
+| `icon/` | UI icon images |
+| `mot/` | Motion data |
+| `snd/` | Sound effect files |
+| `ui/` | UI layout data |
+| `vox/` | Voxel models (maps, characters, etc.) |
+
+Each resource folder is referenced from a JSON-format resource definition file (for example, `chara_vox.json`, `enemy_pic.json`, `bgm.json`, `snd.json`, and so on), which defines the resource ID, file path, and properties.
+
+#### `/project/src`
+
+Stores the source code for the game runtime (sakana language).
+
+| Folder | Description |
+|---|---|
+| `src/rpg/` | Core logic of the RPG game system |
+| `src/rpg/action/` | Action / field control |
+| `src/rpg/battle/` | Battle system |
+| `src/rpg/setting/` | Game settings processing |
+| `src/rpg/ui/` | In-game UI (menus, buttons, etc.) |
+| `src/vox/` | Voxel model loading and conversion |
+| `src/shader/` | Game shader code |
+| `src/bench/` | Benchmark and performance measurement code |
+
+Main files:
+
+- under src/rpg
+
+| File | Description |
+|---|---|
+| `RPGMain.sk` | Main game loop |
+| `RPGSystem.sk` | System-wide initialization and management |
+| `RPGStage.sk` | Stage (map) management |
+| `RPGEvent.sk` | Event system |
+| `RPGObjects.sk` | Game object management |
+| `RPGCamerawork.sk` | Camera control |
+| `RPGEffect.sk` | Effect control |
+| `RPGViews.sk` | Game-specific UI components |
+
+- under src/rpg/setting
+
+| File | Description |
+|---|---|
+| `BattleCommands.sk` | Battle command definitions |
+| `CharaProps.sk` | Character property definitions |
+| `EventCommands.sk` | Event command definitions |
+| `OptionTypes.sk` | Option type definitions |
+
+#### `/project/system`
+
+A collection of general-purpose system libraries not tied to any particular game. These are used both from `src/` and from `util/skstudio/`.
+
+| Folder | Description |
+|---|---|
+| `system/baselib/` | General-purpose utilities (IO, HTTP, serializers, 2D graphics, easing, etc.) |
+| `system/ui/` | UI framework (view hierarchy based on `SKView`, dialogs, rich text, etc.) |
+| `system/3d/` | 3D rendering related code |
+| `system/asset/` | Asset management |
+| `system/sound/` | Sound management |
+| `system/shader/` | Shared system shaders |
+| `system/shadermod/` | Shader modules |
+| `system/exlib/` | Extension libraries loaded as needed |
+
+---
+
+### `/tools`
+
+Stores development helper scripts and external tool binaries.
+
+| File | Description |
+|---|---|
+| `cwebp.exe` / `dwebp.exe` | WebP image conversion tools |
+| `cwebp_lossless.bat` / `cwebp_lossy.bat` | WebP conversion batch files |
+| `cmgen.exe` / `cmgen128.bat` / `cmgen256.bat` | Cubemap generation tools (for IBL) |
+| `toktx.exe` | KTX texture conversion tool |
+| `blender_open.ps1` | PowerShell script to open Blender |
+| `magicavoxel_open.ps1` | PowerShell script to open MagicaVoxel |
+| `gettool.psm1` | PowerShell module for obtaining tools |
+| `tmpl_install.ps1` | Template installation script |
+| `unzip_build.ps1` | Build artifact extraction script |
+
+---
+
+### `/util`
+
+Stores the implementation source code for skstudio, the integrated development environment that forms the basis of the RPG-Cobo tool.
+
+#### `/util/skstudio`
+
+Source code for the RPG-Cobo tool base (skstudio). It includes implementations of various editors such as the polygon model editor, UI editor, effect editor, and sprite sheet editing.
+
+| Folder | Content |
+|---|---|
+| `main/` | Main tool processing |
+| `common/` | Shared tool libraries |
+| `imgeditor/` | Image editor |
+| `uieditor/` | UI editor |
+| `efxeditor/` | Effect editor |
+| `pmeditor/` | Polygon model editor |
+| `spritesheet/` | Sprite sheet editor |
+| `shader/` | Tool shaders |
+| `trans/` | Translation / multilingual support |
+| `ui/` | UI definitions inside the tool |
+
+#### `/util/sxtool`
+
+Tools for creating SX packages, the standard package format used by SakanaGL (key management, licensing, packaging, and more).
+
+#### `/util/etc`
+
+Miscellaneous utility scripts (emoji generation, simple web server, and more).
+
+---
+
+### `/work`
+
+Stores source working files and sample assets used to create game resources.
+
+| Folder | Description |
+|---|---|
+| `work/blender_rpgcobo/` | Blender add-on scripts (model and motion export) |
+| `work/img/` | Image files used in sprite sheets |
+| `work/mot/` | Source data (.blend) for character motion creation |
+| `work/plugin-samples/` | Sample plugin files (such as `hello.plugsk`) |
+

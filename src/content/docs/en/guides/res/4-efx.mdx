@@ -1,0 +1,80 @@
+---
+title: Effects
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of effects."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+This page explains how to edit effects.
+They are used to express slashes, explosions, healing light in skill presentations, and flames, smoke, and splashes on maps.
+
+Select "<M code="f089"/> Resources" in the activity bar and open "<M code="f11c"/> Effects."
+
+<div class="sspart">
+<SS src='docs/chara-vox-1.png' alt=''/>
+
+##### <M part="A"/> Resource list
+The character models are shown in a list. You can rotate the display by dragging with the right mouse button.  
+As a common operation in the resource editor, you can "copy," "paste," and "sort by drag and drop" for list items.
+
+##### <M part="B"/> Name
+Give this resource a name.
+**Note: this name is not displayed in the game. Therefore it is not subject to automatic translation, and the name should be entered in each language as needed.**
+
+##### <M part="C"/> Model
+Select the model to use from the folder where character models are stored.
+
+##### <M part="D"/> Motion
+Select from the animations available for the selected model.
+For example, humanoid models can use motions such as "Male 1,2,3," "Female 1,2,3," "Child," and "Elderly" depending on body type.
+
+##### <M part="E"/> Palette
+The list of colors used by the model is shown as a palette. You can easily make color variants by changing this palette.
+
+##### <M part="F"/> Collision, size
+Specifies the shape and size of the character hitbox on the stage. It may be best not to change the default settings for standard humanoid characters.
+
+##### <M part="G"/> Animation
+Used to replace a specific animation.
+
+##### <M part="H"/> Preview
+You can preview the model, animation, and collision.  
+The panel below contains UI for selecting and playing animations.
+</div>
+
+
+### <M code="f10d"/> Create original effects with color correction and scaling
+- Adjusting colors one by one is very difficult. Select a range in the palette and change the colors all at once with "color correction."
+- Each palette color has a setting called "material." Changing it changes the feel of the material for that color and so on.
+
+
+### <M code="f10d"/> Add overlay FX
+Overlay FX are effects layered on top of a character. When enabled, they can overlay something on the character like in the video below.
+
+---VIDEO---
+
+This overlay FX has the following settings. We will omit a detailed explanation of each property, but try changing the values to express various effects.
+
+---IMG---
+
+
+### <M code="f10d"/> Create a new effect from scratch
+RPG-Cobo lets you create effects with the built-in effect editor in the tool.
+Here we explain the steps for copying a flame effect and creating a new effect in the effect editor.
+
+<Steps>
+1. From the effect list, choose context menu "<M code="e745"/> Edit" for "FX042: (Magic) Fire 1."
+
+2. The effect editor starts and the fire effect is displayed.
+
+3. Use File menu "Save As" (Ctrl+Shift+S) to save it under a different name.
+
+4. Use the effect editor to build a new fire effect. We do not have room to explain the details here, but we plan to cover them later in detail.
+
+5. When finished, return to "<M code="f11c"/> Effects" and load the created effect in "Model."
+</Steps>
+

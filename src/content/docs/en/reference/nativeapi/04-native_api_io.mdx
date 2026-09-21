@@ -1,0 +1,262 @@
+---
+title: "Native API: I/O"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: I/O."
+---
+
+This document is a reference for SakanaGL's I/O-related APIs defined in `core/api/ssapi_io.cpp`.
+
+It provides file operations, network communication, data encoding, compression, packaging, and encryption features.
+
+---
+
+## Contents
+
+1. [Global functions](#global-functions)
+   - [JSON](#json)
+   - [Encoding](#encoding)
+   - [Compression](#compression)
+   - [Other](#other)
+2. [Classes](#classes)
+   - [ByteBuffer](#bytebuffer)
+   - [Date](#date)
+   - [Timezone](#timezone)
+   - [FileRef](#fileref)
+   - [FileStream](#filestream)
+   - [SxrFile](#sxrfile)
+   - [SxrEntity](#sxrentity)
+   - [MD5](#md5)
+   - [Blowfish](#blowfish)
+   - [IPAddress](#ipaddress)
+   - [TCPConnection](#tcpconnection)
+   - [UDPSocket](#udpsocket)
+   - [TCPServer](#tcpserver)
+   - [HTTPRequest](#httprequest)
+   - [SSLContext](#sslcontext)
+   - [SSLConnection](#sslconnection)
+
+---
+
+## Global functions
+
+### JSON
+
+#### `decodeJSON(source[, from, size])`
+```
+object decodeJSON(string|ByteBuffer source[, int from, int size])
+```
+Decodes a JSON string or byte buffer.
+
+**Arguments**:
+- `source` (string/ByteBuffer): JSON string or byte buffer
+- `from` (int, optional): start position in the byte buffer
+- `size` (int, optional): size to decode
+
+**Return value**: decoded object
+
+**Description**:
+- Supports prelexed JSON (starting with `0xfafa`)
+- BOMs (starting with `0xef`) are skipped automatically
+- Throws an exception when an error occurs
+
+#### `encodeJSON(object[, format, dest])`
+```
+string|ByteBuffer encodeJSON(object obj[, int format, ByteBuffer dest])
+```
+Encodes an object to a JSON string.
+
+**Arguments**:
+- `obj` (object): object to encode
+- `format` (int, optional): format flags
+  - `1`: formatted (newlines and indentation)
+  - `2`: escape wide characters
+  - `4`: sort keys
+- `dest` (ByteBuffer, optional): destination buffer
+
+**Return value**: JSON string or byte buffer
+
+**Description**: Returns `null` if encoding fails.
+
+---
+
+### Encoding
+
+#### `encodeBASE64(data[, dest])`
+```
+string|ByteBuffer encodeBASE64(string|ByteBuffer data[, ByteBuffer dest])
+```
+Performs BASE64 encoding.
+
+**Arguments**:
+- `data` (string/ByteBuffer): data to encode
+- `dest` (ByteBuffer, optional): destination byte buffer
+
+**Return value**: BASE64-encoded string or byte buffer
+
+#### `decodeBASE64(data, dest)`
+```
+ByteBuffer decodeBASE64(string|ByteBuffer data, ByteBuffer dest)
+```
+Performs BASE64 decoding.
+
+**Arguments**:
+- `data` (string/ByteBuffer): data to decode
+- `dest` (ByteBuffer): destination byte buffer
+
+**Return value**: decoded byte buffer
+
+#### `encodeURL(str)`
+```
+string encodeURL(string str)
+```
+Performs URL encoding.
+
+**Arguments**:
+- `str` (string): string to encode
+
+**Return value**: URL-encoded string
+
+#### `decodeURL(str)`
+```
+string decodeURL(string str)
+```
+Performs URL decoding.
+
+**Arguments**:
+- `str` (string): string to decode
+
+**Return value**: URL-decoded string
+
+#### `encodeESC(str)`
+```
+string encodeESC(string str)
+```
+Performs escape-sequence encoding (such as `\n`, `\t`, `\"`).
+
+**Arguments**:
+- `str` (string): string to encode
+
+**Return value**: escaped string
+
+#### `decodeESC(str)`
+```
+string decodeESC(string str)
+```
+Performs escape-sequence decoding (such as `\n`, `\t`, `\uXXXX`).
+
+**Arguments**:
+- `str` (string): string to decode
+
+**Return value**: decoded string
+
+---
+
+### Compression
+
+#### `compressZ(input, output[, level])`
+```
+ByteBuffer compressZ(ByteBuffer input, ByteBuffer output[, int level])
+```
+Compresses with zlib.
+
+**Arguments**:
+- `input` (ByteBuffer): input buffer
+- `output` (ByteBuffer): output buffer
+- `level` (int, optional): compression level (1 to 9, default: 4)
+
+**Return value**: output buffer
+
+#### `compressZAsync(input, output[, level])`
+```
+future compressZAsync(ByteBuffer input, ByteBuffer output[, int level])
+```
+Compresses with zlib asynchronously.
+
+**Arguments**:
+- `input` (ByteBuffer): input buffer
+- `output` (ByteBuffer): output buffer
+- `level` (int, optional): compression level (default: 4)
+
+**Return value**: a `future` object that waits for completion
+
+#### `uncompressZ(input, output)`
+```
+ByteBuffer uncompressZ(ByteBuffer input, ByteBuffer output)
+```
+Decompresses zlib-compressed data.
+
+**Arguments**:
+- `input` (ByteBuffer): compressed data
+- `output` (ByteBuffer): output buffer
+
+**Return value**: output buffer
+
+#### `uncompressZAsync(input, output)`
+```
+future uncompressZAsync(ByteBuffer input, ByteBuffer output)
+```
+Decompresses zlib-compressed data asynchronously.
+
+**Arguments**:
+- `input` (ByteBuffer): compressed data
+- `output` (ByteBuffer): output buffer
+
+**Return value**: a `future` object that waits for completion
+
+#### `compressZSTDBound(size)`
+```
+int compressZSTDBound(int size)
+```
+Gets the maximum size after ZSTD compression.
+
+**Arguments**:
+- `size` (int): input size
+
+**Return value**: maximum compressed size
+
+#### `compressZSTD(input[, output, level])`
+```
+ByteBuffer compressZSTD(ByteBuffer input[, ByteBuffer output, int level])
+```
+Compresses with ZSTD.
+
+**Arguments**:
+- `input` (ByteBuffer): input buffer
+- `output` (ByteBuffer, optional): output buffer (new buffer if omitted)
+- `level` (int, optional): compression level (default: `ZSTD_CLEVEL_DEFAULT`)
+
+**Return value**: compressed byte buffer
+
+#### `compressZSTDAsync(input[, level])`
+```
+future compressZSTDAsync(ByteBuffer input[, int level])
+```
+Compresses with ZSTD asynchronously.
+
+**Arguments**:
+- `input` (ByteBuffer): input buffer
+- `level` (int, optional): compression level
+
+**Return value**: a `future` object that waits for completion
+
+#### `uncompressZSTD(input[, output])`
+```
+ByteBuffer uncompressZSTD(ByteBuffer input[, ByteBuffer output])
+```
+Decompresses ZSTD-compressed data.
+
+**Arguments**:
+- `input` (ByteBuffer): compressed data
+- `output` (ByteBuffer, optional): output buffer
+
+**Return value**: decompressed byte buffer
+
+---
+
+### Other
+
+#### `globMatch(pattern, path[, flags])`
+```
+bool globMatch(string pattern, string path[, int flags])
+```
+...
+

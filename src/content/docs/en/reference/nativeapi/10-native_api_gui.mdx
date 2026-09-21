@@ -1,0 +1,500 @@
+---
+title: "Native API: GUI"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: GUI."
+---
+
+This document is a reference for the base class of SakanaGL GUI components, `SKView` (`core/api/ssapi_skview.cpp`).
+
+## Overview
+
+`SKView` is the foundation of SakanaGL's GUI system. It provides hierarchy, coordinate transforms, input picking, drawing, animation, modal dialogs, and more. Custom GUI components such as buttons, text boxes, and lists are created by inheriting from `SKView`.
+
+`SKview` is composed of native code and code written in the `sk` script language. See SKView.sk for details.
+
+---
+
+## Contents
+
+- [SKView](#skview) - base class for GUI components
+- [Hierarchy](#hierarchy)
+- [Coordinate system and transforms](#coordinate-system-and-transforms)
+- [Picking (input hit testing)](#picking-input-hit-testing)
+- [Drawing](#drawing)
+- [Visibility and enabled state](#visibility-and-enabled-state)
+- [Modal and focus](#modal-and-focus)
+- [Touch mode](#touch-mode)
+- [Animation](#animation)
+- [Examples](#examples)
+
+---
+
+## SKView
+
+The base class for GUI components. It has a hierarchy and supports coordinate transforms, input hit testing, and drawing.
+
+### Fields
+
+#### Hierarchy
+
+- `parent` (SKView | null): parent view
+- `children` (Array): array of child views
+
+#### Coordinates / transforms
+
+- `pos` (Vector3D): position (X, Y, Z)
+- `scale` (Vector3D): scale (X, Y, Z)
+- `rot` (Vector3D): rotation (HPB: heading, pitch, bank)
+- `bnd` (Rect2D): bounding rectangle (local coordinates)
+- `mat` (Matrix): world transform matrix (calculated automatically)
+- `customtransform` (int): custom transform flag (if 1, `mat` can be set manually)
+- `matdirty` (int): matrix dirty flag (1 when an update is required)
+
+#### Drawing
+
+- `render` (function | null): custom drawing function `function(skview)`
+- `buf` (Sprite | null): off-screen buffer
+- `buftype` (int): buffer type
+- `bufcolor` (uint): buffer clear color
+- `dorepaint` (int): redraw request flag
+
+#### State flags
+
+- `visible` (int): visibility flag (0 = hidden, 1 = visible)
+- `enabled` (int): enabled flag (0 = disabled, 1 = enabled)
+- `pickable` (int): pickable flag (0 = not pickable, 1 = pickable)
+- `layerflags` (int): layer flags (bit 0 = draw, bit 1 = update)
+- `focused` (int): focus flag
+- `modal` (int): modal flag (if 1, blocks clicks from outside)
+
+#### Touch mode
+
+- `exclusivetouch` (int): exclusive touch mode
+- `multitouch` (int): multi-touch mode
+- `exclusivedrag` (int): exclusive drag mode
+
+#### Mouse cursor
+
+- `mousecurs` (int): mouse cursor ID (-1 = inherit, 0+ = cursor number)
+
+#### Animation
+
+- `framepos` (float): animation frame position
+- `loops` (int): loop count
+
+#### Callback
+
+- `innerpick` (function | null): custom pick test function `function(skview, x, y) -> bool`
+
+---
+
+## Methods
+
+### Coordinates / transforms
+
+##### `setPosition(x[, y[, z]])`
+Sets the position.
+
+**Arguments**:
+- `x` (float): X coordinate
+- `y` (float, optional): Y coordinate
+- `z` (float, optional): Z coordinate
+
+**Description**: If arguments are omitted, that axis is not changed.
+
+##### `updateMatrix()`
+Updates this view's transform matrix.
+
+**Description**: Recalculates the matrix when `pos`, `scale`, `rot`, or `bnd` has changed. Also updates the parent view matrix recursively.
+
+##### `updateMatrixAll([force])`
+Recursively updates the transform matrices for this view and all child views.
+
+**Arguments**:
+- `force` (bool, optional): force update (default: false)
+
+##### `getInvMatrix()`
+Gets the inverse transform matrix.
+
+**Return value**: Matrix - transform from world coordinates to local coordinates
+
+**Description**: Used to transform screen coordinates into local coordinates.
+
+---
+
+### Hierarchy / search
+
+##### `getRoot()`
+Gets the root view (topmost parent).
+
+**Return value**: SKView
+
+##### `getModalRoot()`
+Gets the modal root (the nearest modal view).
+
+**Return value**: SKView | null
+
+##### `contains(child)`
+Checks whether this view contains the specified view directly or indirectly.
+
+**Arguments**:
+- `child` (SKView): view to check
+
+**Return value**: bool
+
+##### `findChildFor(value[, fieldName[, depth]])`
+Searches child views for one with the specified value in the specified field.
+
+**Arguments**:
+- `value`: value to search for
+- `fieldName` (string, optional): field name (default: `"name"`)
+- `depth` (int, optional): search depth (default: 8)
+
+**Return value**: SKView | null
+
+**Description**: Returns a view whose `fieldName` field matches `value` among descendant views.
+
+##### `findOwners(fieldName, outArray)`
+Stores all descendant views that have a value set in the specified field (not equal to 0) into an array.
+
+**Arguments**:
+- `fieldName` (string): field name
+- `outArray` (Array): destination array
+
+**Return value**: Array (the array passed in)
+
+**Description**: Recursively searches all descendants and lists views that match the condition.
+
+---
+
+### Picking (input hit testing)
+
+##### `pick(x, y, chooseModal, outVector)`
+Picks a view at the specified screen coordinates (x, y).
+
+**Arguments**:
+- `x` (float): screen X coordinate
+- `y` (float): screen Y coordinate
+- `chooseModal` (bool): modal check flag
+- `outVector` (Vector3D): destination for local coordinates
+
+**Return value**: SKView | null - hit view (searches from the frontmost child first)
+
+**Description**:
+- Hit testing is performed from the frontmost child view.
+- If `chooseModal` is true, clicking outside a modal view still returns the modal view.
+- `outVector.x, outVector.y` store the local coordinates of the hit view.
+- `outVector.z` stores 1.0 if clicked outside the modal, otherwise 0.0.
+- If a view has an `innerpick` callback, custom hit testing is used.
+
+##### `pickall(x, y[, outArray])`
+Gets all views hit at the specified screen coordinates (in hierarchy order).
+
+**Arguments**:
+- `x` (float): screen X coordinate
+- `y` (float): screen Y coordinate
+- `outArray` (Array, optional): destination array
+
+**Return value**: Array - array of hit views (from parent to child)
+
+**Description**: Enumerates all hit targets in parent-to-child order.
+
+---
+
+### Drawing
+
+##### `repaint()`
+Sets the redraw flag.
+
+**Description**: Marks this view to be redrawn on the next draw cycle. If `buf` is set, updates the off-screen buffer.
+
+##### `repaintCheck(outArray)`
+Checks the redraw flags of this view and its children and stores views that need redrawing into an array.
+
+**Arguments**:
+- `outArray` (Array): array to store redraw targets
+
+**Return value**: bool - `true` if redraw is needed
+
+**Description**: Traverses while clearing redraw flags. Used internally by the drawing system.
+
+##### `renderView()`
+Recursively renders this view and its children.
+
+**Description**:
+- If `buf` is set, draws it as a sprite.
+- If `render` callback is set, calls it.
+- Draws child views from front to back.
+- Usually called on the root view.
+
+---
+
+### State queries
+
+##### `isEnabled()`
+Checks whether this view and all its parent views are enabled.
+
+**Return value**: bool
+
+**Description**: Checks the `enabled` flag hierarchically. Returns false if any parent is disabled.
+
+##### `isVisible()`
+Checks whether this view and all its parent views are visible.
+
+**Return value**: bool
+
+**Description**: Checks the `visible` flag hierarchically. Returns false if any parent is hidden.
+
+##### `isAvailable()`
+Checks whether this view is available (visible, enabled, and layer flag all ON).
+
+**Return value**: bool
+
+**Description**: Checks `visible && enabled && (layerflags & 1)` hierarchically.
+
+##### `getMouseCursor()`
+Gets the mouse cursor ID applied to this view.
+
+**Return value**: int - cursor ID
+
+**Description**: Hierarchically searches this view or parent views for `mousecurs`.
+
+---
+
+### Rectangle calculation
+
+##### `getVisibleRect([container[, outRect]])`
+Gets the visible rectangle of this view, taking clipping by parent views into account.
+
+**Arguments**:
+- `container` (SKView, optional): reference view for the coordinate system (self if omitted)
+- `outRect` (Rect2D, optional): rectangle to store the result (creates a new one if omitted)
+
+**Return value**: Rect2D | null
+
+**Description**: Computes the visible area after applying parent clipping. Used for scroll views and clipping.
+
+##### `getWindowRect([outRect])`
+Gets the bounding rectangle of the parent view in this view's local coordinate system.
+
+**Arguments**:
+- `outRect` (Rect2D, optional): rectangle to store the result
+
+**Return value**: Rect2D | null
+
+**Description**: Represents the parent's drawing area in local coordinates. Returns null if there is no parent.
+
+---
+
+## Hierarchy
+
+SKView has parent-child relationships. A parent view's coordinate transforms are inherited by child views.
+
+### Adding child views
+
+```javascript
+local parent = SKView();
+local child = SKView();
+
+parent.children = [];
+parent.children.append(child);
+child.parent = parent;
+```
+
+### Walking the hierarchy
+
+```javascript
+function printHierarchy(view, indent) {
+	println(indent .. view.name);
+	foreach( child in view.children) {
+		if(child instanceof SKView) {
+			printHierarchy(child, indent.."  ");
+		}
+	}
+}
+
+printHierarchy(rootView, "");
+```
+
+---
+
+## Coordinate system and transforms
+
+SKView has a local coordinate system and inherits transforms from its parent.
+
+### Transform calculation
+
+Transform matrices are calculated in the following order:
+
+1. Translation by `pos`
+2. Rotation by `rot` (quaternion)
+3. Scaling by `scale`
+4. Offset by `bnd.x, bnd.y`
+5. Composition with the parent view's transform matrix
+
+### Custom transform
+
+```javascript
+view.customtransform = 1;
+view.mat = Matrix.fromTranslate(100, 50, 0);
+view.updateMatrix();
+```
+
+If `customtransform` is set to 1, automatic calculation by `pos`, `scale`, and `rot` is disabled and `mat` can be set directly.
+
+---
+
+## Picking (input hit testing)
+
+Picking is a feature that performs input hit testing from screen coordinates to views.
+
+### Basic picking
+
+```javascript
+local hitPos = Vector3D();
+local hitView = rootView.pick(mouseX, mouseY, false, hitPos);
+
+if(hitView) {
+	println("Hit: " .. hitView.name .. " at (" .. hitPos.x .. ", " .. hitPos.y .. ")");
+}
+```
+
+### Custom pick testing
+
+Using the `innerpick` callback, you can implement pick testing with shapes other than rectangles:
+
+```javascript
+view.innerpick = function(v, x, y) {
+	// circular hit test
+	local dx = x - v.bnd.w/2;
+	local dy = y - v.bnd.h/2;
+	local dist = Math.sqrt(dx*dx + dy*dy);
+	return dist < v.bnd.w/2;
+};
+```
+
+### Modal dialogs
+
+```javascript
+local dialog = SKView();
+dialog.modal = 1;
+dialog.bnd.set(0, 0, 400, 300);
+
+// Even if clicking outside the modal, dialog is returned
+local hitPos = Vector3D();
+local hit = rootView.pick(mouseX, mouseY, true, hitPos);
+if(hit == dialog && hitPos.z == 1.0) {
+	// Clicked outside the modal
+	dialog.visible = 0;
+}
+```
+
+---
+
+## Visibility and enabled state
+
+### visible
+
+The `visible` flag controls show/hide:
+
+```javascript
+view.visible = 0; // hidden
+view.visible = 1; // visible
+```
+
+If a parent view is hidden, child views are not drawn.
+
+### enabled
+
+The `enabled` flag controls enabled/disabled:
+
+```javascript
+view.enabled = 0; // disabled (not pickable)
+view.enabled = 1; // enabled
+```
+
+If a parent view is disabled, child views are also excluded from picking.
+
+### pickable
+
+Controls whether an individual view can be picked:
+
+```javascript
+view.pickable = 0; // this view is not pickable (children still can be)
+view.pickable = 1; // pickable
+```
+
+### layerflags
+
+Layer flags control behavior bitwise:
+
+- `layerflags & 1`: draw layer (0 = not drawn)
+- `layerflags & 2`: update layer (application-defined)
+
+```javascript
+view.layerflags = 3; // draw and update
+view.layerflags = 1; // draw only
+view.layerflags = 0; // inactive
+```
+
+---
+
+## Modal and focus
+
+### modal
+
+When the modal flag is 1, clicks outside views that are lower in search order than this view are blocked:
+
+```javascript
+local dialog = SKView();
+dialog.modal = 1;
+
+// During picking, you can detect clicks outside the modal
+local hitPos = Vector3D();
+local hit = rootView.pick(x, y, true, hitPos);
+if(hitPos.z == 1.0) {
+	// Clicked outside the modal
+}
+```
+
+### focused
+
+A field that stores focus state (application-defined):
+
+```javascript
+view.focused = 1; // focused
+```
+
+**Note**: SKView does not manage focus automatically. The application must implement it.
+
+---
+
+## Touch mode
+
+Flags for multi-touch devices:
+
+### exclusivetouch
+
+```javascript
+view.exclusivetouch = 1;
+```
+
+Exclusive touch mode. Only the first touched view receives touch events.
+
+### multitouch
+
+```javascript
+view.multitouch = 1;
+```
+
+Multi-touch mode. Allows multiple fingers to touch at the same time.
+
+### exclusivedrag
+
+```javascript
+view.exclusivedrag = 1;
+```
+
+Exclusive drag mode. During dragging, other views do not receive touch events.
+
+**Note**: These flags are used by the touch event handling system. The application must implement the event handlers.
+
