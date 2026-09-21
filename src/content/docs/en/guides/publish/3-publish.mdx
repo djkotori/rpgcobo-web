@@ -1,0 +1,60 @@
+---
+title: Distribute the Built Game
+description: "Explains the build and distribution process for RPG-Cobo projects with the theme of distributing the built game."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+You can distribute built games in many places. There are no restrictions or fees for distribution.
+Please feel free to distribute them wherever you like!
+
+### <M code="e051"/> Web browser
+
+For games exported for web browsers, we recommend posting them to web game sites. Sites such as itch.io can also be monetized, so monetization is possible even with the Free license.
+
+- UnityRoom
+- Plicy
+- itch.io
+- Your own website
+
+### <M code="eb75"/> Windows (Indie license required)
+
+There are many ways to distribute files exported for Windows, but the representative methods are listed below.  
+The easiest is probably to zip-compress the entire game folder and send it directly to the people who want to play it.  
+
+| |Method|Difficulty|Monetization|
+|-|-|-|-|
+|1|Zip the folder and upload it|Low|Not possible|
+|2|Freem|Low|Not possible|
+|3|Booth|Medium|Possible|
+|4|Steam|High|Possible|
+
+
+### <M code="e859"/> Android (Pro license required)
+
+To distribute a game exported for Android, you need to apply to Google Play or distribute it as a standalone APK file, in short, you need to create an apk file.
+However, at the point where you build with RPG-Cobo, the game is not yet an apk.
+The reason we do not build the apk directly is that, in order to freely add and edit things like push notifications and in-app purchases, developers need to edit the project one step before apk build.
+
+<Steps>
+1. Enter the app information.  
+   *Note: replace the secret key file rpg.key if needed*
+2. Run build_apk.bat.
+3. Upload the generated apk to Google Play Console.
+</Steps>
+
+
+### <M code="e027"/> iOS (Pro license required)
+
+Games for iOS also require a little more work in order to submit them to the App Store.
+Also, a Mac computer is required to build for iOS.
+
+<Steps>
+1. Run make_xcodeproj.sh
+2. Open the generated xcodeproj in Xcode
+3. Edit settings such as Info.plist
+3. Build in Xcode and upload to the App Store.
+</Steps>
+

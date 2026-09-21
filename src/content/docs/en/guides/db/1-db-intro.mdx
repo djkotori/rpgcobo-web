@@ -1,0 +1,63 @@
+---
+title: What Is a Database?
+description: "Explains RPG-Cobo database settings and editing steps with the theme of what a database is."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+RPG-Cobo's database stores all the configuration data for the characters, items, rules, and other elements that appear in the game.
+To edit the database, first select "<M code="f120"/> Data" from the activity bar on the left.
+
+<div class="sspart">
+<SS src='docs/db-intro-1.png' alt='' minscale={0.7}/>
+
+##### <M part="A"/> Database type list
+A list that separates the database into types. Details are explained below.
+
+##### <M part="B"/> Data list
+The list of data for the selected database type.  
+You can use the context menu on the right-click menu for editing actions such as copy/paste and sorting.
+
+##### <M part="C"/> Item count change menu
+For each database type, you can change the maximum number of entries from 100 to 1000 in steps of 100.
+</div>
+
+### <M code="f10d"/> Database types
+In the database side menu, the top shows the database type and the bottom shows the list of data for the selected type.  
+Creating all of these from scratch would be very difficult, so first try modifying the data that already exists.
+
+|Database name|Usage frequency|Overview of the tool|
+|--------------------------|------------|--------------------------|
+|<M code="ea28"/>Game settings|★★★☆☆|Edit the game's basic settings. There are four items: system settings, various types, the word dictionary, and global variables.|
+|<M code="e82f"/>Player|★★★★☆|Edit the game's allied characters.|
+|<M code="e564"/>Job|★★☆☆☆|Edit the jobs that can be assigned to players. You can also choose not to use them if they are unnecessary.|
+|<M code="f119"/>Skills|★★★☆☆|Skills used by players and enemies. It can be a little difficult to create from scratch.|
+|<M code="f084"/>Enemies|★★★★★|Edit enemy characters. In a sense, this is even more important and more difficult than creating players.|
+|<M code="e3e9"/>Conditions|★☆☆☆☆|Status ailments such as poison and sleep, and buffs that enhance abilities. If you are getting comfortable with RPG-Cobo, try modifying this.|
+|<M code="ea63"/>Items|★★☆☆☆|Edit items used in battles and menus, as well as key items needed to advance the story.|
+|<M code="effe"/>Weapons|★★★★☆|Edit the weapons that players equip.|
+|<M code="ead2"/>Armor|★★★★☆|Edit the armor that players equip.|
+|<M code="e62a"/>Store|★★★☆☆|Create item shops, random treasure, and skill groups by listing items or skills.|
+|<M code="eb8e"/>Macro events|★★★★☆|For intermediate users and above. You can bundle common event functions used often or create events that run automatically on all maps.|
+
+
+### <M code="f10d"/> Tips for editing the database
+- Even if you are not used to making RPGs in RPG-Cobo, you can still create a distinctive RPG by editing "Player," "Enemy," "Items," "Weapons," "Armor," and "Store."  
+  For these databases, it is enough to adjust names, numeric parameters, and visuals.
+- Once you are comfortable with the database, try "Jobs," "Skills," and "Conditions." These are effective for creating your preferred game balance.
+- Once you can use "Macro events" well, you are already an advanced user! Try them after you can create events in the map editor.
+
+### <M code="f10d"/> Free-word search with Ctrl+K
+It is common to forget where an item with a certain name is, especially when development has progressed and the number of items has increased.  
+In such cases, use "<M code="ea19"/> Search database by keyword (Ctrl+K)" from the View menu to search all database entries containing the input text.  
+This search can also search messages inside all events on maps.
+
+<SS src='docs/db-intro-2.png' alt=''/>
+
+
+---
+
+Now let us begin explaining how to edit the major databases from the next page onward!
+

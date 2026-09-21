@@ -1,0 +1,71 @@
+---
+title: Tool Screen Layout
+description: "Explains the basic steps from installation to initial setup for RPG-Cobo."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+
+
+### <M code="f10d"/> Basic screen of the RPG-Cobo tool
+
+When you open the project you created on the [previous page](../2-make-project), the RPG-Cobo tool starts and the following screen appears.  
+
+<div class="sspart">
+<SS src='docs/tool-ui-1.png' alt=''/>
+##### <M part="A"/> Activity bar, <M part="B"/> side menu
+The activity bar is a toolbar for easy access to the map, database, resources, and other major functions needed for RPG creation.  
+The side menu changes depending on the tool selected in the activity bar.
+
+##### <M part="C"/> File tabs
+When you open a file to edit from the side menu or elsewhere, the editor opens and the file is added to the file tabs.  
+Tabs that do not fit on the bar can be scrolled with the mouse wheel, or you can show all tabs by clicking the middle mouse button or the "<M code="e5c5"/>" button at the far right of the bar.
+
+##### <M part="D"/> Editor
+The editor for the file currently open is displayed.
+</div>
+
+### <M code="f10d"/> Introduction to the various tools
+
+Here are the major functions shown in the activity bar. **The three functions used most often are "Map," "Data," and "Resources."**
+
+##### <M code="f11e"/>Map
+Displays a list of maps. You can create new maps, duplicate or delete them, and group them.
+[See here](/guides/map/1-map-intro)
+
+##### <M code="f120"/>Data
+Displays a list of all database entries. Edit all game data here, including player and enemy stats, items and weapons, and skills.
+[See here](/guides/db/1-db-intro)
+
+##### <M code="f089"/>Resources
+Used to edit assets used in the game, such as character 3D models, monster images, effects, icons, and sound.
+[See here](/guides/res/1-res-intro)
+
+##### <M code="e2c8"/>Files
+Displays the file tree so you can access every file in the project.
+You probably will not need to use this much until you start working with the tool in earnest.
+
+##### <M code="e8e2"/>Translation
+Displays the translation tool for adapting all in-game text to multiple languages.[See here](/guides/advance/1-translate)
+<Aside>RPG-Cobo includes a very powerful translation tool. Make full use of it and bring your RPG to the entire world!</Aside>
+
+---
+
+##### <M code="f06a"/>Debug
+Displays a menu for test-playing the game.  
+You can also start debugging immediately with the **F5 key**. [See here](/guides/map/4-debug)
+
+##### <M code="ef48"/>Build
+Builds the game so that other people can play it. You can export games that run in browsers, Windows, Android, and iOS.  
+**Note: You need to log in to your account to build.** [See here](/guides/publish/2-build)
+
+##### <M code="e853"/>Account
+Lets you log in with a user registered to RPG-Cobo (you can also register a new one here).
+[See here](/guides/publish/1-register)
+
+##### <M code="e8b8"/>Settings
+Displays a menu where you can change various tool settings. You can quickly access the tool's display language and UI scale.
+You can also create project backups from here.
+

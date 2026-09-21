@@ -1,0 +1,120 @@
+---
+title: Player Data
+description: "Explains RPG-Cobo database settings and editing steps with the theme of player data."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import player_1 from "../../../../../assets/docs/player-1.png"
+
+
+A player is one of the allied characters who forms a party, fights enemies, and levels up. Players are edited in the following ways.
+- Basic information such as name and appearance
+- Starting equipment, starting job, and types of equipment that can be equipped
+- Parameters that grow as the player levels up
+- Abilities such as skills learned as the player levels up
+
+Let's open "<M code="f120"/> Database => <M code="e82f"/> Player => P000: Shiren".
+
+<div class="sspart">
+<SS src='docs/player-1.png' alt=''/>
+
+##### <M part="A"/> Name, description
+Set the player's name and description. The description is not usually shown in the game.
+
+##### <M part="B"/> Voice actor
+Specifies the player's voice. Voices can be added or edited in [Resources => Voice](/guides/res/voice).
+
+##### <M part="C"/> Model
+Select the player's 3D appearance model. This model can be added or edited in [Resources => Character voxels](/guides/res/chara-vox).
+
+##### <M part="D"/> Properties
+Set the initial level, starting equipment, EXP curve for level-up speed, and so on.
+- EXP curve: The experience required for a player to level up is calculated from two parameters, base value and increase value.
+- Job: Set the job the player starts with.
+- Equipable: Roughly specify the types of equipment the player can equip.
+- Starting equipment: Set the items the player has equipped when joining the party.
+
+##### <M part="E"/> Level curve
+Edit the parameters that grow by level.
+
+##### <M part="F"/> Learned options
+Set the special abilities this player has. *By the way, what are options? We will explain later in this page.*
+</div>
+
+### <M code="f10d"/> Level curve
+
+In RPGs, players generally grow stronger as they level up. The table that shows this growth is called the level curve.  
+Try editing the MAXHP level curve. Double-click MAXHP in the level curve list to open the dialog.  
+<SS src='docs/player-2.png' alt=''/>
+
+|Function|How to use| | |
+|-|-|-|-|
+|Scroll graph|Middle mouse drag|Mouse wheel<br/>Shift + mouse wheel|Two-finger trackpad pan|
+|Zoom graph|Ctrl + mouse wheel| |Two-finger trackpad pinch|
+
+
+### <M code="f10d"/> Setting growth types
+It would be very difficult to edit every level curve for every player character one by one. That is why the growth type feature lets you set character level curves all at once.
+From the "<M code="e5d2"/>" button at the right edge of the level curve panel, choose a growth type such as "Hero type" or "Warrior type" from the "<M code="e4fb"/> Apply growth type" submenu.
+<SS src='docs/player-3.png' alt=''/>
+
+- Each time a growth type is applied, the abilities change randomly. Try it a few times and choose the best one.
+- To edit the growth types themselves, use "<M code="e4fb"/> Apply growth type" => "<M code="e8b8"/> Manage growth types...".
+- You can also select a list of abilities, right-click, and specify a different growth type for each ability from the context menu.
+- If you want to manage the numbers in an external spreadsheet, use "<M code="e14d"/> Copy TSV".
+
+---
+
+### <M code="e8af"/> What are options?
+
+It is time to explain an important concept. Almost every database screen, including players and enemies, has an editable list called "options," but
+**this options system is the core system that increases gameplay depth in RPG-Cobo's game system.**  
+##### <M code="e42e"/>Options are additional effects that players and enemies can equip.
+
+If you press the <M code="e146"/> button in the player editor's options panel, a list of addable options pops up.  
+There are many kinds of options, so we will show representative ones in a table.
+
+|Option name|Type|Overview|
+|--------------------------|------------|--------------------------|
+|<M code="efdb"/>Parameter change|Ability change|Changes parameters such as HP, strength, and accuracy.|
+|<M code="e9e0"/>Attribute resistance|Ability change|Changes defense against attributes.|
+|<M code="e80c"/>Learn skill|Ability change|Lets the character use a specified skill.|
+|<M code="e80c"/>Battle command setting|Ability change|Replaces a specified command with a special command such as "steal."|
+|<M code="f11a"/>Race special|Ability change|Specifies races such as "flying" or "dragon" to increase attack power.|
+|<M code="e932"/>Condition infliction|Ability change|Inflicts a specified status ailment on the opponent with a probability on successful attack.|
+|<M code="e932"/>Follow-up skill|Skill ability|Triggers a follow-up skill with a probability on successful attack.|
+|<M code="e932"/>Damage counter|Skill ability|Counters the enemy with a specified skill when attacked.|
+|<M code="f119"/>Cover|Special condition|When an ally in danger is attacked, take the damage instead.|
+|<M code="f119"/>Run script|Other|Runs arbitrary scripts at various timing points.|
+
+When these options are combined and equipped, they can produce many different effects in battles and stages.  
+
+The conditions under which options are granted also differ depending on the database type.  
+In player settings, you can set the level at which each option is granted. This lets you learn skills through leveling up or gain titles for class changes.
+
+### <M code="e8af"/> Option examples
+#### The player learns abilities by level
+<SS src='docs/player-4.png' alt=''/>
+- At LV.1, set the race to "Human" and "Male," and set weapon special effects to +30% for "Sword," "Great Sword," and "Katana."
+- At LV.2, learn the "Heal A" skill.
+- At LV.2, add "White Magic" to the battle commands.
+- At LV.4, learn the "Hero" job. *Jobs can be set in the job screen.*
+
+This setup is a character-centered growth style where the player learns abilities and skills through leveling up.
+On the other hand, you can also leave the character itself with no skills at all and have them learn abilities only through job levels.  
+Choose the style that fits your game: the former if you want to make each character feel unique, or the latter if you want players to enjoy choosing jobs.
+
+#### Poison the opponent with the "Poison Strike" skill
+<SS src='docs/player-4.png' alt=''/>
+- Inflict the "Poison" condition. Infliction multiplier is 1.0 (the probability of infliction follows the debuff formula).
+- +50% race special against the "Fairy" race.
+
+#### Occasionally attack allies under the "Confusion" condition
+<SS src='docs/player-4.png' alt=''/>
+- Use skill force change to attack a random target indiscriminately.
+- Use skill force change to trigger the "Sleep" skill.
+- Reduce "accuracy" by 40% with parameter change.
+- Always remove the "Confusion" condition when the self is attacked.
+

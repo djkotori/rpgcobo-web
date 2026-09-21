@@ -1,0 +1,51 @@
+---
+title: Debugging
+description: "Explains RPG-Cobo map production and related setup points with the theme of debugging."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+
+The act of test-playing to see whether the game behaves as you intended is called debugging.
+
+Debugging is essential in game development.
+Checking whether maps connect properly, battles are not too difficult, and the story progresses correctly is a fun but demanding task.
+RPG-Cobo lets you start debugging from many different places so the process is smooth.
+
+### <M code="f06a"/> Debug the whole game
+You can start debugging the game from the activity bar with "<M code="f06a"/> Debug => <M code="f06a"/> Start debugging (F5)."  
+You can also choose the title screen, the initial game position, or a save slot from "Choose starting point" in the debug menu.
+
+<SS src='docs/debug-1.png' alt=''/>
+
+### <M code="f06a"/> Debug the map you are editing
+On the 3D canvas of the map editor, you can choose "<M code="f06a"/> Debug from here" from the context menu to debug the map you are editing.  
+This is useful when you want to walk around while making a map or check event behavior.
+
+### <M code="f06a"/> Debug battles
+From the "Encounters settings" dialog in the map editor, you can test battles with the selected encounter group.  
+[See here](../3-battle)
+
+### <M code="f06a"/> Debug a specific event
+Choose "<M code="e1c4"/> Page test" from the page menu in the custom event editor to debug a specific event page.  
+*Note: Events are driven by complex conditions. With this debugging method, please consider it a debug tool limited to whether "the page command list works correctly."*  
+[See here](../3-battle)
+
+### <M code="f06a"/> Debug skill presentation
+From the "Test action" button in the property panel of the skill editor (item editor), you can test the battle presentation used by the skill or item you are editing.  
+
+### <M code="f06a"/> Useful functions during debugging
+During debugging, parts of the tool screen switch to a debug-specific view.  
+If you remember the shortcut keys, debugging becomes even more efficient.  
+In particular, the hot reload feature described below combined with "Switch to debug window (Ctrl+Enter)" is a very useful shortcut for efficient debugging.
+
+<SS src='docs/debug-2.png' alt=''/>
+
+### <M code="f06a"/> Hot reload feature
+RPG-Cobo includes a hot reload feature that lets changes to code and assets made during game development be reflected without restarting the game.  
+This greatly improves debugging efficiency.
+
+Hot reload is applied automatically to the game when you edit data in the tool and click "<M code="e161"/> Save (Ctrl+S)."
+

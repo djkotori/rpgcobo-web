@@ -1,0 +1,261 @@
+---
+title: "Native API: Math"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Math."
+---
+
+This document is a reference for SakanaGL's math and coordinate calculation APIs defined in `core/api/ssapi_math.cpp`.
+
+It provides the math functions needed for 3D graphics and game development, including 3D coordinate calculations, vector operations, matrix transforms, quaternions, cameras, and collision detection.
+
+---
+
+## Contents
+
+1. [Math functions](#math-functions)
+2. [Classes](#classes)
+   - [Random](#random)
+   - [Vector3D](#vector3d)
+   - [Quaternion](#quaternion)
+   - [Plane](#plane)
+   - [Matrix](#matrix)
+   - [Rect2D](#rect2d)
+   - [Rect3D](#rect3d)
+   - [Transform](#transform)
+   - [TransformTimeline](#transformtimeline)
+   - [Camera](#camera)
+   - [bigint](#bigint)
+
+---
+
+## Math functions
+
+The math functions are stored in the `Math` table.
+
+### Constants
+
+```javascript
+Math.PI      // pi (about 3.14159)
+Math.DTOR    // degrees to radians conversion factor (PI / 180)
+Math.RTOD    // radians to degrees conversion factor (180 / PI)
+Math.PI2     // pi times 2
+Math.HPI     // pi divided by 2
+```
+
+### Basic math functions
+
+#### `Math.abs(value)`
+Returns the absolute value.
+
+**Arguments**:
+- `value` (int/float): input value
+
+**Return value**: absolute value
+
+#### `Math.sqrt(value)`
+Returns the square root.
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: square root
+
+#### `Math.saturate(value)`
+Clamps a value to the range 0 to 1.
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: value clamped to the range 0 to 1
+
+#### `Math.sign(value)`
+Returns the sign (-1, 0, 1).
+
+**Arguments**:
+- `value` (int/float): input value
+
+**Return value**: -1 (negative), 0 (zero), 1 (positive)
+
+### Trigonometric functions
+
+#### `Math.sin(rad)`, `Math.cos(rad)`, `Math.tan(rad)`
+Trigonometric functions.
+
+**Arguments**:
+- `rad` (float): radians
+
+**Return value**: value of the trigonometric function
+
+#### `Math.asin(value)`, `Math.acos(value)`, `Math.atan(value)`
+Inverse trigonometric functions.
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: radians
+
+**Description**: `asin` and `acos` automatically clamp out-of-range values (-1 to 1).
+
+#### `Math.atan2(y, x)`
+Two-argument arctangent.
+
+**Arguments**:
+- `y` (float): Y component
+- `x` (float): X component
+
+**Return value**: radians (-π to π)
+
+### Logarithmic and exponential functions
+
+#### `Math.log(value)`, `Math.log2(value)`, `Math.log10(value)`
+Logarithmic functions (natural log, base 2, base 10).
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: logarithmic value
+
+#### `Math.logn(value, base)`
+Logarithm with an arbitrary base.
+
+**Arguments**:
+- `value` (float): input value
+- `base` (float): base
+
+**Return value**: logarithmic value
+
+#### `Math.exp(value)`, `Math.exp2(value)`
+Exponential functions (e^x, 2^x).
+
+**Arguments**:
+- `value` (float): exponent
+
+**Return value**: exponential value
+
+#### `Math.pow(base, exp)`
+Power calculation.
+
+**Arguments**:
+- `base` (float): base
+- `exp` (float): exponent
+
+**Return value**: base^exp
+
+### Rounding functions
+
+#### `Math.floor(value)`, `Math.ceil(value)`, `Math.round(value)`
+Rounding functions (floor, ceiling, round).
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: rounded float value
+
+#### `Math.ifloor(value)`, `Math.iceil(value)`, `Math.iround(value)`
+Rounds as an integer.
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: rounded int value
+
+#### `Math.floor2(value)`
+Rounds down to a power of two.
+
+**Arguments**:
+- `value` (float): input value
+
+**Return value**: value rounded down to a power of two
+
+### Maximum, minimum, and range
+
+#### `Math.max(value1, value2, ...)`
+Returns the maximum value (variable-length arguments).
+
+**Arguments**:
+- `value1, value2, ...` (int/float): values to compare
+
+**Return value**: maximum value
+
+#### `Math.min(value1, value2, ...)`
+Returns the minimum value (variable-length arguments).
+
+**Arguments**:
+- `value1, value2, ...` (int/float): values to compare
+
+**Return value**: minimum value
+
+#### `Math.clamp(value, min, max)`
+Clamps a value to a specified range.
+
+**Arguments**:
+- `value` (int/float): input value
+- `min` (int/float): minimum value
+- `max` (int/float): maximum value
+
+**Return value**: clamped value
+
+### Interpolation
+
+#### `Math.lerp(a, b, t)`
+Linear interpolation.
+
+**Arguments**:
+- `a` (float): start value
+- `b` (float): end value
+- `t` (float): interpolation factor (0 to 1)
+
+**Return value**: interpolated value (a + (b-a)*t)
+
+#### `Math.lerpcolor(color1, color2, t)`
+Linear interpolation of colors.
+
+**Arguments**:
+- `color1` (int): start color (RGBA format)
+- `color2` (int): end color (RGBA format)
+- `t` (float): interpolation factor (0 to 1)
+
+**Return value**: interpolated color (int)
+
+### Bit operations
+
+#### `Math.shift(value, shift)`
+Bit shift.
+
+**Arguments**:
+- `value` (int): value
+- `shift` (int): shift amount (positive: left shift, negative: right shift)
+
+**Return value**: shifted value
+
+#### `Math.bitcount(value)`
+Returns the number of set bits.
+
+**Arguments**:
+- `value` (int): value
+
+**Return value**: number of bits set to 1
+
+#### `Math.pot(value)`
+Returns the next power of two.
+
+**Arguments**:
+- `value` (int): input value
+
+**Return value**: smallest power of two greater than or equal to value
+
+#### `Math.msb(value)`
+Returns the position of the most significant bit.
+
+**Arguments**:
+- `value` (int): value
+
+**Return value**: index of the most significant bit
+
+#### `Math.lsb(value)`
+Returns the position of the least significant bit.
+
+**Arguments**:
+- `value` (int): value
+
+**Return value**: index of the least significant bit
+

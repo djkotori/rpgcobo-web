@@ -1,0 +1,65 @@
+---
+title: Make an Item Shop
+description: "Explains RPG-Cobo database settings and editing steps with the theme of making an item shop."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+
+This is created in the "<M code="e54c"/> Store" database. In addition to item shops, the store database can also create "skill groups" and "random treasure chests."
+
+First, open "R000: Town Item Shop" in the store.
+
+<div class="sspart">
+<SS src='docs/store-1.png' alt=''/>
+
+##### <M part="A"/> Name, icon, description
+Set the shop's name, icon, and description. Usually the shop name and icon are shown together.
+
+##### <M part="B"/> Store type
+Choose from "Item shop," "Skill group," "Random treasure chest," or "Choice."
+
+##### <M part="C"/> Lineup
+The list of items to place in the item shop. Editing features such as sorting and copy/paste are available.
+
+##### <M part="D"/> Properties of the selected item
+Properties for each item.
+</div>
+
+### <M code="f10d"/> Place the shop event
+Once the item shop data has been edited, place an event so you can actually do shopping.
+In the map editor's event tool, choose the context menu "<M code="e01e"/> Place Event => <M code="e54c"/> Shopkeeper".
+
+<SS src='docs/store-2.png' alt=''/>
+
+If you specify the "R000: Item shop" you edited earlier here, the item shop is complete! Try it in test play.
+
+<SS src='docs/store-3.png' alt=''/>
+
+### <M code="f10d"/> Item appearance conditions
+If you want to add items gradually to a single item shop as the game progresses, set the property's "appearance conditions."
+
+
+### <M code="f10d"/> How are other store types used?
+
+#### Skill group
+The "Skill group" store type defines a list of skills that can be selected from battle commands.
+The name "R001: White Magic" makes it obvious. A white mage's battle command skill group is called "White Magic."  
+Create any kind of skill groups you want, such as "special moves," "ninjutsu," or "summoning magic."
+
+#### Random treasure chest
+When obtaining items, it chooses from various items based on conditions and probabilities. It can be used in the following ways.
+
+- Make acquired items more valuable as the game progresses
+- Group random loot items dropped by enemies
+- Treasure chests that are randomly dropped on the map
+
+#### Choice
+You can set conditions for choices displayed by event commands and switch what is shown. It can be used in the following ways. This seems like a useful feature even for multi-scenario novel games.
+
+- Choices that do not appear unless a certain flag is set
+- Warp spell destinations
+

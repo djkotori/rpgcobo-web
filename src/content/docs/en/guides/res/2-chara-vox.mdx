@@ -1,0 +1,76 @@
+---
+title: Character Voxels
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of character voxels."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+This page explains how to edit the graphics for 3D characters such as the player and NPCs that appear on maps.
+
+Select "<M code="f089"/> Resources" in the activity bar and open "<M code="f11c"/> Character voxel." A list of character models is displayed.
+
+<div class="sspart">
+<SS src='docs/chara-vox-1.png' alt=''/>
+
+##### <M part="A"/> Resource list
+The character models are shown in a list. You can rotate the display by dragging with the right mouse button.  
+As a common operation in the resource editor, you can "copy," "paste," and "sort by drag and drop" for list items.
+The "x100" button at the bottom right lets you change the maximum number of resources.
+
+##### <M part="B"/> Properties
+
+- Name: Give this resource a name. **Note: this name is not displayed in the game. Therefore it is not subject to automatic translation, and the name should be entered in each language as needed.**
+- Model: Select the model to use from the folder where character models are stored.
+- Motion: Select from the animations available for the selected model. For example, humanoid models can use motions such as "Male 1, 2, 3," "Female 1, 2, 3," "Child," and "Elderly" depending on body type.
+- Palette: The list of colors used by the model is shown as a palette. You can easily make color variants by changing this palette.
+- Collision, size: Specify the shape and size of the character hitbox on the stage. It may be best not to change the default settings for standard humanoid characters.
+- Animation: Used to replace a specific animation.
+
+##### <M part="C"/> Preview
+You can preview the model, animation, and collision. The panel below contains UI for selecting and playing animations.
+</div>
+
+
+
+### <M code="f10d"/> Increase color variations
+By simply increasing the color variants of an existing character, you can very easily create more characters.  
+**RPG-Cobo's voxel characters are especially easy to make color variants for, and color variants make it easy to give them personality.**  
+The steps for making a color variant are as follows.
+
+<Steps>
+1. On the character you want to duplicate, choose "<M code="e14d"/> Copy" from the context menu.<SS src='docs/chara-vox-2.png' alt=''/>
+2. Paste it into an empty slot with "<M code="e14f"/> Paste"
+3. Edit the palette in the property panel and change the colors
+</Steps>
+
+##### <M code="ea24"/> Palette editing tips
+- Adjusting colors one by one is very difficult. Select a range in the palette and change the colors all at once with "color correction."
+- Each palette color has a setting called "material." Changing it can make the color feel rough, glossy, glittery, and more.
+
+
+### <M code="f10d"/> Create a completely original voxel character
+RPG-Cobo includes dozens of character models as preset materials. Even these models alone provide enough variety to make a fantasy RPG.  
+However, those assets may not be enough for people who want to create a game full of originality, or for those who want to design everything themselves.  
+
+**To edit voxels, choose "<M code="e745"/> Edit voxel" from the context menu in the list.**
+
+The open-source voxel editor MagicaVoxel will start, so rewrite the voxel however you like.
+After saving, return to the tool and choose "<M code="f053"/> Reload RPG-Cobo (Ctrl+F4)" from the file menu to apply the edited design.
+
+*Palettes are not reloaded automatically. If you use a different color, use the button to the right of the palette <M code="e5d2"/> and choose "Reset palette."*
+
+### <M code="f10d"/> Create original animations
+**RPG-Cobo character animations are created with Blender, a powerful open-source 3D tool.**
+To edit animations, choose "<M code="e566"/> Edit motion" from the context menu.
+Then Blender starts and opens the .blend file for animation editing. (*The first time may take a while because Blender must be downloaded.*)
+
+Edit the animation in Blender (*the operation is very complex and difficult, but do your best!*)
+When you finish editing the animation, choose "RPGCobo" => "Export Chara Motion" from Blender's menu.
+That updates the resource file, so just like the model, use "Reload RPG-Cobo" to reflect it.
+
+<SS src='docs/chara-vox-3.png' alt=''/>
+

@@ -1,0 +1,521 @@
+---
+title: "Native API: Graphics"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Graphics."
+---
+
+This document is a reference for SakanaGL's GPU rendering APIs defined in `core/api/ssapi_graphics.cpp`.
+
+It provides OpenGL/OpenGL ES/WebGL-based 3D graphics rendering, shader management, textures, frame buffers, render states, lighting, particle systems, and more.
+
+---
+
+## Contents
+
+1. [Global functions](#global-functions)
+   - [System information](#system-information)
+   - [Rendering control](#rendering-control)
+   - [Render targets](#render-targets)
+   - [Render states](#render-states)
+   - [Matrix operations](#matrix-operations)
+   - [Buffer binding](#buffer-binding)
+   - [Draw commands](#draw-commands)
+   - [Viewport](#viewport)
+   - [Occlusion query](#occlusion-query)
+   - [Shader management](#shader-management)
+   - [Lighting](#lighting)
+   - [Other](#other)
+2. [Classes](#classes)
+   - [VertexBufferStream](#vertexbufferstream)
+   - [VertexBuffer](#vertexbuffer)
+   - [IndexBuffer](#indexbuffer)
+   - [PixelBuffer](#pixelbuffer)
+   - [ClearParam](#clearparam)
+   - [SamplerState](#samplerstate)
+   - [RenderStates](#renderstates)
+   - [Texture](#texture)
+   - [RenderBuffer](#renderbuffer)
+   - [FrameBuffer](#framebuffer)
+   - [ShaderSource](#shadersource)
+   - [SKFXTechnique](#skfxtechnique)
+   - [SKFXEffect](#skfxeffect)
+   - [Material](#material)
+   - [ShadowMap](#shadowmap)
+   - [Light](#light)
+   - [Fog](#fog)
+   - [Environment](#environment)
+   - [Sprite](#sprite)
+   - [ParticleEmitter](#particleemitter)
+   - [ParticleGroup](#particlegroup)
+   - [OcclusionQuery](#occlusionquery)
+   - [PolygonFace](#polygonface)
+   - [Bone / BoneParts](#bone--boneparts)
+   - [Animation / AnimationState](#animation--animationstate)
+   - [ShapeKeyList / ShapeState](#shapekeylist--shapestate)
+   - [SK3DRenderNode / SK3DDisplayList](#sk3drendernode--sk3ddisplaylist)
+   - [Other graphics classes](#other-graphics-classes)
+
+---
+
+## Global functions
+
+### System information
+
+#### `skGetSupportedTextureFormats()`
+Gets the list of supported texture compression formats.
+
+**Return value**: array of strings (for example: `["etc2", "dxt", "astc"]`)
+
+**Supported formats**:
+- `"etc2"`: ETC2 (Android, iOS, and so on)
+- `"etc1"`: ETC1 (older Android)
+- `"pvr1"`: PVRTC (iOS)
+- `"dxt"`: DXT/S3TC (Windows, consoles)
+- `"astc"`: ASTC (latest devices)
+
+#### `skIsGLEnabled()`
+Returns whether an OpenGL context is enabled.
+
+**Return value**: bool
+
+---
+
+### Rendering control
+
+#### `skFlush([gpuFlush])`
+Flushes drawing commands.
+
+**Arguments**:
+- `gpuFlush` (bool, optional): whether to synchronize the GPU (default: `false`)
+
+**Description**:
+- A normal flush ensures that buffered sprites and particles being written are definitely drawn.
+- If `gpuFlush = true`, waits for GPU completion (note the performance cost).
+
+#### `skFinish()`
+Waits for GPU drawing to finish.
+
+**Description**: Calls `glFinish()` and guarantees completion of all draw commands (large performance impact).
+
+#### `skFence([option])`
+Creates a GPU fence object.
+
+**Arguments**:
+- `option` (int, optional): fence option
+
+**Return value**: fence ID (int)
+
+**Description**: Used to check GPU completion asynchronously.
+
+#### `skWaitFence(fenceId[, timeoutMs])`
+Waits for a fence to complete.
+
+**Arguments**:
+- `fenceId` (int): fence ID
+- `timeoutMs` (int, optional): timeout in milliseconds (default: 1)
+
+**Return value**: completion status (int)
+
+---
+
+### Render targets
+
+#### `skClearScreen([clearParam])`
+#### `skClearScreen([clearMask])`
+Clears the screen or render target.
+
+**Arguments**:
+- `clearParam` (ClearParam, optional): clear parameters
+- `clearMask` (int, optional): clear mask
+
+**Clear mask constants**:
+- `SK_CLEAR_COLOR` (1): color buffer
+- `SK_CLEAR_DEPTH` (2): depth buffer
+- `SK_CLEAR_STENCIL` (4): stencil buffer
+
+**Example**:
+```javascript
+// Clear color and depth
+skClearScreen(SK_CLEAR_COLOR | SK_CLEAR_DEPTH);
+
+// Use ClearParam
+local cp = ClearParam(0.2, 0.3, 0.4, 1.0);
+skClearScreen(cp);
+```
+
+#### `skClearParam(clearParam)`
+Sets the default clear parameters.
+
+**Arguments**:
+- `clearParam` (ClearParam): clear parameters
+
+#### `skSetRenderTarget(renderTarget)`
+Sets the render target. Specify `null` to return to the screen (swap chain).
+
+**Arguments**:
+- `renderTarget` (RenderTarget/Texture/FrameBuffer/null): render target
+
+**Return value**: previous render target
+
+**Example**:
+```javascript
+local tex = Texture();
+tex.create(512, 512, SK_RGBA8, 1);
+
+local oldRT = skSetRenderTarget(tex);
+// Draw to the texture...
+skSetRenderTarget(oldRT);  // Restore
+```
+
+#### `skGetRenderTarget()`
+Gets the current render target.
+
+**Return value**: render target
+
+#### `skReadPixels(x, y, width, height, image)`
+Reads pixels from the render target.
+
+**Arguments**:
+- `x`, `y` (int): start coordinates to read from
+- `width`, `height` (int): read size (maximum 4096x4096)
+- `image` (RGBAImage): destination image
+
+**Return value**: `image`
+
+**Description**: Transfers image data from the current render target to CPU memory (slow).
+
+---
+
+### Render states
+
+#### `skSetRenderStates(renderStates)`
+Sets render states in bulk.
+
+**Arguments**:
+- `renderStates` (RenderStates): render states
+
+#### `skGetRenderStates([renderStates])`
+Gets the current render states.
+
+**Arguments**:
+- `renderStates` (RenderStates, optional): destination object
+
+**Return value**: `RenderStates` object
+
+#### `skPushRenderStates()`
+Pushes the current render states onto the stack.
+
+**Return value**: `true` if successful
+
+**Description**: The stack depth is limited (usually around 64).
+
+#### `skPopRenderStates()`
+Pops and restores render states from the stack.
+
+**Return value**: `true` if successful
+
+#### `skSetRenderState(stateType, value[, value2, value3, value4])`
+Sets an individual render state.
+
+**Arguments**:
+- `stateType` (int): state type
+- `value`, `value2`, ... (int/float): values
+
+**Description**: If multiple values are specified, they are set as `float[]`.
+
+#### `skSetPMAMode(mode)`
+Sets premultiplied alpha mode.
+
+**Arguments**:
+- `mode` (int): PMA mode
+
+---
+
+### Matrix operations
+
+#### `skSetMatrix(matrixType, matrix)`
+Sets a matrix of the specified type.
+
+**Arguments**:
+- `matrixType` (int): matrix type (`SK_WORLD`, `SK_VIEW`, `SK_PROJECTION`)
+- `matrix` (Matrix): matrix to set
+
+**Example**:
+```javascript
+local worldMat = Matrix.fromTranslate(10, 5, 0);
+skSetMatrix(SK_WORLD, worldMat);
+```
+
+#### `skGetMatrix(matrixType, matrix)`
+Gets a matrix of the specified type.
+
+**Arguments**:
+- `matrixType` (int): matrix type
+- `matrix` (Matrix): destination matrix
+
+#### `skMultMatrix(matrixType, matrix)`
+Multiplies the specified matrix type from the right.
+
+**Arguments**:
+- `matrixType` (int): matrix type
+- `matrix` (Matrix): matrix to multiply
+
+**Description**: `currentMatrix = currentMatrix * matrix`
+
+#### `skInitMatrix(matrixType)`
+Sets the specified matrix type to the identity matrix.
+
+**Arguments**:
+- `matrixType` (int): matrix type
+
+#### `skPushMatrix(matrixType[, matrixType2, ...])`
+Pushes matrices onto the stack.
+
+**Arguments**:
+- `matrixType` (int): matrix type (multiple can be specified)
+
+**Description**: Multiple matrices can be pushed at once.
+
+#### `skPopMatrix(matrixType[, matrixType2, ...])`
+Pops matrices from the stack.
+
+**Arguments**:
+- `matrixType` (int): matrix type (multiple can be specified)
+
+#### `skBillboardMatrix([bank])`
+Sets a billboard matrix.
+
+**Arguments**:
+- `bank` (float, optional): bank angle (radians)
+
+**Description**: Turns the world matrix toward the camera. Scale components are preserved.
+
+**Example**:
+```javascript
+// Before drawing particles and similar objects
+skPushMatrix(SK_WORLD);
+skSetMatrix(SK_WORLD, particleMat);
+skBillboardMatrix();  // Face the camera
+// ... draw ...
+skPopMatrix(SK_WORLD);
+```
+
+#### `skSetCamera(camera)`
+Sets the camera view and projection matrices together.
+
+**Arguments**:
+- `camera` (Camera): camera object
+
+**Description**: Runs `skSetMatrix(SK_VIEW, camera.viewmat)` and `skSetMatrix(SK_PROJECTION, camera.prjmat)`.
+
+---
+
+### Buffer binding
+
+#### `skBindVertexBuffer(vertexBuffer)`
+#### `skBindVertexBuffer(vertexBufferArray)`
+Binds a vertex buffer.
+
+**Arguments**:
+- `vertexBuffer` (VertexBuffer): vertex buffer
+- `vertexBufferArray` (array): array of vertex buffers
+
+**Description**: Multiple vertex buffers can be bound at the same time (multi-stream).
+
+#### `skBindEnvironment(environment)`
+Binds environment settings.
+
+**Arguments**:
+- `environment` (Environment): environment object
+
+**Description**: Passes environment maps, ambient light, and so on to shaders.
+
+#### `skBindBonePoses(boneArray)`
+Binds an array of bone matrices.
+
+**Arguments**:
+- `boneArray` (array): array of `Bone` objects, or `null` to clear
+
+**Description**: Sends bone transforms for skinned mesh animation to the GPU.
+
+#### `skCalculateBonePoses(boneArray, animationState[, physicsMatrix[, reflectDynamic]])`
+Calculates bone poses from the animation state (linear interpolation).
+
+**Arguments**:
+- `boneArray` (array): array of `Bone` objects
+- `animationState` (AnimationState): animation state
+- `physicsMatrix` (Matrix, optional): transform matrix for physics
+- `reflectDynamic` (int, optional): whether to reflect on dynamic bones (default: 0)
+
+**Return value**: `true` if successful
+
+**Description**:
+- Evaluates the current frame of `animationState` and updates bone matrices.
+- Blends with animations that are fading out.
+- If a physics body exists, it can be reflected in the rigid body.
+
+#### `skCalculateBonePosesSlerp(boneArray, animationState[, physicsMatrix[, reflectDynamic]])`
+Calculates bone poses from the animation state (spherical linear interpolation).
+
+**Arguments**: same as `skCalculateBonePoses`
+
+**Description**: Uses spherical linear interpolation (slerp) for rotations. It is smoother but slightly slower.
+
+---
+
+### Draw commands
+
+#### `skDrawIndexBuffer(material, mode, indexBuffer[, offset[, length[, instanceCount[, vertexOffset]]]])`
+Draws an index buffer.
+
+**Arguments**:
+- `material` (Material): material
+- `mode` (int): primitive mode (`SK_TRIANGLES`, `SK_LINES`, etc.)
+- `indexBuffer` (IndexBuffer): index buffer
+- `offset` (int, optional): start index (default: 0)
+- `length` (int, optional): number of indices to draw (default: entire buffer)
+- `instanceCount` (int, optional): number of instances (default: 0 = normal draw)
+- `vertexOffset` (int, optional): vertex offset (default: 0)
+
+**Return value**: `true` if successful
+
+**Primitive mode constants**:
+- `SK_POINTS`: points
+- `SK_LINES`: lines
+- `SK_LINE_STRIP`: line strip
+- `SK_LINE_LOOP`: line loop
+- `SK_TRIANGLES`: triangles
+- `SK_TRIANGLE_STRIP`: triangle strip
+- `SK_TRIANGLE_FAN`: triangle fan
+
+#### `skDrawSprite(sprite[, x, y])`
+#### `skDrawSprite(sprite, x, y, width, height)`
+Draws a sprite.
+
+**Arguments**:
+- `sprite` (Sprite): sprite
+- `x`, `y` (float, optional): draw position
+- `width`, `height` (float, optional): draw size
+
+**Description**:
+- If no arguments are given, draws using the position and size of `sprite.bnd`.
+- If `x, y` are specified, offsets while keeping the size of `sprite.bnd`.
+- If `x, y, width, height` are specified, fully overrides it.
+
+#### `skDrawSprites(...sprites)`
+#### `skDrawSprites(spriteArray)`
+Draws multiple sprites.
+
+**Arguments**:
+- `sprites` (Sprite, variadic): sprites
+- `spriteArray` (array): array of sprites
+
+**Description**: Draws only sprites that are visible and have `bnd` set.
+
+#### `skDrawTextBox(textbox)`
+Draws a text box.
+
+**Arguments**:
+- `textbox` (TextBox): text box
+
+#### `skDrawParticleGroup(particleGroup)`
+Draws a particle group.
+
+**Arguments**:
+- `particleGroup` (ParticleGroup): particle group
+
+#### `skDrawParticleGroups(...particleGroups)`
+Draws multiple particle groups.
+
+**Arguments**:
+- `particleGroups` (ParticleGroup/array, variadic): particle groups or arrays
+
+#### `skDrawPolygonMesh(vertexBuffer, boneArray, polygonFaces[, visibleMask[, worldMatrix[, material]]])`
+Draws a polygon mesh in bulk.
+
+**Arguments**:
+- `vertexBuffer` (VertexBuffer/array): vertex buffer
+- `boneArray` (array): bone array (use `null` if not needed)
+- `polygonFaces` (PolygonFace/array): polygon faces
+- `visibleMask` (int, optional): visible mask (default: -1 = all)
+- `worldMatrix` (Matrix, optional): world matrix
+- `material` (Material, optional): forced material
+
+**Description**:
+- Performs binding and drawing of vertex buffers, bones, and faces together.
+- An optimized drawing path for performance.
+
+---
+
+### Viewport
+
+#### `skSetViewport(x, y, width, height)`
+#### `skSetViewport([x, y, width, height])`
+#### `skSetViewport()`
+Sets the viewport.
+
+**Arguments**:
+- `x`, `y` (int): top-left viewport coordinates
+- `width`, `height` (int): viewport size
+- `array` (array): `[x, y, width, height]`
+- With no arguments, resets to the full render target
+
+#### `skGetViewport(array)`
+Gets the current viewport.
+
+**Arguments**:
+- `array` (array): array to store the result (resized to 4 elements)
+
+**Description**: Stores `[x, y, width, height]` in `array[0..3]`.
+
+---
+
+### Occlusion query
+
+#### `skBeginQuery(occlusionQuery)`
+Starts an occlusion query.
+
+**Arguments**:
+- `occlusionQuery` (OcclusionQuery): query object
+
+#### `skEndQuery()`
+Ends the occlusion query.
+
+#### `skQueryResult(occlusionQuery[, mode])`
+Gets the result of an occlusion query.
+
+**Arguments**:
+- `occlusionQuery` (OcclusionQuery): query object
+- `mode` (int, optional): retrieval mode (default: 0)
+
+**Return value**: query result (int, such as rendered pixel count)
+
+**Description**: Waits if the result is not yet available.
+
+---
+
+### Shader management
+
+#### `skSetShaderDefine(defineString)`
+Sets shader preprocessor defines.
+
+**Arguments**:
+- `defineString` (string): `#define` string
+
+**Description**: Applied the next time the shader is compiled.
+
+**Example**:
+```javascript
+skSetShaderDefine("#define USE_SHADOWS 1\n#define MAX_LIGHTS 4\n");
+```
+
+#### `skSetDefaultSpriteShader(shaderSource)`
+Sets the default sprite shader.
+
+**Arguments**:
+- `shaderSource` (ShaderSource): shader source
+
+#### `skGetDefaultSpriteShader()`
+Gets the default sprite shader.
+
+**Return value**: `ShaderSource` or `null`
+

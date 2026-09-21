@@ -1,0 +1,49 @@
+---
+title: What Are Resources?
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of what resources are."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+Resources are the materials used in a game, such as graphics and sound.  
+RPG-Cobo provides rich features so that both creators who want to build resources from scratch and hobby users who only want to tweak them a little can easily make their own materials and add character to them.
+
+First, select "<M code="f089"/> Resources" from the activity bar. A list of the resource types that can be edited in RPG-Cobo will appear.
+
+<div class="sspart">
+<SS src='docs/res-intro-1.png' alt='' minscale={0.7}/>
+
+### <M code="f10d"/> Resource types
+In the resource side menu, double-clicking an item in the list opens the editor for that resource.
+
+|Resource name|Usage frequency|Overview of the tool|
+|--------------------------|------------|--------------------------|
+|<M code="f11c"/>Character voxel|★★★★☆|Includes humanoid characters as well as animals, treasure chests, and more.|
+|<M code="f11a"/>Equipment voxel|★★☆☆☆|Weapons and shields equipped by the player and shown during battle.|
+|<M code="e859"/>Enemy picture|★★★★★|Enemy images. Detailed settings such as animation are also possible.|
+|<M code="e416"/>Event picture|★★☆☆☆|Images that can be displayed with event commands.|
+|<M code="e3e7"/>Effect|★★★☆☆|Effects that can be shown in battles and stages. Can also be placed as events.|
+|<M code="f11d"/>Map voxel|★★★★★|Block resources that form the basis of map design.|
+|<M code="ea09"/>Map asset|★★★☆☆|Map materials such as buildings that can be placed with one touch while editing maps.|
+|<M code="e545"/>Icon|★★★☆☆|Icons for items, skills, attributes, and more.|
+|<M code="e1bd"/>UI|★★☆☆☆|Change screen design and layout.|
+|<M code="e521"/>BGM|★★★☆☆|Edit music used in the game.|
+|<M code="e7f4"/>Sound effects|★★★☆☆|Sounds for UI and 3D audio.|
+|<M code="e029"/>Voice|★★★☆☆|AI-powered voice generation is available. Try it!|
+</div>
+
+### <M code="f10d"/> By the way, what is voxel?
+In RPG-Cobo, all major 3D models are made in a format called "voxel," but many people may not be familiar with the term.  
+A voxel is like 3D pixel art, created by extending pixel art directly into 3D.
+Compared with the mainstream polygon approach, it has the disadvantage that free-form shapes are harder to make, but the biggest benefit is that **you can create 3D models with the same ease as drawing pixel art**.
+
+<SS src='docs/res-intro-2.png' alt=''/>
+***The screenshot on the left shows voxels being edited with a tool called MagicaVoxel. RPG-Cobo can work seamlessly with MagicaVoxel for voxel editing.***
+
+##### <M code="ea24"/> First, try changing the voxel palette
+Even though voxel modeling is easier than polygon modeling, that does not mean anyone can master it immediately.  
+Start by making a color variant of an existing character.  
+We will explain this in the next page, "Character voxel."
+

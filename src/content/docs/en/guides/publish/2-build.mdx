@@ -1,0 +1,75 @@
+---
+title: How to Build
+description: "Explains the build and distribution process for RPG-Cobo projects with the theme of how to build."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+
+By building, you can turn the game into a distributable file format.
+[After account login](/guides/finish/1-finish-intro)
+and then click "<M code="ef48"/> Build" at the bottom of the activity bar and choose the "<M code="ef48"/> Build dialog." The following dialog appears.
+
+<Aside>
+The newly registered "Free license" only supports output for web browsers (WebGL).
+All explanations on this page are for the case of exporting WebGL with the Free license.
+</Aside>
+
+<div class="sspart">
+<SS src='docs/build-1.png' alt=''/>
+
+##### <M part="A"/> Build target
+Specify the platform to output in the build. You can choose WebGL, Windows, Android, or iOS.
+
+##### <M part="B"/> Output folder name
+Enter the folder name where the build result will be output. It will be output to the following folder:  
+**project-folder/build/output-folder-name**  
+*Note: For security reasons, this output folder setting is fixed and cannot be changed.*
+
+##### <M part="C"/> Zip compression progress
+Shows the progress of zip compression for upload during the build.
+If the zip size exceeds the limit, the build cannot be performed. **In this case, you need to remove large unused files from resources and similar items.**
+
+##### <M part="D"/> Build execution button
+Enabled when the build is ready, and clicking it starts the build.
+</div>
+
+### <M code="f10d"/> Running the build
+- When you open the build dialog, project compression starts automatically. Once compression is complete, the "Build" button becomes enabled, so click it. The build execution dialog appears.
+   <SS src='docs/build-2.png' alt=''/>
+- The build process uploads the compressed project to the build server and then downloads the result of the build execution on the server.
+   Because communication with the server is always involved, make sure your internet connection is stable while the build is running.
+- Build time depends on the project size and internet speed, but in normal cases it completes within one minute.
+- Once built, files are output to the destination folder as shown below.
+<SS src='docs/build-3.png' alt=''/>
+
+
+### <M code="f075"/> About the maximum build size
+With the Free license, the export size limit when the project is zip-compressed during build is **100 MB**.  
+Unless the game is extremely large, it should not exceed 100 MB,
+but if it does, check the following items before considering buying a license.
+In most cases, a small number of huge files is what is pushing up the size.
+
+- BGM: Check whether there are long music files with a high bitrate. Normally, each song should be around 2 to 5 MB.
+- Sound effects and voice: Check whether there are uncompressed WAV files. Encode long sound effects as ogg.
+- Monster images and event images: High-resolution 32-bit PNG files with alpha become very large, so convert them to WebP. Using lossy compression is even more effective.
+
+### <M code="f11f"/> About build tickets
+With the Free license, you can build up to twice per day.  
+If you want more builds, consider **buying a license** or **buying build tickets**.
+
+
+### <M code="f10d"/> Test play the build result
+Let's test-play the built game to confirm that it works properly.
+**Especially when exporting to a web browser, there is a chance of problems such as heavy maps or broken plugin behavior.** Make sure to check carefully before publishing.
+
+##### <M code="eb9b"/> Test play on Windows
+If you exported to a web browser, there is a batch file called webserv.bat in the output folder, so run it. A simple web server will start.
+Then the browser opens automatically, accesses http://localhost:7070, and you can test play.
+
+##### <M code="eb9b"/> Test play on smartphones
+*At present, smartphone test play over a LAN environment is not supported. This is because WebAssembly requires HTTPS communication.*  
+*We plan to solve this issue in a future update.*
+

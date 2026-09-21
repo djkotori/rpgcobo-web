@@ -1,0 +1,104 @@
+---
+title: Create a Map
+description: "Explains RPG-Cobo map creation and related setup points with the theme of creating maps."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+Come on, let's start making the most enjoyable part of RPG development: maps!
+The map editor is the editor with the most features concentrated into RPG-Cobo, and for that reason it can also be the most difficult tool. Take your time and learn its operations little by little.
+
+First, select "<M code="f11e"/> Map" from the activity bar on the left. The following side menu appears.
+
+<div class="sspart">
+<SS src='docs/map-intro-1.png' alt=''/>
+
+##### <M part="A"/> Map group list
+Map groups are used to organize the many maps you create.  
+
+- "<M code="e866"/> Template" is a special group. Maps placed in this group can be selected in the "Template selection" of the "Create new map" dialog.
+
+##### <M part="B"/> Map list
+Maps belonging to the selected map group are displayed in a list together with thumbnails of the overall map.  
+From the right-click context menu, you can move groups, change IDs, duplicate maps, and more.
+</div>
+
+### <M code="f10d"/> Open a map
+Let's open "**M001 First Map**" from the "<M code="f11e"/> Map" side menu. A screen like the one below appears. This is the map editor.
+
+<div class="sspart">
+<SS src='docs/map-intro-2.png' alt=''/>
+
+##### <M part="A"/> Map canvas
+The map editor canvas is displayed in 3D, and you can freely change the viewpoint with the mouse or a laptop trackpad.
+
+
+##### <M part="B"/> Top toolbar
+Contains tools for switching display methods and showing information.
+
+- <M code="e569"/> : Show cursor coordinates
+- <M code="ebca"/> : Toggle collision display
+- <M code="e3ec"/> : Toggle grid display over blocks
+- <M code="e40b"/> : Toggle weather and background display
+- <M code="e883"/> : Toggle preview of back-face culling in map settings
+- <M code="e88e"/> : Toggle display of information such as polygon count
+- Render settings menu: Switch rendering settings such as time of day and location.
+
+##### <M part="C"/> Toolbar
+A toolbar with tools for creating maps. More on that later.
+
+##### <M part="D"/> Tool panel
+Various settings are shown for the selected tool.
+</div>
+
+### <M code="f10d"/> Map editor tool list
+
+You create maps by switching between the following tools in the map editor. We will explain how to use them on the next pages, but here is an introduction to what tools are available.
+
+|Tool name|Usage frequency|Overview of the tool|
+|--------------------------|------------|--------------------------|
+|<M code="e3c2"/>Selection tool|★★★★☆|Tool for selecting areas of the map and moving/copying/pasting them. Also used for various map settings.|
+|<M code="e82f"/>Event tool|★★★★★|Tool for placing and editing events.|
+|<M code="e564"/>Terrain tool|★★★☆☆|Tool for dramatically drawing differences in map height. Use this first to build the rough structure of the map.|
+|<M code="f119"/>Pen tool|★★★★★|Basic tool for painting, erasing, and adding terrain blocks.|
+|<M code="f084"/>Water tool|★★☆☆☆|Tool that turns painted terrain into water. Painting a wall can even create a waterfall.|
+|<M code="e3e9"/>Carpet tool|★☆☆☆☆|Tool for placing carpets over floors. For finishing touches.|
+|<M code="f205"/>Flower tool|★★☆☆☆|Tool for placing flower details over floors. For finishing touches.|
+|<M code="ea63"/>Nature tool|★★★★☆|Tool for placing natural objects such as trees, rocks, and spider webs.|
+|<M code="effe"/>Exterior tool|★★★☆☆|Tool for placing doors, lights, and other decorative blocks on outdoor maps.|
+|<M code="ead2"/>Interior tool|★★★★☆|Tool for placing doors, lights, and other decorative blocks on indoor maps.|
+|<M code="e62a"/>Column tool|★★★☆☆|Tool for placing column-like blocks whose height and width can be freely changed.|
+|<M code="f1a1"/>Slope tool|★★★☆☆|Tool for placing slopes and stairs. Width and height can be changed freely.|
+|<M code="f201"/>Roof tool|★★★☆☆|Tool for easily placing roofs of many shapes.|
+|<M code="e3ad"/>Crack tool|★★☆☆☆|Tool for adding cracks and similar patterns to create ruins. For finishing touches.|
+|<M code="e3ad"/>No-entry tool|★★☆☆☆|Tool for specifying no-entry areas that do not affect appearance.|
+|<M code="e8a7"/>Asset tool|★★★☆☆|Tool for placing registered buildings.|
+
+### <M code="f10d"/> Create a new map
+
+Click the "<M code="e5d2"/>" button at the top right of the "<M code="f11e"/> Map" side menu and choose "⊕ New map" to show the new map dialog.
+
+<SS src='docs/map-intro-3.png' alt=''/>
+
+The new map creation dialog appears.  
+After entering the necessary information, press the "Confirm" button.
+
+<div class="sspart">
+<SS src='docs/map-intro-4.png' alt=''/>
+
+##### <M part="A"/> Map ID
+Each map gets an ID from M000 to M999. Here you choose the ID to assign to the new map. *The default available IDs are already assigned.*
+
+##### <M part="B"/> Map group
+You can specify a map group for organizing maps. Map groups can be moved freely later.
+
+##### <M part="C"/> Template selection
+Choose the template that is closest to the map you want to make.
+</div>
+
+---
+
+Now let's start building the map that was created!
+

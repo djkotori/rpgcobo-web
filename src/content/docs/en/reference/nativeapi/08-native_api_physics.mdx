@@ -1,0 +1,263 @@
+---
+title: "Native API: Physics Simulation"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Physics Simulation."
+---
+
+This document is a reference for SakanaGL's 3D physics simulation and collision detection API (`core/api/ssapi_physics3d.cpp`).
+
+## Overview
+
+The SakanaGL Physics3D API provides 3D physics simulation features based on Bullet Physics. It gives access to rigid bodies, collision shapes, constraints, ray casts, contact tests, and other physics operations.
+
+---
+
+## Contents
+
+- [Global functions](#global-functions)
+- [b3Result](#b3result) - collision result
+- [b3World](#b3world) - physics world
+- [b3Shape](#b3shape) - collision shape
+- [b3Body](#b3body) - rigid body
+- [b3Constraint](#b3constraint) - physics constraint
+- [b3CompoundChild](#b3compoundchild) - child element of a compound shape
+- [b3ConcaveInterface](#b3concaveinterface) - custom concave interface
+- [Constants](#constants)
+- [Examples](#examples)
+
+---
+
+## Global functions
+
+### `skPhysicalPoseToBoneList`
+
+```javascript
+skPhysicalPoseToBoneList(Matrix, Array)
+```
+
+**Description**: Applies physics results to a bone array. This is physics synchronization for skeletal animations.
+
+**Arguments**:
+- `Matrix`: global transform matrix
+- `Array`: array of `Bone` objects
+
+**Return value**: none
+
+### `skBonePoseToPhysicalList`
+
+```javascript
+skBonePoseToPhysicalList(Matrix, Array[, nondynamic])
+```
+
+**Description**: Reflects the pose of a bone array into the physics world.
+
+**Arguments**:
+- `Matrix`: global transform matrix
+- `Array`: array of `Bone` objects
+- `nondynamic` (int, optional): flag to skip non-dynamic bones
+
+**Return value**: none
+
+### `skContactTest`
+
+```javascript
+skContactTest(mode, srcShape, srcMatrix, dstShape, dstMatrix[, b3Result]) -> b3Result
+```
+
+**Description**: Runs a contact test between two shapes.
+
+**Arguments**:
+- `mode` (int): test mode (`SK_TEST_ALL` or `SK_TEST_CLOSEST`)
+- `srcShape` (b3Shape): source shape
+- `srcMatrix` (Matrix): source transform matrix
+- `dstShape` (b3Shape): target shape
+- `dstMatrix` (Matrix): target transform matrix
+- `b3Result` (optional): destination for results (uses a global instance if omitted)
+
+**Return value**: `b3Result` - collision result
+
+### `skConvexSweepTest`
+
+```javascript
+skConvexSweepTest(mode, shape, fromMatrix, toMatrix, dstShape, dstMatrix[, b3Result]) -> b3Result
+```
+
+**Description**: Runs a convex sweep test (collision detection along a movement path).
+
+**Arguments**:
+- `mode` (int): test mode
+- `shape` (b3Shape): convex shape
+- `fromMatrix` (Matrix | Vector3D): start position
+- `toMatrix` (Matrix | Vector3D): end position
+- `dstShape` (b3Shape): target shape
+- `dstMatrix` (Matrix): target transform matrix
+- `b3Result` (optional): destination for results
+
+**Return value**: `b3Result` - collision result
+
+---
+
+## b3Result
+
+A class that stores the results of collision detection and ray casts. It is iterable, allowing multiple collision results to be processed in sequence.
+
+### Constructor
+
+```javascript
+b3Result([capacity])
+```
+
+**Arguments**:
+- `capacity` (int, optional): result storage capacity (default: 16, max: 1024)
+
+### Properties
+
+**Read-only**:
+- `bodya` (b3Body | null): collided body A
+- `bodyb` (b3Body | null): collided body B
+- `pointa` (Vector3D): collision point on body A
+- `pointb` (Vector3D): collision point on body B
+- `normal` (Vector3D): collision normal vector
+- `reflect` (Vector3D): reflection vector
+- `surfnormal` (Vector3D | null): polygon surface normal (if available)
+- `fraction` (float): collision distance for ray casts (0.0 to 1.0)
+- `partida` (int): part ID of body A
+- `partidb` (int): part ID of body B
+- `trida` (int): triangle index of body A
+- `tridb` (int): triangle index of body B
+- `groupa` (int): collision group of body A
+- `groupb` (int): collision group of body B
+- `length` (int): total number of collision results
+- `index` (int): current index (read/write)
+
+### Methods
+
+##### `len()`
+Gets the total number of collision results.
+
+**Return value**: int
+
+##### `getReferences([Array])`
+Collects the `ref` properties of collided bodies.
+
+**Arguments**:
+- `Array` (optional): reuse an existing array
+
+**Return value**: Array - array of body references
+
+##### `dotSurfaceNormal()`
+Calculates the dot product of the normal vector and the surface normal.
+
+**Return value**: float (-1.0 to 1.0, or 1.0 if the surface normal is unavailable)
+
+### Iteration
+
+`b3Result` is iterable with a for-in loop:
+
+```javascript
+let result = b3Result();
+world.rayTest(SK_TEST_ALL, from, to, -1, -1, result);
+for(let i, v in result) {
+	println("hit: ", v.bodya, " at ", v.pointa);
+}
+```
+
+---
+
+## b3World
+
+A class representing a physics simulation space. It manages rigid bodies and constraints, and performs simulation updates and collision checks.
+
+### Constructor
+
+```javascript
+b3World([Rect3D[, flags]])
+```
+
+**Arguments**:
+- `Rect3D` (optional): world space range (default: from 0,0,0 to 1000x1000x1000)
+- `flags` (int, optional): initialization flags
+
+### Methods
+
+##### `setGravity(gravity)`
+Sets the gravity vector.
+
+**Arguments**:
+- `gravity` (float | Vector3D): Y-axis gravity (if float) or a vector
+
+##### `getGravity()`
+Gets the gravity vector.
+
+**Return value**: Vector3D
+
+##### `numBodies()`
+Gets the number of rigid bodies in the world.
+
+**Return value**: int
+
+##### `numConstraints()`
+Gets the number of constraints in the world.
+
+**Return value**: int
+
+##### `clear()`
+Clears the world (deletes all rigid bodies and constraints).
+
+##### `addBody(b3Body)`
+Adds a rigid body to the world.
+
+**Arguments**:
+- `b3Body`: rigid body to add
+
+##### `removeBody(b3Body)`
+Removes a rigid body from the world.
+
+**Arguments**:
+- `b3Body`: rigid body to remove
+
+##### `getBodies(Array[, mask])`
+Collects rigid bodies in the world.
+
+**Arguments**:
+- `Array`: destination array
+- `mask` (int, optional): collision group mask (default: -1)
+
+**Return value**: Array - array of rigid bodies
+
+##### `addConstraint(b3Constraint)`
+Adds a constraint to the world.
+
+**Arguments**:
+- `b3Constraint`: constraint to add
+
+##### `removeConstraint(b3Constraint)`
+Removes a constraint from the world.
+
+**Arguments**:
+- `b3Constraint`: constraint to remove
+
+##### `rayTest(mode, from, to[, group[, mask[, b3Result]]])`
+Runs a ray cast test.
+
+**Arguments**:
+- `mode` (int): `SK_TEST_ALL` or `SK_TEST_CLOSEST`
+- `from` (Vector3D): ray start
+- `to` (Vector3D): ray end
+- `group` (int, optional): collision group (default: -1)
+- `mask` (int, optional): collision mask (default: -1)
+- `b3Result` (optional): destination for results
+
+**Return value**: b3Result
+
+##### `convexSweepTest(mode, b3Shape, fromMatrix, toMatrix[, group[, mask[, b3Result]]])`
+Runs a convex sweep test.
+
+**Arguments**:
+- `mode` (int): test mode
+- `b3Shape`: convex shape
+- `fromMatrix` (Matrix | Vector3D): start transform
+- `toMatrix` (Matrix | Vector3D): end transform
+- `group` (int, optional): collision group
+- `mask` (int, optional): collision mask
+- `b3Result` (optional): destination for results
+

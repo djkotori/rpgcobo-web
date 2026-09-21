@@ -1,0 +1,52 @@
+---
+title: Pricing
+description: "An overview of RPG-Cobo pricing plans, licenses, and notes to check before purchasing."
+template: splash
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { default as PriceList} from '/src/components/PriceList.astro';
+
+## <M code="e853"/> First, register as a user!
+
+To purchase a license, you must first register as an RPG-Cobo user. **Just by registering, you will receive a Free license automatically**, so please use the link below to register!
+
+<LinkButton href="https://user.rpg-cobo.com" variant="secondary" target="_blank"><M code="e879"/>RPG-Cobo User Site</LinkButton>
+
+
+## <M code="e7af"/> License list
+<Aside type="caution">
+Because we are currently in beta testing, license purchases are not available. Please wait for the early access launch planned for August 2026.
+</Aside>
+
+<PriceList/>
+
+## <M code="e39f"/> Which license should I choose?
+
+<CardGrid stagger>
+	<Card title="I just want to try it out" icon="pencil">
+		- In most cases, a Free license is enough. If you do not need to build, you do not even need to register as a user.
+	</Card>
+	<Card title="For solo creators" icon="pencil">
+		- If you want to make freeware, a Free license is often enough.  
+		  There are limits on the number of builds and other usage details, so if you want to use it more extensively, consider purchasing an Indie license.
+		- If you are thinking about monetization, an Indie license is recommended. Since it allows Windows builds, you can also release to platforms such as Steam.
+	</Card>
+	<Card title="For small team development" icon="setting">
+		- Even when developing as a team, you do not need to purchase a license for every team member. Purchase only as many licenses as there are people who will perform builds.
+		- If you plan to expand monetization in multiple ways, such as in-app ads on smartphones or in-game purchases on Steam, a Pro license is recommended.
+		
+		*Please note that sharing one user account among multiple people or using multiple accounts as one person violates the terms.*
+	</Card>
+	<Card title="For companies with large-scale development" icon="open-book">
+		- I want to release games for consoles such as Switch or PlayStation 5.
+		- I want access to native code for more advanced development.
+		- I want to use RPG-Cobo's tool system to develop our own titles.
+
+		We also accept individual consultations for these kinds of needs. Please feel free to contact us!
+		<LinkCard title="Go to the contact page" href="contact" />
+	</Card>
+</CardGrid>
+

@@ -1,0 +1,75 @@
+---
+title: Various Types
+description: "Explains RPG-Cobo database settings and editing steps with the theme of various types."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Image } from 'astro:assets';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+import types_1 from "../../../../../assets/docs/types-1.png"
+
+RPGs classify many things into types. For example, important elements that express the game's world such as "**attributes**" like fire, water, wind, and earth, or "**equipment**" like swords, shields, and armor.  
+In RPG-Cobo, these type classifications can be edited together as "<M code="e574"/> Various types."  
+
+
+Let's open "<M code="ea28"/> Game settings" => "<M code="e574"/> Various types" in the database.
+
+
+<Image src={types_1} alt="types-1" scale="70%"/>
+
+The types are lined up across the horizontal columns, and the items are listed vertically. Depending on the type, some have extra settings in addition to the name and icon.  
+The buttons like "x27" or "x5" next to the type name are used to change the number of items. Each type can be expanded to up to 32 entries.
+
+Let's briefly explain each type.
+
+##### <M code="f0ec"/> Equip types
+This is a list of weapon and armor types. In player settings, you can set whether each equipment type can be equipped.
+
+##### <M code="f0ec"/> Equip slots
+This type lets you define which kinds of equipment can be equipped in which body slot.
+<Aside type="caution">
+It is possible to allow weapons in both the right and left hands, but unfortunately dual wielding is not currently supported.
+</Aside>
+
+##### <M code="f0ec"/> Attributes
+Set the attack attributes that are essential for giving battles in an RPG strategic depth.
+To change resistance against attributes, add the option "attribute resistance."
+
+##### <M code="f0ec"/> Resistance groups
+A grouped list of resistance values (reduced accuracy) against debuff skills that inflict status ailments.  
+For example, grouping "sleep," "confusion," and "charm" under a resistance group like "hypnosis resistance" makes sense, and grouping related ailments like "poison" and "deadly poison" under "poison resistance" is also useful.  
+Conditions are edited in the "<M code="ebd5"/> Conditions" database. You can set a resistance group for each condition.
+
+##### <M code="f0ec"/> Races
+A list used to assign races to players and enemies. You can add options such as "race special" to weapons and skills to create effects like dragon slayer.
+
+##### <M code="f0ec"/> Exclusive equipment flags
+A list of special qualifications for equipping things, such as "Hero equipment," "Female equipment," or "Elf equipment." Equipment types provide broad equip eligibility, but this is used for finer adjustments.
+
+##### <M code="f0ec"/> Job slots
+Defines the slots available for jobs.  
+If you do not use the job system, set the maximum value to 0 using the button at the top right of the list.
+
+<Aside type="tip">
+You can give the game more personality by using names other than literal "jobs."  
+For example, if you name the second slot "personality" and let the player change it by reading books, you can make it resemble the personality system of a certain RPG.
+</Aside>
+
+##### <M code="f0ec"/> Exclusive job flags
+If there are exclusive equipment types for specific characters, you can of course also define exclusive jobs for specific characters.
+
+##### <M code="f0ec"/> Damage formulas
+Damage formulas during battle vary a lot depending on the skill. Damage formula types are the grouped list for those formulas.  
+Explaining them in full would take a very long time, so here we will only briefly introduce the default formula list.
+
+| |Type name|Overview|
+|-|--------------------------|------------|
+|00|Physical attack|Calculated from physical attack and physical defense. Includes miss and critical checks.|
+|01|Magic attack|Calculated from magic attack and magic defense|
+|02|Healing magic|Calculated using magic attack only|
+|03|Physical magic|Calculated from magic attack and physical defense|
+|04|Attack item|Fixed attack value, taking both physical and magic defense into account|
+|05|Healing item|Fixed healing amount|
+|06|Debuff infliction|This type is special, with a formula only for accuracy. This becomes the hit rate for debuff skills.|
+

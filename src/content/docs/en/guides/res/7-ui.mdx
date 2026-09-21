@@ -1,0 +1,174 @@
+---
+title: Screen Design
+description: "Explains how to handle the various resources used in RPG-Cobo with the theme of screen design."
+---
+
+import { Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+When changing the screen design, first open "<M code="f089"/> Resources" from the activity bar and then "<M code="e1bd"/> UI."  
+
+## UI resource screen
+
+This UI resource screen is where you manage the UI resources used to change the game's screen design.  
+
+
+<div class="sspart">
+<SS src='docs/ui-1.png' alt=''/>
+
+##### <M part="A"/> Category tabs
+Tabs used to classify UI more clearly.
+
+##### <M part="B"/> UI list
+The UI definitions for the selected category are shown in a list. You can manage up to 100 UIs in one category.
+
+##### <M part="C"/> Properties
+- Language: You can switch the UI for each language. See <M part="E"/>.
+- Name: Give this UI a name. **Note: this name is not displayed in the game. Therefore it is not subject to automatic translation, and the name should be entered in each language as needed.**
+- Description: You can enter a description for each language. Leaving it blank is fine.
+
+##### <M part="D"/> Select the base UI
+The .ui file selected here is the base UI file for this UI. Your screen design will replace this base UI.
+
+##### <M part="E"/> Select the UI to use (per language)
+The .ui files available as replacements for the base UI are shown in a list. You can switch the UI used for each language. This lets you switch, for example, the title logo between Japanese and English.
+</div>
+
+### <M code="f10d"/> How to replace a screen design
+---
+
+Now let's actually replace the "000: Title screen" with a different design. There are a few steps, so follow them in order.
+
+<div class="sspart">
+1. First, select the screen you want to replace from the list. This time, choose "000: Title screen" in the "Screen" category.  
+2. In "<M part="D"/> Base UI," look at the base UI. `/presetui/title.ui` is the original UI file.  
+   "<M part="E"/> Select UI to use" is a list. At the top of the list, the same `/presetui/title.ui` as the base UI is checked.
+   <SS src='docs/ui-2.png' alt=''/>
+3. When you click the menu at the top right of <M part="E"/>, the menu "Duplicate base UI" and "Select file and add" appears.  
+  This time, choose "Duplicate base UI." A new UI file named `/resource/ui/title_1.ui` will be created.
+   <SS src='docs/ui-3.png' alt=''/>
+4. It is still the base UI that is selected. Right-click `title_1.ui` and choose "<M code="e834"/> Use this UI." The new UI file is now in use.
+   <SS src='docs/ui-4.png' alt=''/>
+5. At last, the preparation is complete! Right-click `title_1.ui` and choose "<M code="e745"/> Edit UI" to enter UI file editing.
+</div>
+
+<Aside type="caution">
+/presetui UI files are preset UIs in RPG-Cobo. Please duplicate them and edit the copy instead of editing them directly.
+</Aside>
+
+
+
+### <M code="f10d"/> Editing UI files (for intermediate users and above)
+---
+<Aside type="caution">
+- Edit UI files carefully. If you delete elements needed by the screen or rename them to something else, the game may stop working correctly.  
+If something goes wrong, duplicate the base UI again and start over.
+- To edit UI, you need the skill to add images and parts from the RPG-Cobo folder tree.
+</Aside>
+
+Now let's explain the UI editor screen, which is the true purpose of this page.
+
+*This guide can only explain a small part of it. We plan to create a more detailed manual for using the UI editor in the future.*
+
+<div class="sspart">
+<SS src='docs/ui-5.png' alt=''/>
+
+##### <M part="A"/> Canvas
+You can select and move UI elements with mouse operations. You can also open various context menus with a right click.
+
+##### <M part="B"/> Timeline
+A timeline that displays animations along the time axis. You can drag to move through time.
+If you hold Shift while dragging, you can select a timeline range and perform editing operations such as copying.
+
+##### <M part="C"/> View list
+UI elements are displayed in a tree. **UI element parent-child relationships and names are very important**, so it is important to keep track of them carefully while editing with this view list.
+
+##### <M part="D"/> Edit tabs
+You can switch what you want to edit for the selected UI element with tabs.
+- Properties: Edit the properties of the UI element. The properties shown differ depending on the type of UI element.
+- FX: Add effects to group UI elements. FX can add effects such as blur, glow, and stroke.
+- Actions: You can execute actions on this UI element from the game. Actions are a mechanism for running animations, sounds, scripts, and more in sequence.
+
+##### <M part="E"/> Details for properties, FX, and actions
+Displays the details of the selected UI's properties, FX, and actions.  
+If nothing is selected, the properties for the entire UI are shown.
+</div>
+
+
+
+### <M code="f10d"/> Replace the title logo
+
+The default title screen in RPG-Cobo uses text drawn with a font as the title logo. It has some decoration, but it feels a little plain.  
+Let's replace this title logo with an illustrated logo designed by you.
+
+1. Drag and drop an image file from Explorer into the UI editor screen.  
+   <SS src='docs/ui-6.png' alt=''/>
+2. Move the added image by drag and drop in the view list so that it becomes a child of the appropriate element.  
+  This time, move it so that it becomes a child of the element `<M code="e2c7"/>g`.
+   <SS src='docs/ui-7.png' alt=''/>
+3. The original font logo is no longer needed, so delete it. Select `<M code="e2c7"/>lblg` and press the Delete key.
+4. The title logo has been successfully replaced!
+
+   <SS src='docs/ui-8.png' alt=''/>
+
+
+<Aside type="tip">
+RPG-Cobo UI is built on a 1280x720 resolution. When playing at 1920x1080, the UI is displayed enlarged.
+For that reason, make your images at a size that matches 1080p. If you make them at 66% scale, they will hold up well to the enlarged UI.
+</Aside>
+
+### <M code="f10d"/> Actions and keyframes
+
+UI elements can have actions. Actions are a mechanism for running animations, sounds, scripts, and more in sequence.
+When you switch the `<M part="D"/> Properties` tab to Actions, you can edit actions.  
+title_1.ui defines three actions: `darken`, `lighten`, and `show`.
+
+<div class="sspart">
+##### <M part="A"/> Action list
+A list of the actions owned by this UI element (or the entire UI). You can add, delete, rename, and so on.  
+You can also preview actions by double-clicking the list.
+
+##### <M part="B"/> Execution list for the selected action
+UI elements are displayed in a tree. UI element parent-child relationships are very important, so it is important to keep track of them carefully while editing with this view list.
+</div>
+
+Let's focus on the `show` action. This is the action for the title screen appearance animation.    
+If you check the screen, this action plays the animation from `00:00` over the `-10 to 0` frames at a speed of 6.0 frames per second.
+
+Drag the `<M part="C"/> keyframes` from `-10` to `0` with the mouse. You can confirm that the display animation plays according to the keyframes.  
+For example, if you set the scale to `0,0` at keyframe `-10` for the title logo image you added earlier, the title logo will be shown with a gradual zoom-in effect.  
+In this way, you can freely design game screen presentations using UI actions and keyframes.
+
+<video src="/mov/uiedit-1.mp4" controls/>
+
+For another advanced presentation, select `<M code="e2c7"/>g` and look at the FX tab.
+You can confirm that an effect called `Shine` is set. This creates the sparkling effect on the title logo.
+
+### <M code="f10d"/> Basic UI parts
+
+Press the `<M code="e145"/>` button at the upper left of the canvas to show a list of UI parts. You can add UI parts by dragging and dropping from there.
+In addition to basics such as text labels and groups, there are convenient parts for use in RPGs. Here are some of them.
+
+##### <M code="ea22"/> CharaPreview
+A UI part for displaying 3D character models. It is used in many places such as status screens.
+
+##### <M code="e416"/> EventPicture
+A UI part for displaying event pictures from resources. If you register a title logo as an event picture, you can show it with this part.
+
+### <M code="f10d"/> How to use the file view
+
+When you edit a UI file, the side view switches to the "file view." This shows the project's folder tree and file list.  
+For UI editing, the file view can be used in the following ways.
+- You can drag and drop images from the file view into the UI.
+- If you drag and drop a .ui file from the file view, you can add it as a UI part.
+- Try double-clicking `/resource/ui/uiimg.ssg` in the file view. This is a sprite sheet that collects images used by the UI.  
+  **Add common UI images to this file.**
+
+
+
+### <M code="f10d"/> Summary
+RPG-Cobo's UI editor is highly functional and expressive compared with the UI editors of other game engines.  
+It may take some time to learn, but you will be able to freely create screen designs for not just RPGs but many other genres as well.
+

@@ -1,0 +1,267 @@
+---
+title: Add Character Parameters
+description: "A detailed guide to RPG-Cobo plugin development, using the theme of adding character parameters."
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<div class="sspart">
+First, set up the [Visual Studio Code development environment](../../devel/5-vscode) and open the RPG-Cobo project in VS Code.
+</div>
+
+In the chapter on **Practical plugin development**, we will use sample plugins to explain practical methods for RPG-Cobo plugin development.
+
+First, let's create a plugin that adds properties representing character traits.
+
+### About the plugin explained on this page
+---
+We will explain the sample plugin below.
+
+- work/plugin-samples/charaprops.plugsk: Adds character parameters. It also defines plugin properties.
+
+<Aside>
+If you cannot find `work/plugin-samples/charaprops.plugsk`, update the portal app to the latest version and then create a new RPG-Cobo project.  
+Some older projects may not include the sample plugins. (as of 2026/07/13)
+</Aside>
+
+### Overview of charaprops.plugsk
+---
+This plugin adds the following two character parameters.
+1. Luck score property (LUK): a **score property** added to both the player and enemies.
+2. Satiety status property (FOOD): a **status property** added only to the player.
+
+First, a **score property** is a numeric parameter owned by a character. It can change according to level and can also change through equipment or options.
+For example, physical attack power (PATK) and magic attack power (MATK) are score properties.
+
+On the other hand, a **status property** is also a numeric parameter owned by a character, but it changes dynamically depending on various game situations.
+For example, HP, MP, equipment, and jobs fall under status properties.
+
+`charaprops.plugsk` adds both of these. It also allows you to specify, as a plugin parameter, which one should be added.
+
+
+Let's first look at the sample plugin as-is (some comments are omitted).
+
+```js
+import PropertyType;
+
+local luklbl = { "ja":"幸運","en":"Luck"};
+local foodlbl = { "ja":"満腹度","en":"Satiety"};
+
+pluginfo <- {
+	name : { "ja":"サンプルプロパティ追加","en":"Sample Properties Addition"}
+	author : "djkotori"
+	ver : "0.0.1"
+	desc : { "ja":"キャラにサンプルプロパティを追加します。","en":"Adds sample properties to chara."}
+	// Define plugin properties. They can be configured in the plugin manager.
+	props : [
+		{ pid : "LUK", lbl : luklbl, type : BOOL, defval : true },		// Whether to add the luck score property
+		{ pid : "FOOD", lbl : foodlbl, type : BOOL, defval : true },	// Whether to add the satiety status property
+	]
+	order : 50	// Load order. Anything >= 1 is fine.
+}
+
+function loadPlugin( args, opt){
+	// LUK definition. Added when the plugin's LUK setting is true.
+	if( opt["LUK"]){
+		local prop = {
+			proptype = "score"
+			pid = "LUK"
+			lbl = luklbl
+			lvcurve = true		// Parameter that changes according to level.
+			// Property definition. Also referenced when editing lvcurve.
+			type = SCALAR
+			range = (1,9999)
+			defval = 100
+		};
+		// Add to player and enemy property lists. *To use LUK in battle, it must be added to both player and enemy.*
+		RPGSystem.playerprops .. prop;
+		RPGSystem.enemyprops .. prop;
+		// Add to the job screen and the level-up display. Do not show LUK on the equipment screen.
+		//::equipmenu_showpids .. "LUK";
+		::jobmenu_showpids .. "LUK";
+		::levelup_showpids .. "LUK";
+	}
+	// FOOD definition. Added when the plugin's FOOD setting is true.
+	// Satiety is a character-specific status value. It can decrease over time and even reduce HP when it reaches 0.
+	if( opt["FOOD"]){
+		local prop = {
+			proptype = "status"
+			pid = "FOOD"
+			lbl = foodlbl
+			type = SCALAR
+			range = (1,100)
+			defval = 100
+		};
+		// Satiety is a property only for the player.
+		RPGSystem.playerprops .. prop;
+		RPGPlayer.addStatusProp( "FOOD", 100);
+		// Add a satiety option to the player. You can add logic such as reducing it while walking and applying hunger when it reaches 0.
+		RPGSystem.option .. {
+			category = -1,		// Category -1 means it cannot be added manually.
+			key = "opt_food",
+			name = foodlbl,
+			icon = "\ue000",
+			order = 99,
+			desc = "",
+			// Execute the option's effect
+			action = @( opd, id, arg, self){
+				switch( id){
+				case "walk":	// Called for every 1m walked.
+					self.FOOD = Math.max( self.FOOD-0.1, 0);	// Decreases by 10% of walking distance. It decreases by 100 per 1km.
+					break;
+				}
+			}
+		}
+		// Hook RPGPlayer.getBaseOptions and add the satiety option. *A better approach should be considered because this can become spaghetti code!!*
+		local opd = { opttype = "opt_food", };
+		local _getBaseOptions = RPGPlayer.getBaseOptions;
+		RPGPlayer.getBaseOptions <- @(){		// Replace the instance function. You need to use the "<-" operator.
+			local opts = _getBaseOptions();		// Call the original getBaseOptions
+			opts .. RPGOption( opd);			// Add the satiety option. This makes every player have a satiety option.
+			return opts;
+		}
+	}
+	return true;
+}
+```
+
+That was quite a long code sample from the start, but if you break it down, each part is very simple.  
+Let's go through it step by step.
+
+
+### 1: Adding the Luck property (LUK)
+---
+
+The part that adds LUK looks like this.
+
+```js
+function loadPlugin( args, opt){
+	// LUK definition. Added when the plugin's LUK setting is true.
+	local prop = {
+		proptype = "score"
+		pid = "LUK"
+		lbl = { "ja":"幸運","en":"Luck"}
+		lvcurve = true		// Parameter that changes according to level.
+		// Property definition. Also referenced when editing lvcurve.
+		type = SCALAR
+		range = (1,9999)
+		defval = 100
+	};
+	// Add to player and enemy property lists. *To use LUK in battle, it must be added to both player and enemy.*
+	RPGSystem.playerprops .. prop;
+	RPGSystem.enemyprops .. prop;
+	// Add to the job screen and the level-up display. Do not show LUK on the equipment screen.
+	//::equipmenu_showpids .. "LUK";
+	::jobmenu_showpids .. "LUK";
+	::levelup_showpids .. "LUK";
+}
+```
+
+- `local prop = { ... }` creates the definition for the luck property.
+  - `proptype="score"` indicates that it is a score property.
+  - `pid="LUK"` sets the property ID to "LUK".
+  - `lvcurve=true` indicates that it changes according to level. If it is false or omitted, the parameter will not change with level.
+  - The value definition uses `type=SCALAR`, `range=(1,9999)`, and `defval=100`. This means it is a numeric value from 1 to 9999 with a default of 100.
+- `RPGSystem.playerprops .. prop;` adds it to the player's property list.  
+- `RPGSystem.enemyprops .. prop;` adds it to the enemy property list as well.  
+   ***=> To use LUK in battle, it must be added to both the player and the enemy.***
+- `::jobmenu_showpids .. "LUK";` configures the job screen to display LUK in its parameter list.
+- `::levelup_showpids .. "LUK";` adds LUK to the level-up display. Properties with `lvcurve=true` are better shown on the level-up screen so the changing values are visible.
+
+Now the addition of the Luck property (LUK) is complete. However, by itself luck is just a number.  
+To make formulas actually change when luck increases, you need to include LUK in the formula in the type setting's **Damage Formula**.
+
+
+### 2: Adding the Satiety property (FOOD)
+---
+
+Next is the addition of the satiety property (FOOD). This is a status property added only to the player.
+To make it a little more interesting, we'll make it a parameter that decreases while walking. You could also use it as a mechanic where HP decreases when satiety reaches 0.
+The mechanism that reduces satiety is implemented by adding an option type.
+
+```js
+function loadPlugin( args, opt){
+	local prop = {
+		proptype = "status"
+		pid = "FOOD"
+		lbl = { "ja":"満腹度","en":"Satiety"}
+		type = SCALAR
+		range = (1,100)
+		defval = 100
+	};
+	// Satiety is a property only for the player.
+	RPGSystem.playerprops .. prop;
+	RPGPlayer.addStatusProp( "FOOD", 100);
+	// Add a satiety option to the player. You can add logic such as reducing it while walking and applying hunger when it reaches 0.
+	RPGSystem.option .. {
+		category = -1,		// Category -1 means it cannot be added manually.
+		key = "opt_food",
+		icon = "\ue000",
+		order = 99,
+		// Execute the option's effect
+		action = @( opd, id, arg, self){
+			switch( id){
+			case "walk":	// Called for every 1m walked.
+				self.FOOD = Math.max( self.FOOD-0.1, 0);	// Decreases by 10% of walking distance. It decreases by 100 per 1km.
+				break;
+			}
+		}
+	}
+	// Hook RPGPlayer.getBaseOptions and add the satiety option. *A better approach should be considered because this can become spaghetti code!!*
+	local opd = { opttype = "opt_food", };
+	local _getBaseOptions = RPGPlayer.getBaseOptions;
+	RPGPlayer.getBaseOptions <- @(){
+		local opts = _getBaseOptions();
+		opts .. RPGOption( opd);
+		return opts;
+	}
+}
+```
+
+- The `local prop = { ... }` structure is almost the same as `LUK`. It is defined as a status property using `proptype = "status"`.
+- `RPGPlayer.addStatusProp( "FOOD", 100);` adds `FOOD` as an additional variable to the RPGPlayer class.  
+  This lets you reference, modify, and save `RPGPlayer.FOOD`.
+- `RPGSystem.option .. { ... }` adds the satiety reduction option.  
+  This option implements logic that reduces FOOD according to the player's walking distance.
+- `RPGPlayer.getBaseOptions <- @(){ ... }` overrides the function and adds the satiety consumption option to every player.
+
+#### Ideas for modification
+
+As written, this `FOOD` property does nothing by itself. You can make the game more interesting by adding logic such as reducing HP when satiety reaches 0.  
+For example, you could modify the option's `action` function to make the character enter a "hunger condition" when FOOD reaches 0.
+It would also be interesting to add food as an item and have it automatically consumed to restore satiety.
+
+
+### 3: About plugin properties
+
+This plugin defines properties that can be configured in the plugin manager.
+
+```js
+pluginfo <- {
+	..., 
+	props : [
+		{ pid : "LUK", lbl : luklbl, type : BOOL, defval : true },		// Whether to add the luck score property
+		{ pid : "FOOD", lbl : foodlbl, type : BOOL, defval : true },	// Whether to add the satiety status property
+	]
+}
+```
+
+By specifying this, the plugin manager will show property settings like the image below.
+<SS src='docs/charaprops-1.png' alt=''/>
+
+The values configured in the plugin manager are passed as a table to the `opt` argument of `loadPlugin( args, opt)`.
+By doing the following, you can change the plugin's loading behavior based on the configuration values.
+
+```js
+function loadPlugin( args, opt){
+	if( opt["LUK"]){
+		// Process that adds LUK
+	}
+	if( opt["FOOD"]){
+		// Process that adds FOOD
+	}
+	return true;
+}
+```

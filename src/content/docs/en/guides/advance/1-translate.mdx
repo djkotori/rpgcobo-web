@@ -1,0 +1,95 @@
+---
+title: Learn Localization (Translation)
+description: "Explains practical operation and application techniques in RPG-Cobo with the theme of localization (translation)."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+
+### <M code="f10d"/> Why localization matters
+
+The number of game players continues to grow worldwide, and game developers increasingly need to support multiple languages.    
+However, localization is a very difficult task. In particular, for solo creators it is close to impossible, and many people may have given up on it.
+
+With RPG-Cobo, localization becomes surprisingly easy with the help of AI translation! The work time required for translation will likely be just a few minutes.
+
+Of course, the translation quality will not be on the same level as a professional translator, but the fact that your game can simply be translated
+and targeted at players around the world will surely be a strength that cannot be replaced by anything else.
+
+### <M code="f10d"/> Supported AI translation methods
+RPG-Cobo supports several AI translation methods so it can fit the way game creators work.
+
+##### 1. AI translation using web translation (non-commercial use only)
+A simple and powerful AI translation method using Google Web Translate.  
+Let's start with this and get a feel for the translation flow.
+
+##### 2. Google Translation API
+An AI translation service provided by Google Cloud. It is paid, but commercial use is allowed and the translation quality is high.  
+The downside is that there are many annoying steps such as registering a Google Cloud account, enabling the API, and obtaining an API key.
+You probably do not need to worry much about the cost.
+
+<Aside type="caution">
+I could not find a clear rule, but it seems Google Web Translate is free only for non-profit pages. [See here](https://developers.google.com/search/blog/2020/05/google-translates-website-translator?hl=ja)  
+If you are making a free game, that is fine, but if you are planning to sell it, using Google Translation API is legally safer.  
+**Google Translation API has a cumbersome setup process, but even the free tier can translate a sufficient amount of text.**
+</Aside>
+
+
+### <M code="f10d"/> Localization flow
+
+<Steps>
+1. Open the "<M code="e8e2"/> Translation tool" from the activity bar, then from the top-left <M code="e5d2"/> button in the side menu choose "<M code="e627"/> Create source translation dictionary."
+    <SS src='docs/translate-1.png' alt=''/>
+2. Each text item in the database is converted into a source dictionary. Save this dictionary with the "Save" button.
+    <SS src='docs/translate-2.png' alt=''/>
+3. Next, from the "Target translation dictionary" list, choose the language you want to translate, here English, and right-click to select "<M code="e148"/> Create target translation dictionary."
+    <SS src='docs/translate-3.png' alt=''/>
+4. The dialog for creating a target translation dictionary appears. **For "Automatic translation method," this time choose "Web translation (non-commercial use only)."**
+    <SS src='docs/translate-4.png' alt=''/>
+5. Following the steps for web auto-translation, first press the "Open" button in "1. Open the translation web page." A browser will open and the translation page will appear.
+
+6. In the browser, select "English" from the "Language selection▼" menu. Automatic translation runs, and the displayed dictionary is translated into English.
+    <SS src='docs/translate-5.png' alt=''/>
+
+7. Press the "Scroll down" button to scroll the page to the bottom. Then press the "Copy translated results to clipboard" button there.  
+    <SS src='docs/translate-6.png' alt=''/>
+    <SS src='docs/translate-7.png' alt=''/>
+   This finishes the browser-side operation. Return to the tool.
+
+8. Press the "Import" button in "2. Import translated results from clipboard." A confirmation dialog appears, so confirm with the "Save" button.
+
+9. That completes it! You can also manually edit the automatically translated dictionary afterward. Let's move on to the next explanation.
+</Steps>
+
+### <M code="f10d"/> Manually edit translation dictionaries
+
+Languages for which a "Target translation dictionary" has been generated can be edited by double-clicking them.
+
+<div class="sspart">
+<SS src='docs/translate-8.png' alt=''/>
+
+##### <M part="A"/> Display filter
+Specify conditions to narrow the word list that is displayed.
+
+##### <M part="B"/> Menu button
+From this menu, you can copy and paste TSV data. Use it when working with familiar tools such as Excel or spreadsheets, or when handing data to an external translator.
+
+##### <M part="C"/> Word list
+- Word key: An ID that identifies which database item the word belongs to.
+- Source word: The text before translation
+- Target word: The translated text (edit this)
+- Complete check: Check this for words whose translation is complete. The progress percentage shown in the side menu will increase.
+</div>
+
+
+### <M code="f10d"/> Localization debugging
+
+If you specify the "Language to debug" in the "Debug" tab of the settings, you can switch languages while debugging the game.
+
+
+
+

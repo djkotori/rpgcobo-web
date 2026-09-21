@@ -1,0 +1,464 @@
+---
+title: "Native API: Sound"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Sound."
+---
+
+This document is a reference for SakanaGL's sound API (`core/api/ssapi_sound.cpp`).
+
+## Overview
+
+The SakanaGL Sound API provides audio features such as waveform data management, audio playback, 3D sound, mixing, reverb effects, and streaming playback. It also includes an Ogg Vorbis decoder.
+
+---
+
+## Contents
+
+- [SoundContext](#soundcontext) - sound context
+- [SoundMixer](#soundmixer) - sound mixer
+- [SoundSource](#soundsource) - sound source
+- [WaveBuffer](#wavebuffer) - waveform data buffer
+- [VorbisDecoder](#vorbisdecoder) - Ogg Vorbis decoder
+- [Reverb](#reverb) - reverb effect
+- [Source3DParam](#source3dparam) - 3D sound parameters
+- [SoundRenderInterface](#soundrenderinterface) - custom sound render interface
+- [Parameter constants](#parameter-constants)
+- [Examples](#examples)
+
+---
+
+## SoundContext
+
+The core context of the sound system. It creates and manages mixers, sound sources, and reverb.
+
+### Static methods
+
+##### `SoundContext.createContext(flags)`
+Creates a sound context.
+
+**Arguments**:
+- `flags` (int): initialization flags
+
+**Return value**: SoundContext
+
+### Instance methods
+
+##### `createMixer([mix3d])`
+Creates a mixer.
+
+**Arguments**:
+- `mix3d` (int, optional): 3D mixing flag (default: 0)
+
+**Return value**: SoundMixer
+
+##### `createWaveSoundSource(WaveBuffer)`
+Creates a sound source from waveform data.
+
+**Arguments**:
+- `WaveBuffer`: waveform data buffer
+
+**Return value**: SoundSource
+
+##### `createStreamSoundSource(freq, ch, fmt, ringbufsize)`
+Creates a sound source for streaming playback.
+
+**Arguments**:
+- `freq` (int): sampling frequency (Hz)
+- `ch` (int): number of channels (1 = mono, 2 = stereo)
+- `fmt` (int): format (`SK_SND_FORMAT_*`)
+- `ringbufsize` (int): ring buffer size
+
+**Return value**: SoundSource
+
+##### `createCustomSoundSource(SoundRenderInterface)`
+Creates a sound source using a custom render interface.
+
+**Arguments**:
+- `SoundRenderInterface`: render interface
+
+**Return value**: SoundSource
+
+##### `createReverb(WaveBuffer)`
+Creates a reverb effect.
+
+**Arguments**:
+- `WaveBuffer`: impulse response data
+
+**Return value**: Reverb
+
+##### `gc()`
+Garbage collects finished sound sources.
+
+**Description**: Frees sound sources in the `SK_SND_DONE` state. Calling this periodically helps prevent memory leaks.
+
+##### `getPlayingSounds()`
+Gets sound sources currently playing.
+
+**Return value**: SoundSource[] - array of sound sources being played
+
+##### `setReverb(index, Reverb | null)`
+Sets a reverb slot.
+
+**Arguments**:
+- `index` (int): reverb slot (0-3)
+- `Reverb | null`: reverb object (null to clear)
+
+**Return value**: `true` if successful
+
+##### `scroll(Vector3D)`
+Scrolls all 3D sound sources.
+
+**Arguments**:
+- `Vector3D`: offset vector
+
+### Parameter access
+
+SoundContext can access the following parameters with `[SK_SND_*]`:
+
+- `[SK_SND_LISTENER]`: listener position/orientation (Matrix | Camera)
+- `[SK_SND_MASTEFX]`: master effect parameters (Array, 16 elements)
+
+**Example**:
+```javascript
+ctx[SK_SND_LISTENER] = camera;
+```
+
+---
+
+## SoundMixer
+
+A sound mixer. Mixes and outputs multiple sound sources.
+
+### Properties
+
+**Read-only**:
+- `ctx` (SoundContext): owning context
+
+### Methods
+
+##### `connect()`
+Connects the mixer to the context.
+
+**Return value**: bool - `true` if successful
+
+##### `disconnect()`
+Disconnects the mixer from the context.
+
+**Return value**: bool - `true` if successful
+
+##### `findDuplicatedSound(id[, pan])`
+Searches for a playing sound source with the same ID and pan (for preventing duplicate playback).
+
+**Arguments**:
+- `id` (int): sound source ID
+- `pan` (float, optional): pan value (-1.0 to 1.0, default: 0)
+
+**Return value**: SoundSource | null
+
+**Description**: Used to prevent the same sound from playing more than once. Returns the source with the closest pan value within 8192 samples from playback start.
+
+### Parameter access
+
+SoundMixer can access the following parameters with `[SK_SND_*]`:
+
+**Writable**:
+- `[SK_SND_GAIN]` (float): gain (volume)
+- `[SK_SND_PAN]` (float): pan (-1.0 to 1.0)
+- `[SK_SND_PITCH]` (float): pitch
+- `[SK_SND_MIX3D]` (int): 3D mixing mode
+- `[SK_SND_PANMODEL]` (int): pan model
+- `[SK_SND_SEND]` (int): send destination
+- `[SK_SND_INSEFX]` (Array): insert effect parameters (16 elements)
+- `[SK_SND_SENDEFX]` (Array): send effect parameters (16 elements)
+- `[SK_SND_POSITION]` (Matrix): 3D position
+
+**Read-only**:
+- `[SK_SND_MUTECOUNT]` (int): mute count
+
+---
+
+## SoundSource
+
+A sound source (playable audio source).
+
+### Properties
+
+**Read/write**:
+- `id` (int): sound ID (user-defined)
+
+**Read-only**:
+- `ctx` (SoundContext): owning context
+- `wav` (WaveBuffer): waveform data (for waveform sources)
+
+### Methods
+
+##### `play(SoundMixer)`
+Plays the sound.
+
+**Arguments**:
+- `SoundMixer`: mixer to play into
+
+**Return value**: bool - `true` if successful
+
+##### `stop()`
+Stops playback.
+
+**Return value**: int - stop result code
+
+##### `getState()`
+Gets the playback state.
+
+**Return value**: int - state code (`SK_SND_DONE`, `SK_SND_PLAYING`, `SK_SND_PAUSED`)
+
+### Parameter access
+
+SoundSource can access the following parameters with `[SK_SND_*]`:
+
+**Writable**:
+- `[SK_SND_GAIN]` (float): gain (volume)
+- `[SK_SND_PAN]` (float): pan (-1.0 to 1.0)
+- `[SK_SND_PITCH]` (float): pitch
+- `[SK_SND_MIX3D]` (int): 3D mixing mode
+- `[SK_SND_PANMODEL]` (int): pan model
+- `[SK_SND_SEND]` (int): send destination
+- `[SK_SND_LOOP]` (bool): loop flag
+- `[SK_SND_PAUSE]` (bool): pause flag
+- `[SK_SND_CALC3D]` (bool): 3D calculation flag
+- `[SK_SND_POSITION]` (Matrix): 3D position
+- `[SK_SND_INSEFX]` (Array): insert effect parameters (16 elements)
+- `[SK_SND_SENDEFX]` (Array): send effect parameters (16 elements)
+- `[SK_SND_SOURCE3D]` (Source3DParam): 3D sound parameters
+- `[SK_SND_PUSHSTREAM]` (ByteBuffer): stream data push (stream sources only)
+
+**Read-only**:
+- `[SK_SND_BUFREMAINING]` (int): remaining buffer size
+- `[SK_SND_MUTECOUNT]` (int): mute count
+- `[SK_SND_PCMTIME]` (int): playback position (sample count)
+
+---
+
+## WaveBuffer
+
+A buffer that holds PCM waveform data.
+
+### Static methods
+
+##### `WaveBuffer.load(ByteBuffer)`
+Loads waveform data from a ByteBuffer (automatically detects formats such as WAV and AIFF).
+
+**Arguments**:
+- `ByteBuffer`: waveform file data
+
+**Return value**: WaveBuffer | null
+
+##### `WaveBuffer.create(ByteBuffer, freq, ch, fmt, length)`
+Creates a waveform buffer from raw PCM data.
+
+**Arguments**:
+- `ByteBuffer`: PCM data
+- `freq` (int): sampling frequency (Hz)
+- `ch` (int): number of channels
+- `fmt` (int): format
+- `length` (int): data length
+
+**Return value**: WaveBuffer
+
+### Properties
+
+**Read-only**:
+- `length` (int): PCM sample count
+- `totaltime` (float): total playback time (seconds)
+- `freq` (int): sampling frequency (Hz)
+- `ch` (int): number of channels (1 = mono, 2 = stereo)
+- `format` (int): format
+
+### Methods
+
+##### `decode([ByteBuffer[, pos[, len]]])`
+Decodes PCM data into a float array.
+
+**Arguments**:
+- `ByteBuffer` (optional): destination buffer (creates a new one if omitted)
+- `pos` (int, optional): start position (sample count, default: 0)
+- `len` (int, optional): decode length (sample count, default: all)
+
+**Return value**: ByteBuffer - float array (4 bytes/sample)
+
+##### `decode16([ByteBuffer[, pos[, len]]])`
+Decodes PCM data into a 16-bit integer array.
+
+**Arguments**:
+- `ByteBuffer` (optional): destination buffer
+- `pos` (int, optional): start position
+- `len` (int, optional): decode length
+
+**Return value**: ByteBuffer - short array (2 bytes/sample)
+
+---
+
+## VorbisDecoder
+
+A class that decodes Ogg Vorbis files. Supports background decoding.
+
+### Constructor
+
+```javascript
+VorbisDecoder(ByteBuffer)
+```
+
+**Arguments**:
+- `ByteBuffer`: Ogg Vorbis file data
+
+### Properties
+
+**Read-only**:
+- `pcmlength` (int): PCM sample count
+- `format` (int): format
+- `freq` (int): sampling frequency (Hz)
+- `ch` (int): number of channels
+
+### Methods
+
+##### `getComments()`
+Gets Vorbis comments (metadata).
+
+**Return value**: Array - array of comment strings
+
+##### `close()`
+Closes the decoder.
+
+##### `setRegion(start, end, looppoint)`
+Sets the decode region and loop point.
+
+**Arguments**:
+- `start` (int, optional): start position (sample count, default: 0)
+- `end` (int, optional): end position (sample count, default: -1 = to the end)
+- `looppoint` (int, optional): loop point (sample count, default: -1 = none)
+
+##### `startDecode(length)`
+Starts background decoding.
+
+**Arguments**:
+- `length` (int): decode length (sample count)
+
+**Return value**: bool - `true` if started successfully
+
+##### `isDecoding()`
+Checks whether decoding is in progress.
+
+**Return value**: bool
+
+##### `getResult(ByteBuffer)`
+Gets the decode result (swaps with the ByteBuffer contents).
+
+**Arguments**:
+- `ByteBuffer`: buffer to receive the result
+
+**Return value**: bool - `true` if a result was available
+
+**Description**: Swaps the buffer contents quickly (no memory copy).
+
+##### `getResultWave()`
+Gets the decode result as a WaveBuffer.
+
+**Return value**: WaveBuffer | null
+
+##### `tell()`
+Gets the current decode position.
+
+**Return value**: int - sample position
+
+---
+
+## Reverb
+
+A reverb effect. A convolution reverb using impulse responses.
+
+### Description
+
+Reverb objects are created with `SoundContext.createReverb()`. They cannot be created directly with a constructor.
+
+---
+
+## Source3DParam
+
+A class that manages 3D sound parameters.
+
+### Constructor
+
+```javascript
+Source3DParam()
+```
+
+### Fields
+
+**Read/write**:
+- `conein` (float): inner cone angle (radians)
+- `coneout` (float): outer cone angle (radians)
+- `conegain` (float): cone gain
+- `maxdist` (float): maximum distance
+- `refdist` (float): reference distance
+- `rolloff` (float): rolloff factor
+- `distmodel` (int): distance model
+
+---
+
+## SoundRenderInterface
+
+An interface class for custom sound rendering.
+
+### Description
+
+By passing a class that implements this interface to `SoundContext.createCustomSoundSource()`, you can implement your own sound generation logic.
+
+---
+
+## Parameter constants
+
+Constants used to access sound parameters.
+
+### Common parameters
+
+- `SK_SND_GAIN`: gain (volume, float)
+- `SK_SND_PAN`: pan (-1.0 to 1.0, float)
+- `SK_SND_PITCH`: pitch (float)
+- `SK_SND_LOOP`: loop flag (bool)
+- `SK_SND_PAUSE`: pause flag (bool)
+- `SK_SND_MIX3D`: 3D mixing mode (int)
+- `SK_SND_PANMODEL`: pan model (int)
+- `SK_SND_SEND`: send destination (int)
+- `SK_SND_POSITION`: 3D position (Matrix)
+- `SK_SND_LISTENER`: listener position/orientation (Matrix)
+- `SK_SND_CALC3D`: 3D calculation flag (bool)
+- `SK_SND_SOURCE3D`: 3D sound parameters (Source3DParam)
+
+### Effect parameters
+
+- `SK_SND_INSEFX`: insert effect (Array, 16 elements)
+- `SK_SND_SENDEFX`: send effect (Array, 16 elements)
+- `SK_SND_MASTEFX`: master effect (Array, 16 elements)
+
+### Stream parameters
+
+- `SK_SND_PUSHSTREAM`: stream data push (ByteBuffer)
+
+### Read-only parameters
+
+- `SK_SND_BUFREMAINING`: remaining buffer size (int)
+- `SK_SND_MUTECOUNT`: mute count (int)
+- `SK_SND_PCMTIME`: playback position sample count (int)
+
+### Playback states
+
+- `SK_SND_DONE`: playback finished
+- `SK_SND_PLAYING`: playing
+- `SK_SND_PAUSED`: paused
+
+### Notes
+
+1. **Memory management**: Call `ctx.gc()` regularly to free finished sound sources.
+2. **Stream supply**: Monitor `SK_SND_BUFREMAINING` for stream sources to avoid running out of data.
+3. **3D sound position**: Update the listener (camera) and sound source positions every frame.
+4. **Reverb cost**: Reverb is computationally expensive, so limit the number of sources you send to it.
+5. **Mixer disconnect**: Disconnecting the mixer with `disconnect()` stops all sounds currently playing.
+6. **Parameter thread safety**: Parameter gets/sets are locked internally, but avoid changing them frequently.
+

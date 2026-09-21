@@ -1,0 +1,23 @@
+---
+title: Sample Games
+description: "Showcases sample works and reference projects created with RPG-Cobo."
+template: splash
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { default as Card2 } from '/src/components/Card2.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
+import IMGS from '/src/components/IMGS.astro';
+
+<Card2 title="WebGL export demo" icon="pencil" rev={true} imgs={["samples/webgldemo-1.png","samples/webgldemo-2.png"]}>
+- This sample is a direct WebGL export of a new RPG-Cobo project.
+- Use it as a reference for what kinds of games RPG-Cobo can create. ***Please note that it is not a complete game.***
+- **We plan to add more attractive sample games in the future!**
+
+*Last updated: 2026/06/05*
+<LinkCard title="⚔️ Play in your browser" href="https://demo.rpg-cobo.com/beta01_webgl/index.html" target="_blank" />
+<LinkCard title="💾 Download the Windows version (120MB)" href="https://demo.rpg-cobo.com/beta01_win32.zip" />
+</Card2>
+

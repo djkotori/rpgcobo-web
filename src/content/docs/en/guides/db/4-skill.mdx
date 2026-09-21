@@ -1,0 +1,119 @@
+---
+title: Skill Data
+description: "Explains RPG-Cobo database settings and editing steps with the theme of skill data."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+
+Skills are all the techniques and spells used by players and enemies in battles or on menu screens.  
+When editing skills, you first choose a broad "skill type" such as "attack skill" or "healing skill," and then configure the detailed properties.  
+In addition, there are many other settings such as the animation, effects, and sound when the skill is activated.  
+**We recommend starting by modifying only the name and numbers of an existing skill.**
+
+Let's open "S010: Slash Attack." This is a simple attack skill used for enemy normal attacks and player sword attacks.
+
+<div class="sspart">
+<SS src='docs/skill-1.png' alt=''/>
+
+##### <M part="A"/> Name, icon, description
+Set the skill's name, icon, and description. Usually the skill and icon are displayed together. The description is shown on the skill use screen.
+
+##### <M part="B"/> Basic properties
+
+- Weapon allowed: Specifies which weapon types can use this skill. For example, you can make sword skills usable only when a sword is equipped.
+- Cost points: Sets the points consumed when using this skill. You can choose from HP, MP, TP, HP(%), MP(%), and TP(%).
+- Add to skill list: If ON, the skill is added to the battle command "Skills." For details, see => [Database => Game settings](../7-setting.mdx)
+- Enemy usable: If ON, the skill can be selected as an enemy default skill or in battle AI.
+
+##### <M part="C"/> Skill type
+Choose the broad type of the skill, such as attack or healing.
+
+##### <M part="D"/> Properties for each skill type
+Settings for the selected skill type.
+
+##### <M part="E"/> Action
+Specify the character animation, effects, and other presentation details when the skill is used. The number of items varies by skill type.
+
+##### <M part="F"/> Options
+Add special effects that are applied when using this skill.
+For example, a "Poison Strike" skill can be implemented by adding the option "Condition Infliction => Poison."
+</div>
+
+
+### <M code="f10d"/> Skill types
+Skill types are divided into the following seven kinds.
+
+##### 1. Do nothing
+As the name implies, using a skill of this type does nothing. However, it is the base type for very important skills such as "Defend," "Counter," and "Cover."  
+For example, defense can be created by assigning the option "Damage -50%" to the "Do nothing" skill type.
+
+##### 2. Attack skill
+A skill that deals damage to an enemy character. This is the most commonly used skill type and forms the basis of physical and magical attacks.
+
+##### 3. Healing skill
+A skill that restores HP to allies. It can also be given an effect that removes the target's current status ailments.
+It can also be used from menu screens.
+
+##### 4. Buff skill
+A skill type that applies a buff to allied characters to raise their abilities. It generally succeeds automatically.
+It can also be used from menu screens.
+
+##### 5. Debuff skill
+A skill type that applies a debuff to enemy characters to lower their abilities. Success rate changes depending on the user's abilities, the skill's success rate, and the target's resistance.
+
+##### 6. Enhanced attack skill
+This skill triggers another arbitrary skill while retaining the specified options. It can be used for skills such as "Charge Attack," "Lightning Strike," "Snatch," and "Desperate Attack," so it has a wide range of uses.
+
+##### 7. Macro skill
+A skill type that executes a macro event in order to perform special actions that cannot be created with the skill types above. You can also specify a separate macro for when it is used in the menu, not just during battle.  
+"Run away," "Steal," "Formation change," "Dungeon escape," and "Holy water" are made with macro skills.
+
+### <M code="f10d"/> Properties for each skill type
+Properties vary greatly depending on the skill type. The following settings are available.
+
+|Property name|Skill type|Overview|
+|---|---|---|
+|Target range|All|Specifies the target range such as single enemy, all enemies, single ally, or self.|
+|Damage type|Attack, healing|Specifies which parameter receives damage (or healing): HP, MP, or TP.|
+|Damage formula|Attack, healing|A formula type edited in "<M code="e574"/> Various types" that determines the damage formula based on the abilities of the user and target.|
+|Power formula|Attack, healing|Replaces the power calculation in the damage formula. If left blank, the standard formula is used.|
+|Condition infliction|Buff, debuff|Specifies the condition to inflict on the target. Multiple conditions can be specified.|
+|Condition removal|Healing|Specifies the conditions to remove from the target. Multiple conditions can be specified.|
+|Speed modifier|All|Increasing the modifier makes the skill activate faster. 1.0 is normal speed.|
+|Accuracy modifier|Attack, debuff|A modifier for accuracy. 1.0 means no change.|
+|Number of attacks|Attack|Specifies how many times the attack occurs in a single skill. Minimum and maximum counts can be set.|
+|Skill flags|Almost all|Specifies whether the skill can be reflected, countered, or is effective against bosses, and so on.|
+|Follow-up skill|Enhanced attack|Specifies the skill that follows after this one.|
+|Battle macro|Macro|Specifies the macro ID to execute when the skill is used in battle.|
+|Menu macro|Macro|Specifies the macro ID to execute when the skill is used from the menu.|
+|Macro arguments|Macro|Variables and values can be passed when the macro runs.|
+
+<SS src='docs/skill-2.png' alt=''/>
+
+### <M code="f10d"/> Action
+Specify the character animation, effects, and other presentation details when the skill is used. The number of items varies by skill type.
+
+|Setting item|Overview|
+|--------------------------|------------|
+|Ready animation|Animation from selecting the command until the skill is activated|
+|Activation action|Action at the moment the skill is activated (animation, effect)|
+|Attack action|Action of swinging the weapon for weapon attacks|
+|Hit action|The target's action when the skill hits|
+|End action|Action when the skill ends|
+
+<Aside>
+The action settings are probably the most difficult part of the skill configuration.
+However, even though they are difficult, action settings are only for presentation and have almost no effect on game balance.  
+**So first it is best to balance the other parameters thoroughly, and then set up the actions as a finishing touch.**
+</Aside>
+
+##### Checking action behavior
+
+If you press the "<M code="e1c4"/> Test action" button, the game screen opens and both enemies and allies keep using this skill.  
+Use it to check whether the action is working at the correct timing.  
+*However, skills such as counter techniques cannot currently be tested properly.*
+

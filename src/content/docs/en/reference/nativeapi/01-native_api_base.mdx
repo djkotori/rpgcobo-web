@@ -1,0 +1,259 @@
+---
+title: "Native API: Built-in"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Native API: Built-in."
+---
+
+This document is an API reference for the built-in functions, basic type methods, and basic classes defined in `ssbaselib.cpp` for SakanaScript (SK language).
+
+## Contents
+
+- [Global functions](#global-functions)
+- [Type conversion functions](#type-conversion-functions)
+- [Thread functions](#thread-functions)
+- [Debugging utilities](#debugging-utilities)
+- [Table methods](#table-methods)
+- [String methods](#string-methods)
+- [Array methods](#array-methods)
+- [Closure methods](#closure-methods)
+- [NativeClosure methods](#nativeclosure-methods)
+- [Thread methods](#thread-methods)
+- [Class methods](#class-methods)
+- [Basic classes](#basic-classes)
+  - [Exception](#exception-class)
+  - [long](#long-class)
+  - [Void](#void-class)
+  - [WeakRef](#weakref-class)
+  - [wstring](#wstring-class)
+
+---
+
+## Global functions
+
+### length(obj)
+Returns the length of an object.
+- **Arguments**: `obj` - array, table, string, or instance
+- **Return value**: integer (length)
+- **Supported types**: array, table, string, instance (if it has the MT_LENGTH metamethod)
+
+### weakref(obj)
+Creates a weak reference to an object.
+- **Arguments**: `obj` - reference-counted object
+- **Return value**: WeakRef instance, or the original object if it is not a reference type
+
+### realref(weakref)
+Gets the real object from a weak reference.
+- **Arguments**: `weakref` - WeakRef instance
+- **Return value**: the actual object
+
+### sprintf(format, ...)
+Generates a formatted string.
+- **Arguments**: `format` - format string, `...` - variable-length arguments
+- **Return value**: formatted string
+- **Format specifiers**: `%s`, `%d`, `%i`, `%f`, `%x`, `%c`, and more
+- **Positional specifiers**: positional forms such as `%2$s` are also supported
+
+### print(obj)
+Converts an object to a string and outputs it.
+- **Arguments**: `obj` - object to output
+
+### printf(format, ...)
+Outputs with formatting.
+- **Arguments**: `format` - format string, `...` - variable-length arguments
+
+### println(obj)
+Converts an object to a string and outputs it with a newline.
+- **Arguments**: `obj` - object to output
+
+### compilestring(source, [name], [debug])
+Compiles a string and returns a closure.
+- **Arguments**:
+  - `source` - source code string to compile
+  - `name` - (optional) source name
+  - `debug` - (optional) whether to include debug information
+- **Return value**: compiled closure
+
+### compiletemplate(source, [asarray])
+Compiles a template string. Calling the generated closure returns a string.
+- **Arguments**:
+  - `source` - template source string
+  - `asarray` - (optional) whether to return as an array
+- **Return value**: compiled closure
+
+### suspend([value])
+Suspends the current thread for one frame.
+- **Arguments**: `value` - (optional) value to return when suspended
+- **Return value**: specified value (suspension flag)
+
+### hashcode(obj)
+Returns the hash code of an object.
+- **Arguments**: `obj` - object to hash
+- **Return value**: integer (hash value)
+
+### array([size], [defaultValue])
+Creates an array.
+- **Arguments**:
+  - `size` - (optional) array size
+  - `defaultValue` - (optional) default value
+- **Return value**: new array
+
+### tuple(size, [defaultValue])
+Creates a tuple (an immutable array).
+- **Arguments**:
+  - `size` - tuple size
+  - `defaultValue` - (optional) default value
+- **Return value**: new tuple
+
+### objcmp(obj1, obj2)
+Compares two objects.
+- **Arguments**: `obj1`, `obj2` - objects to compare
+- **Return value**: -1, 0, or 1 (obj1 < obj2, obj1 == obj2, obj1 > obj2)
+
+### deepclone(obj)
+Creates a deep clone of an object.
+- **Arguments**: `obj` - object to clone
+- **Return value**: cloned object
+- **Notes**: Supports array, table, and instance. Circular references are handled too.
+
+### fget(table, key, ...)
+Gets the value for a key from a table or instance.  
+**However, if the retrieved value is a function, the return value of calling that function is returned instead.**
+- **Arguments**:
+  - `table` - table or instance
+  - `key` - key
+  - `...` - function arguments
+- **Return value**: value, or the function's return value
+
+### newslot(table, key, value, [flags])
+Adds a new slot to a table or class.
+- **Arguments**:
+  - `table` - table or class
+  - `key` - key
+  - `value` - value
+  - `flags` - (optional) flags
+- **Return value**: value on success, error on failure
+
+### spread(target, source)
+Expands and appends an array or table.
+- **Arguments**:
+  - `target` - destination array or table
+  - `source` - source array or table
+- **Return value**: target
+
+---
+
+## Type conversion functions
+
+### typeof(obj)
+Returns the type of an object.
+- **Arguments**: `obj` - object whose type to inspect
+- **Return value**: integer (type ID)
+
+### flagsof(obj)
+Returns the flags of a reference-counted object.
+- **Arguments**: `obj` - object
+- **Return value**: integer (flags)
+
+### int(value, [base])
+Converts a value to an integer.
+- **Arguments**:
+  - `value` - value to convert
+  - `base` - (optional) radix for strings (default 10)
+- **Return value**: integer
+
+### float(value)
+Converts a value to a floating-point number.
+- **Arguments**: `value` - value to convert
+- **Return value**: floating-point number
+
+### string(value)
+Converts a value to a string.
+- **Arguments**: `value` - value to convert
+- **Return value**: string
+
+### char(charCode)
+Creates a string from a character code.
+- **Arguments**: `charCode` - integer (character code)
+- **Return value**: one-character string (UTF-8)
+
+### getclass(instance)
+Returns the class of an instance.
+- **Arguments**: `instance` - instance
+- **Return value**: class
+
+### getbaseclass(class)
+Returns the base class of a class.
+- **Arguments**: `class` - class
+- **Return value**: base class, or null
+
+### getclassname(obj)
+Returns the class name of a class or instance.
+- **Arguments**: `obj` - class or instance
+- **Return value**: class name (string)
+
+### extendclass(baseClass)
+Creates a new class that extends a class.
+- **Arguments**: `baseClass` - base class
+- **Return value**: new class
+
+---
+
+## Thread functions
+
+### currentthread()
+Returns the thread currently being executed.
+- **Return value**: current thread
+
+### mainthread()
+Returns the main thread.
+- **Return value**: main thread
+
+### newthread([name])
+Creates a new thread. By calling the start or call method on this thread, you can start processing on a separate thread.
+- **Arguments**: `name` - (optional) thread name
+- **Return value**: new thread
+
+### sleep(milliseconds, [returnValue])
+Sleeps the current thread for the specified time.
+- **Arguments**:
+  - `milliseconds` - sleep time in milliseconds
+  - `returnValue` - (optional) return value
+- **Return value**: specified return value (suspension flag)
+
+### timersuspend()
+Performs a timer suspension (for Emscripten environments).
+- **Return value**: 0 (non-Emscripten), or a suspension flag
+
+### getcaller([depth])
+Returns the `this` object of the caller.
+- **Arguments**: `depth` - (optional) stack depth (default 0)
+- **Return value**: caller's `this` object
+
+### callee([depth])
+Returns the currently executing closure.
+- **Arguments**: `depth` - (optional) stack depth (default 0)
+- **Return value**: current closure
+
+### varguments([array], [append])
+Gets variable-length arguments as an array.
+- **Arguments**:
+  - `array` - (optional) destination array
+  - `append` - (optional) append mode
+- **Return value**: array of variable-length arguments
+
+---
+
+## Debugging utilities
+
+### refcount(obj)
+Returns the reference count of an object.
+- **Arguments**: `obj` - object
+- **Return value**: integer (reference count)
+
+### printexception(exception)
+Outputs exception information.
+- **Arguments**: `exception` - exception object
+
+### collectgarbage([generation])
+Runs garbage collection.
+- **Arguments**: `generation` - (optional) GC generation (default: highest generation)
+

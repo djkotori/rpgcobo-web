@@ -1,0 +1,84 @@
+---
+title: Game-wide Settings
+description: "Explains RPG-Cobo database settings and editing steps with the theme of game-wide settings."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+The "<M code="ea28"/> Game settings" database contains the game's overall settings.
+
+<div class="sspart">
+<SS src='docs/setting-1.png' alt='' minscale={0.8}/>
+
+|Setting item|Overview|
+|--------------------------|------------|
+|<M code="e8b8"/>System settings|Settings for the game's title, app icon, and game rules|
+|<M code="e574"/>Various types|Attributes, equip types, races, damage formulas, and more|
+|<M code="e0e0"/>Word dictionary|Change fixed words and messages.|
+|<M code="e16e"/>Global variables|Variables that can be read and written throughout the game and from events|
+</div>
+
+**Most game settings do not need to be changed unless necessary.**  
+This page explains how to set the game's title, app icon, and rules, which you will definitely edit at least once.  
+
+Now let's open "<M code="e8b8"/> System settings" from the "<M code="ea28"/> Game settings" database.
+
+
+
+<div class="sspart">
+<SS src='docs/setting-2.png' alt=''/>
+
+##### <M part="A"/> Application settings
+
+- Project name: Write the skill description here. This description is shown on the skill use screen.
+- Game title: Set the skill name and icon. Usually the skill and icon are displayed together.
+- Game icon: The icon set here becomes the app icon when the game is built. You can load square png, webp, or jpg files. Around 128x128 pixels is a good size.
+- Subtitle: Specifies which weapon type can use this skill.
+
+##### <M part="B"/> Basic settings
+
+- Battle system: Set from "turn-based," "action order," or "real-time."
+- Maximum party size: Set the maximum number of party members. You can choose from 1 to 6.
+- Walking speed: Set the player's standard walking speed in the game.
+- Weapon type: Choose which entries from "<M code="e574"/> Various types" should be classified as weapons.
+- Job point addition: Settings for how job system experience is added.
+  1. Automatic distribution: Job points are added when battles are won, and job levels increase automatically.
+  2. Manual allocation: Add them manually on the job menu screen. This is better if you want to manage growth more finely in a skill-tree style.
+
+
+##### <M part="C"/> Starting settings
+
+- Starting members: Set the initial party formed when starting a new game.
+- Starting money: Money at the start of a new game.
+- Title map: The title screen is also a map and can be heavily customized. By default, M000 is the title map.
+- Starting map: Displays the initial map position set in the map editor.
+
+##### <M part="D"/> Main menu state
+Here you can set the **initial display state at game start** for each menu available in the main menu opened during the game.  
+This state can be changed by event commands. This makes gradual menu unlocking possible, such as showing the item menu after the tutorial ends.
+
+##### <M part="E"/> Battle commands
+Here you can set the eight commands available during battle. This becomes the basic battle command list.  
+If you want to vary battle commands per character, you can replace them individually with the option "<M code="e80c"/> Battle command settings".  
+**RPG-Cobo has eight command slots.**
+
+|Command type|Overview|
+|--------------------------|------------|
+|Attack command|Calculated from physical attack and physical defense. Includes miss and critical checks.|
+|Single skill command|A command with one fixed skill assigned|
+|Skill group command|A command selectable from the "skill groups" in the store database|
+|Owned skill command|A command selectable from all skills the character has|
+|Owned item command|A command to use items|
+|Formation change command|A command to swap the front and back rows|
+
+<Aside type="tip">
+- Single skill commands are good for commands like "Defend," "Run away," or "Steal."
+- Skill group commands are good for grouping special techniques a character has, such as "Sword Arts," "Ninjutsu," or "Summoning Magic."
+- Owned skill commands are convenient commands that let you choose all the skills you have without complicated setup.
+</Aside>
+
+</div>
+

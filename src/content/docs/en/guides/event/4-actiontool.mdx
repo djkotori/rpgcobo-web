@@ -1,0 +1,86 @@
+---
+title: Making Presentations with the Character Presentation Tool
+description: "Explains RPG-Cobo event production and presentation settings with the theme of making presentations with the character presentation tool."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+[By the previous page](../3-talk-branch), you have learned how to make events and use the basic event commands.  
+This page changes the perspective a little and explains how to move various characters around, choreograph them, and create the kind of presentation scenes essential to an RPG.
+
+### <M code="e8af"/> What is the character presentation tool?
+The **character presentation tool** lets you graphically view multiple events and the player on the map while moving them, playing animations, effects, and sounds at the timing you choose.
+
+First, edit the custom event where you want to do the presentation and add the "<M code="e912"/> Character presentation tool" command. Then a dialog like the following appears.
+
+<div class="sspart">
+<SS src='docs/actiontool-1.png' alt=''/>
+
+##### <M part="A"/> 3D canvas
+A 3D canvas where you can set the movement route for events/players and preview the presentation. You can also drag the placed routes to move them.
+
+##### <M part="B"/> Preview playback panel
+Contains buttons to start and stop the presentation preview.
+You can also adjust playback speed with the gauge on the left.
+
+##### <M part="C"/> Event selection tab
+Switch this tab to change the event/player being edited.
+With the <M code="e146"/> button on the right, you can add other events on the map and make them part of the presentation.
+
+##### <M part="D"/> Properties
+There are settings such as loop playback and waiting for the next event command until the presentation finishes.
+
+##### <M part="E"/> Action list
+Added events are shown in order in the list. You can use editing features such as reordering and copy/paste.
+</div>
+
+
+### <M code="f10d"/> Add event actions
+
+
+
+If you open the right-click context menu on the canvas, you will see a menu like the one below.
+
+<div class="sspart">
+<SS src='docs/actiontool-2.png' alt=''/>
+
+|Action|Function|Settings|
+|-|-|-|
+|<M code="ef3a"/> Move here|Moves to the specified place. Can be added visually on the canvas.|Move type, movement speed|
+|<M code="e034"/> Wait|Waits for a specified time.|Time (ms)|
+|<M code="e620"/> Wait for condition|Waits until a specified condition is met.|Condition|
+|<M code="e577"/> Turn around|Turns in place to the specified direction.|Direction|
+|<M code="eae9"/> Animation|Plays an animation.|Wait|
+|<M code="ef55"/> Effect|Triggers an effect.||
+|<M code="e7f4"/> Sound|Plays a sound effect.||
+|<M code="e41e"/> Camera work|Switches to another camera.||
+|<M code="efeb"/> Camera motion|Applies movement/rotation to the camera.||
+|<M code="eb8e"/> Script|Runs whatever processing you want in a script.||
+</div>
+
+
+Basic presentations are completed by adding movement routes and inserting animations, sounds, and waits between them.  
+Once the action list looks like the one below, try checking the presentation with the "<M code="e037"/>" button in the preview panel.
+
+
+
+
+### <M code="f10d"/> Edit the player's presentation
+Switch the event selection tab to Player. The player display becomes active, and now you can edit the player's presentation.
+
+Now try adding presentation for both the event and the player and then check the preview.
+Did they move at the same time?
+
+### <M code="f10d"/> Set the movement of other events too
+If you add other events on the map using the <M code="e146"/> button to the right of the event selection tab, that event appears in the tool and you can edit its presentation.
+By creating multiple tabs, you can move many characters at once and create large-scale presentations.
+
+<SS src='docs/actiontool-3.png' alt=''/>
+
+### <M code="f10d"/> Can also be used for character movement behavior
+
+This character presentation tool can be specified not only in event commands but also in the movement action of all events, including template events.
+Try using it in many ways, such as for children running around, wandering enemies, or dancers on stage.
+

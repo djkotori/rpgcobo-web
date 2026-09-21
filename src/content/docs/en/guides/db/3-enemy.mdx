@@ -1,0 +1,74 @@
+---
+title: Enemy Data
+description: "Explains RPG-Cobo database settings and editing steps with the theme of enemy data."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+
+
+Enemies are the opponents the player fights, in other words, monsters. Let's get started.
+
+<div class="sspart">
+<SS src='docs/enemy-1.png' alt=''/>
+
+##### <M part="A"/> Name, description
+Set the enemy's name and description. The description is not usually shown in the game.
+
+##### <M part="B"/> Model
+Select the enemy's appearance image. This model can be added or edited in [Resources => Enemy picture](/guides/res/enemy-pic).
+
+##### <M part="C"/> Property / battle AI tab switch
+Switch between editing the enemy's basic abilities and battle AI using tabs.
+
+##### <M part="D"/> Properties
+- Level: Enter the enemy level as a reference value
+- Default skill: The enemy's normal attack skill. This skill is also selected when confused, and so on.
+- Loot item 1~4: Specify up to four items that can be obtained from the enemy. You can assign drop or steal to each one.
+
+##### <M part="E"/> Options
+Specify the enemy's special abilities. See here for details => [What are options?](/guides/res/enemy-pic)
+
+##### <M part="F"/> Battle test
+You can debug a battle in which this enemy appears alone.
+
+</div>
+
+### Battle AI definitions
+Battle AI is the behavior pattern settings used during battle.
+Most weak enemies only need a simple attack-only AI, so they are not much work, but important boss characters can also be configured in elaborate ways, such as frequently changing attack patterns depending on the situation.
+
+To edit battle AI, select "Battle AI" in the tab at the top right of the enemy editor. Once selected, the screen will look like the image below.
+
+<div class="sspart">
+<SS src='docs/enemy-2.png' alt='' minscale={0.7}/>
+
+##### <M part="A"/> AI page list
+You can add, delete, and move pages.
+
+##### <M part="B"/> AI page properties
+- Condition 1, 2: Conditions under which this page is selected
+- Priority: Priority when this page is selected
+- Continuous turns: How many turns this AI page continues after being selected
+- Number of actions: How many commands are used per turn
+- AI level: The intelligence level used when selecting commands, in five stages
+
+##### <M part="C"/> Command list
+The command list specifies the skills to use, the conditions for their use, and what kind of target to select.
+
+</div>
+
+
+### How to use multiple battle AI pages
+
+Battle AI can define a complex behavior pattern even with a single page, but combining multiple pages allows you to create even more elaborate and distinctive AI.
+
+Use pages to create AI with multiple modes such as the following.
+
+- Enters a berserk mode when HP decreases
+- Switches to a mode that prioritizes healing when an ally is in danger
+- Randomly changes behavior patterns to confuse the player's strategy
+- Taunts and acts careless when the opponent is weak
+- Starts a countdown when HP decreases and self-destructs at 0
+

@@ -1,0 +1,93 @@
+---
+title: Place Events
+description: "Explains RPG-Cobo event production and the flow of presentation settings with the theme of placing events."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { Aside } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+
+Villagers, treasure chests, exits to other locations, and many other tricks that appear in RPGs are collectively called "events."
+
+### <M code="f10d"/> Place events in the map editor
+
+You can place and edit events in the map editor.  
+From the map editor, select the "<M code="e82f"/> Event tool." Then choose the place where you want to put the event on the canvas and open the context menu with a right click.
+You will see a menu like the one below, with many kinds of events you can place.
+
+<div class="sspart">
+<SS src='docs/event-1.png' alt=''/>
+
+|Menu|Submenu|Menu overview|
+|---------|----------|---------|
+|<M code="e01e"/>Place event|<M code="e01e"/>Custom event|Place an event that freely combines commands. *Explained on the next page*|
+| |<M code="e8b1"/>Treasure chest|Place a chest that gives an item.|
+| |<M code="e91f"/>Villager|Place a talking villager.|
+| |<M code="e859"/>Enemy|Place a character used for symbol encounters.|
+| |<M code="e54c"/>Shopkeeper|Place a character for an item shop.|
+| |<M code="e53a"/>Innkeeper|Place a character for an inn.|
+| |...||
+|<M code="e55c"/>Place marker|<M code="e3af"/>Camera|Place a camera at a specific point for presentation purposes.|
+| |<M code="eab1"/>Landmark|Place a point name that can be shown on the world map.|
+| |<M code="e55d"/>Point|Can be used as a marker when specifying a position in events and similar cases.|
+| |<M code="e56a"/>Set here as initial map position|Set the specified location as the starting position when the game begins.|
+|<M code="ea77"/>Place portal| |Place an entrance event that moves to another map.|
+</div>
+
+Placed events (markers) can be edited by double-clicking them on the canvas or choosing "<M code="e745"/> Edit" from the context menu.  
+All events placed on the map are also listed in the tool panel.
+
+- Markers are placed in the event editor, but unlike events they cannot be configured to perform actions. They are used as simple markers from events and similar systems.
+
+### <M code="f10d"/> Edit events
+
+Let's place and edit a "<M code="ea77"/> Portal" event as an example.  
+Double-click the placed event or choose "<M code="e745"/> Edit" from the right-click context menu to show an editing window like the one below.
+
+<div class="sspart">
+<SS src='docs/event-2.png' alt=''/>
+
+##### <M part="A"/> Event name
+You can specify the event name. It is basically a name used for management.
+<Aside type="tip">The reason the first character of the name is "*" is that it indicates the name is excluded from translation candidates. Usually, if an event name does not need translation, it is a good idea to start it with "*".</Aside>
+
+##### <M part="B"/> Destination settings
+Specify the destination map and position. There are two ways to specify the position: "portal specification" and "coordinate specification." If the entrance and exit are connected as a portal, it is better to use portal specification.
+
+##### <M part="C"/> Wipe type
+The screen effect when moving maps is called a wipe. Here you can specify the wipe type when moving maps.  
+You can choose from "No wipe," "Normal," "Building," "Warp," "Memory," and "Battle."
+
+##### <M part="D"/> Reposition map
+Specifies whether to reset the state of opened doors or defeated enemies on the destination map. Usually it is fine to leave this ON.
+</div>
+
+### <M code="f10d"/> Set up various door behaviors
+Doors placed with the exterior or interior tool can be switched between three states from the right-click menu's "<M code="effd"/> Door state":
+"<M code="e897"/> Lock," "<M code="e898"/> Unlock," and "<M code="e9ba"/> Open."  
+**Among these, the "<M code="e898"/> Unlock" state is a convenient state where the door opens automatically when touched.**
+
+<SS src='docs/event-4.png' alt=''/>
+
+You can also right-click a door with the "<M code="e82f"/> Event tool" and convert it into the following kinds of events.
+
+<div class="sspart">
+<SS src='docs/event-3.png' alt=''/>
+
+|Door type|Description|
+|---------|----------|
+|<M code="effd"/>Door state|Same as with the exterior or interior tool.|
+|<M code="f1b5"/>Auto door|Makes the door automatically open and close under certain conditions.|
+|<M code="f118"/>Portal door|A door that opens and closes and also has portal functionality to move to another map.|
+</div>
+
+
+### <M code="f10d"/> Other events
+
+In addition to the events introduced so far, RPG-Cobo also includes many kinds of template events for making RPGs, such as "<M code="e8b1"/> Treasure chest" and "<M code="e91f"/> Villager."  
+These events let you mass-produce events easily with only a few settings. Try placing them and see for yourself.
+
+
+In the next page, we will explain how to make "custom events" that can do whatever you want.
+

@@ -1,0 +1,68 @@
+---
+title: Master Map Assets
+description: "Explains RPG-Cobo map production and related setup points with the theme of making the most of map assets."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+
+[As introduced on the previous page](../2-mapedit), RPG-Cobo has a feature called "map assets" for quickly creating maps.
+
+These map assets are not just pre-made assets you can use as-is; you can also easily register buildings you have created yourself.
+This page explains how to register and manage map assets, as well as some advanced techniques.
+
+<SS src='docs/map-asset-1.png' alt=''/>
+
+### <M code="ef42"/> Register a new asset from inside the map
+
+You can register the selected area in the map editor with the selection tool as an asset. Let's register your own map asset using the following steps.
+<Steps>
+1. In the selection tool, set the selection mode to "<M code="e9fe"/> 3D." <SS src='docs/map-asset-2.png' alt=''/>
+2. Select so that the building you want to register fits well inside the selection. *It may take a little practice to get used to selection operations.*
+3. Open the context menu with a right-click and choose "<M code="e02e"/> Register as asset." <SS src='docs/map-asset-3.png' alt=''/>
+4. A "Register as asset" dialog appears, so press the "Confirm" button.
+</Steps>
+
+### <M code="ef42"/> Manage the map asset list
+
+Select Resources in the activity bar and open "<M code="ea09"/> Map asset."
+You can modify the created map assets, copy a house you made to create color variants, and so on.
+
+<div class="sspart">
+<SS src='docs/map-asset-4.png' alt=''/>
+
+##### <M part="A"/> Map asset list
+The models for map assets are displayed as a list. You can rotate the display by dragging with the right mouse button.
+As with the common operations in the resource editor, you can use "copy," "paste," and "sort by drag and drop" on list items. You can change the maximum number of resources with the "x100" button at the bottom right.
+
+##### <M part="B"/> Properties
+- Group: Choose from "building," "building part," "terrain part," or "moving asset" for classification.
+- Place as event: If ON, you can use this asset as the model for an event.
+</div>
+
+### <M code="ef42"/> Advanced map asset techniques
+
+
+##### Add bay windows to roofs
+To vary the look of a house, place bay windows anywhere on the roof.
+Several bay window patterns are registered in the building parts.
+
+##### Build a giant fortress
+The map assets for building parts include several pieces for assembling a fortress.
+If you connect them sideways or rotate and place them, an impregnable castle is complete in no time!
+
+##### A bridge appears through an event
+You can use event commands to dynamically place assets on the map.
+For example, you can easily create an event where a bridge appears after you clear a quest and you can proceed to a new map.
+
+With this mechanism, you might even be able to make randomly generated dungeons.
+
+##### Build an elevator that moves up and down
+Yes, map assets can even be placed on the map as event characters.
+And you can move them however you like using event commands.
+
+With this feature, you can create anything from elevators that move automatically when stepped on, to moving floors, to huge sailing ships.
+

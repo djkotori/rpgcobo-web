@@ -1,0 +1,195 @@
+---
+title: "Addon API: Steamworks"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Addon API: Steamworks."
+---
+
+This document is a reference for SakanaGL's Steamworks SDK addon (`addon/steam/sakana_addon.cpp`).
+
+## Overview
+
+The sksteam addon lets SakanaGL applications use Steam platform features. It supports user information retrieval, achievement management, stats, in-game purchases, authentication, Steam Deck support, and more.
+
+**How to load the addon**:
+```javascript
+skLoadAddon( "sksteam");
+```
+
+---
+
+## Contents
+
+- [Initialization](#initialization)
+- [Steam user information](#steam-user-information)
+- [Authentication / tickets](#authentication--tickets)
+- [Achievements](#achievements)
+- [Stats](#stats)
+- [In-game purchases (micro transactions)](#in-game-purchases-micro-transactions)
+- [Steam Deck / Big Picture mode](#steam-deck--big-picture-mode)
+- [Gamepad text input](#gamepad-text-input)
+- [Other utilities](#other-utilities)
+- [Examples](#examples)
+
+---
+
+## Initialization
+
+### `SteamAPI.init()`
+
+Initializes the Steam API. Must be called first when the application starts.
+
+**Return value**: bool - `true` if initialization succeeds
+
+**Description**: If initialization fails, the Steam client may not be running or `steam_appid.txt` may not be found.
+
+**Example**:
+```javascript
+if(!SteamAPI.init()) {
+	println("Steam initialization failed");
+	exit(1);
+}
+```
+
+---
+
+### `SteamAPI.runSteamCallbacks()`
+
+Processes Steam callbacks. Call this periodically in the main loop.
+
+**Description**: Required to receive events such as achievement unlocks, purchase approvals, and authentication ticket results.
+
+**Example**:
+```javascript
+function update() {
+	SteamAPI.runSteamCallbacks();
+	// game logic...
+}
+```
+
+---
+
+### `SteamAPI.restartAppIfNecessary(appid)`
+
+Restarts the app through Steam if it was not launched through Steam.
+
+**Arguments**:
+- `appid` (int): Steam app ID
+
+**Return value**: bool - `true` if a restart is required (the app should exit)
+
+**Description**: Automatically restarts through Steam when the app was not launched through Steam. Usually called at the beginning of the application.
+
+**Example**:
+```javascript
+if(SteamAPI.restartAppIfNecessary(YOUR_APP_ID)) {
+	// will be restarted through Steam, so exit
+	exit(0);
+}
+```
+
+---
+
+## Steam user information
+
+### `SteamAPI.getSteamID64(long)`
+
+Gets the current user's Steam ID (64-bit).
+
+**Arguments**:
+- `long`: long object to store the result
+
+**Return value**: long - the passed long object
+
+**Description**: Gets the Steam ID as a 64-bit integer.
+
+**Example**:
+```javascript
+local steamID = SteamAPI.getSteamID64( long());
+println("Steam ID: " .. steamID);
+```
+
+### `SteamAPI.getSteamIDString()`
+
+Gets the Steam ID as a string.
+
+**Return value**: string - `"<account type>_<account ID>"`
+
+**Description**: Gets the Steam ID as an easy-to-read string.
+
+### `SteamAPI.getSteamAccountID()`
+
+Gets the Steam account ID (32-bit).
+
+**Return value**: int - account ID
+
+### `SteamAPI.getPlayerSteamLevel()`
+
+Gets the player's Steam level.
+
+**Return value**: int - Steam level
+
+### `SteamAPI.getPersonaName()`
+
+Gets the player's Steam display name.
+
+**Return value**: string - display name
+
+### `SteamAPI.getCurrentGameLanguage()`
+
+Gets the current game language code.
+
+**Return value**: string - language code (for example: `"english"`, `"japanese"`, `"schinese"`)
+
+**Description**: Used to switch the game's display language based on Steam language settings.
+
+---
+
+## Authentication / tickets
+
+### `SteamAPI.getAuthTicketForWebApi([identity])`
+
+Gets an authentication ticket for the Web API.
+
+**Arguments**:
+- `identity` (string, optional): service identifier (optional)
+
+**Return value**: `ticketHandle (int)`
+
+**Description**:
+- Used for Web API authentication (use this instead of `getSteamAuthSessionTicket`)
+- Keep calling `runSteamCallbacks()` and check the result with `getAuthTicketResult()`
+
+### `SteamAPI.getAuthTicketResult()`
+
+Gets the result of an authentication ticket request.
+
+**Return value**: string | int | null - ticket string on success, error code (EResult) on failure, null if not finished yet
+
+**Description**: After calling `getAuthTicketForWebApi()`, null is returned until Steam-side processing is complete.
+
+### `SteamAPI.getSteamAuthSessionTicket()`
+
+Gets a session authentication ticket.
+
+**Return value**: Array - `[ticketHandle (int), hexToken (string), tokenBytes (ByteBuffer)]`
+
+**Description**:
+- Use `getAuthTicketForWebApi` for Web API authentication.
+- Can be used for limited purposes such as P2P network play.
+
+### `SteamAPI.getSteamAuthSessionResult()`
+
+Gets the result of a session authentication ticket request.
+
+**Return value**: int | null - result code
+
+**Description**: Used to check the result of `getSteamAuthSessionTicket()`.
+
+### `SteamAPI.cancelSteamAuthSessionTicket(ticketHandle)`
+
+Cancels an authentication ticket.
+
+**Arguments**:
+- `ticketHandle` (int): ticket handle
+
+**Description**: Invalidates the obtained authentication ticket. Call this when the session ends.
+

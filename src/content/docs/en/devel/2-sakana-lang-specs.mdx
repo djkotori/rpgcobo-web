@@ -1,0 +1,354 @@
+---
+title: About the sakana Language
+description: "Explains the sakana language and RPG-Cobo's developer-facing features and extension methods."
+---
+
+RPG-Cobo uses the `sakana` language (abbreviated `sk`), which is based on the Squirrel language, an embedded language for game development, and has been heavily optimized and extended.  
+Because it has a syntactic affinity with JavaScript, it should be relatively easy to learn and get used to.
+This page gives a brief introduction to the basic language specification of `sk` and explains how it differs from JavaScript where the usage is different.
+
+
+## 1. Basic Types
+
+- Value types: `int`, `float`, `bool`, `null`, `undefined`
+- Strings: UTF-8 compatible
+- Arrays: `array`
+- Tables: `table`
+- Closures: `closure`
+- Native functions: `nclosure`
+- Classes / instances: `class`, `instance`
+- Threads: `thread`
+
+### undefined
+In `sk`, there is an `undefined` type in addition to `null`. It is a special value that indicates the absence of a value.
+
+### string
+A UTF-8 formatted string.  
+In addition to the usual string literal `"abc"`, you can also use JavaScript-style template strings `` `abc${val}` `` and Python-style string formatting expressions such as `"abc %d %s" % (a,b)`.
+
+### array
+The `array` type in `sk` is a variable-length list, just like JavaScript's Array type.
+
+### table
+The `table` type in `sk` is a key/value table, just like JavaScript's object type.
+
+### closure, nclosure
+Executable functions. nclosure is a native function that runs C++ code.
+
+### class, instance
+One major difference from JavaScript is that a `sk` `class` locks its internal structure the first time it is instantiated, and from then on you cannot freely add new member variables.  
+For detailed usage, see the section on classes and metamethods.
+
+### thread
+`sk` is a blocking language with many logical threads. This is the biggest difference from JavaScript and is very convenient for game programming.  
+For detailed usage, see the section on threads.
+
+
+## 2. Variables and Scope
+
+### Local variables
+
+```sk
+local x, y;
+local z = 10;
+```
+
+### Global variables
+
+Use `::` to define and assign global variables.
+
+```sk
+::gvar <- "some";
+::[key] <- "some";
+```
+
+If you modify a global variable without using `::`, it will cause an error, so you need to specify globals explicitly.
+
+### Scope resolution
+
+When `gvar` is referenced inside a class method, it first checks whether the object itself has the name; if not, it refers to the global.
+
+```sk
+::gvar <- "some";
+
+class X {
+    function getgvar(){ return gvar; }  // refers to ::gvar
+    function setgvar(x){ ::gvar = x; }  // gvar = x; would be an error
+}
+```
+
+## 3. Function Definitions
+
+### Normal functions
+
+```sk
+function foo(a, b, c = 0, ...){
+    ;
+}
+```
+
+### Local functions
+
+```sk
+local localfoo(a, b){
+    ;
+}
+```
+
+### Lambda expressions
+
+```sk
+list.sort(@(v) v.id);
+local func = @(){ if (x) y = 100; };
+```
+
+### Variable-length arguments
+
+Arguments are obtained through `vargc` and `vargv`.
+
+```sk
+function foo(a, ...){
+    local n = vargc;
+    local first = vargv[0];
+}
+```
+
+### Lexical scope
+
+External variables can be read, but attempting to reassign them from inside a function causes a compilation error.
+
+```sk
+local outer = "abc";
+function getouter(){ return outer; }
+function setouter(x){ outer = x; } // error
+```
+
+### `with` and `#`
+
+- `with` behaves similarly to JavaScript's `with`.
+- `#` works like a static initializer: it is evaluated only once on the first call to the function, and the same value is reused afterward.
+
+```sk
+function func(x){
+    local staticval = #(x + 1234);
+    ...
+}
+```
+
+## 4. Object References and Field Access
+
+In `sk`, `obj.key` and `obj["key"]` behave differently.
+
+- `obj.key` throws an exception if the field does not exist.
+- `obj["key"]` returns `undefined` if it does not exist.
+
+This behavior is the same for all types such as `table`, `instance`, and `null`. If you do not want exceptions to occur during field access,
+you should access fields using the `obj["key"]` form.
+
+## 5. Operators
+
+Main operators available in `sk`:
+
+- Arithmetic: `+`, `-`, `*`, `/`, `%`
+- Bitwise: `|`, `&`, `<<`, `>>`, `>>>`, `^`, `~`
+- Logical: `&&`, `||`, `??`, `!`
+- Concatenation: `..`
+- Spread: `...`
+- Assignment: `=`, `<-`, `+=`, `-=`, `*=`, `/=`, `%=`, `|=`, `&=`, `<<=`, `>>=`, `>>>=`
+- Comparison: `==`, `!=`, `<=`, `<`, `>=`, `>`, `<>`, `instanceof`
+- Increment / decrement: `++`, `--`
+- Others: `?:`, `delete`, `clone`, `with`, `#`, `::`
+
+### `newslot` operator (`<-`)
+
+When adding a new key to a `table` or global variable, use `<-`. Using `=` when the key does not already exist will cause an error.
+
+```sk
+obj <- { };
+obj["newKey"] <- 123;
+```
+
+### Comparison operator `<>`
+
+`a <> b` performs a 3-way comparison and returns one of `-1`, `0`, or `1`. Because it performs structural comparison, values are considered equal if their internal values are the same, even when the references differ.
+
+### Concatenation operator `..`
+
+`..` can be used to concatenate strings and arrays.
+
+```sk
+"string" .. 123        // "string123"
+[1, 2, 3] .. 4 .. 5      // [1, 2, 3, 4, 5]
+```
+
+When concatenating to an array, elements are appended to the array itself and no clone is created.
+
+### The `~` operator for arrays
+
+To support flexible function calls, `sk` can combine the `~` operator and arrays to call functions like this:  
+`~[function,self,arg1,arg2,...]`
+
+## 6. Table Array Initialization
+
+`sk` tables can be initialized with `{ expression }`, and both JavaScript/json-compatible notation and Squirrel-compatible notation are supported.  
+You can also expand existing tables using the spread operator.
+
+```javascript
+local t = { "a":1, "b":null, "c":"abcd", "d":[1,2,3] };   // json-compatible notation
+local t = { a:1, b:null, c:"abcd", d:[1,2,3] };           // JavaScript-compatible notation
+local t = { a=1, b=null, c="abcd", d=[1,2,3] };           // Squirrel-compatible notation
+local t = { [x]=1, [y]=null, [30]="abcd" };               // wrapping in [] lets you use the value of a variable as the key.
+
+local t = { ...t0, "e":123, "f":"xyz" };                  // spread operator is also possible
+local t = { a, b, c};                                     // error! JavaScript shorthand syntax cannot be used.
+```
+
+## 7. Classes and Metamethods
+
+`sk` class definitions are similar in syntax to JavaScript, but the structure is locked when the first instance is created, and instance variables cannot be added after locking (methods and static variables can still be changed).
+
+```sk
+class Foo extends BaseFoo
+{
+    static s = "abc";
+    x = 0.0;
+    y = "y";
+    z = null;
+
+    function foo(a){ ; }
+    static function staticfoo(a){ ; }
+
+    <abc, def> tagval = 0;  // tags can be specified for member variables
+}
+```
+
+### Metamethods
+
+In `sk`, you can define special methods on a class to extend its behavior.
+
+```sk
+class Foo
+{
+    function _get(k) scp[k]
+    function _set(k, v) scp[k] = v
+    function _newslot(k, v) scp[k] <- v
+    function _call(caller, ...){ ; }
+    function _cloned(org){ ; }
+    function _cmp(b) id <> b.id
+}
+```
+
+- `_get` / `_set`: control access to undefined fields
+- `_newslot`: behavior when adding a new field
+- `_call`: behavior when the object is called
+- `_cloned`: behavior during copying
+- `_cmp`: definition of 3-way comparison
+
+## 8. Threads
+
+`sk` adopts a blocking threading model in which many logical threads run in parallel.  
+Unlike JavaScript, it allows cooperative thread control.
+
+```sk
+local t = newthread("thread name");
+```
+
+### Autonomous threads
+
+```sk
+t.start(func, self, arg0, arg1, ...);
+```
+
+It runs automatically every frame.
+
+### Cooperative threads
+
+```sk
+t.call(func, self, arg0, arg1, ...);
+t.wakeup(dt);
+```
+
+By using `wakeup` after `call`, you can control the execution timing as you like.
+
+### Suspending threads
+
+Because `sk` threads are cooperative, you need to call `suspend()` or `sleep(16)` at appropriate points during processing to avoid infinite loops.
+
+```sk
+suspend();
+sleep(16);
+```
+
+## 9. Control Structures
+
+The following syntax works almost the same way as in JavaScript.
+
+- `if`
+- `switch`
+- `while`
+- `do` / `while`
+- `for`
+- `foreach`
+- `break`
+- `continue`
+- `local`
+- `return`
+- `try` / `catch`
+- `goto`
+- `enum`
+- `import`
+
+### foreach
+
+`foreach` is equivalent to JavaScript's `for-of`.
+
+```sk
+foreach(val in obj){
+    ;
+}
+
+foreach(idx, val in obj){
+    ;
+}
+```
+
+### removei
+
+Use `removei` to safely remove elements while iterating in a `foreach` loop.
+
+```sk
+foreach(val in obj){
+    if (val == 0) removei;
+}
+```
+
+### goto
+
+`goto` jumps to a label within the function. It can jump across block boundaries, but the state of local variables may become unstable.
+
+```sk
+LABEL:
+    ;
+if (cond) goto LABEL;
+```
+
+### enum
+
+`enum` defines an enumeration type.
+
+```sk
+enum Color { Red, Green, Blue }
+local c = Color.Red;
+```
+
+### import
+
+`sk`'s `import` is different from JavaScript's version. It is syntax for registering constants and functions into the global scope within the source, rather than for modules.  
+For example, by using `import` as shown below, you can directly reference `VirtualKeyCode` constants such as `VK_A`.
+
+```sk
+import VirtualKeyCode;
+```
+
+What you can specify with `import` is limited to constants defined by enums, predefined tables, or classes.
+

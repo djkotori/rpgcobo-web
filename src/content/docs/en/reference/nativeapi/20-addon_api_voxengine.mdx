@@ -1,0 +1,260 @@
+---
+title: "Addon API: VoxEngine"
+description: "An API reference that summarizes the specifications, function lists, arguments, return values, and usage of Addon API: VoxEngine."
+---
+This document is a reference for SakanaGL's VoxEngine addon (`voxengine/sakana_addon.cpp`, `voxengine/sakana_block.cpp`).
+
+## Overview
+
+The VoxEngine API is a comprehensive system for building voxel-based 3D environments. It supports voxel data generation and editing, polygon meshing, block worlds (chunk management and free-block placement), collision detection, and more.
+
+---
+
+## Contents
+
+### Math and transforms
+- [IMat](#imat) - integer matrix (for voxel/block coordinate transforms)
+- [IPos](#ipos) - integer position (x, y, z, rot)
+- [IRect3D](#irect3d) - integer 3D rectangle
+
+### Voxel data
+- [VoxelPalette](#voxelpalette) - voxel color palette
+- [VoxelData](#voxeldatal) - 32-bit voxel data
+- [VoxelData8](#voxeldata8) - 8-bit palette voxel data
+- [VoxelParts](#voxelparts) - voxel parts (hierarchical structure)
+- [VoxelContainer](#voxelcontainer) - voxel container (manages multiple parts)
+- [VoxelCanvas](#voxelcanvas) - voxel canvas (32-bit drawing)
+- [VoxelCanvas8](#voxelcanvas8) - voxel canvas (8-bit drawing)
+
+### Block world
+- [BlockWorld](#blockworld) - block world (chunk management)
+- [Block](#block) - block definition
+- [FreeBlock](#freeblock) - freely placed block
+- [BlockChunkData](#blockchunkdata) - chunk data (for save/restore)
+- [HitBlock](#hitblock) - block collision information
+- [BlockColiderInterface](#blockcoliderinterface) - block physics collision interface
+- [BlockRenderer](#blockrenderer) - block renderer
+
+### Meshing and drawing
+- [VoxelMeshData](#voxelmeshdata) - voxel mesh data
+- [VoxelMeshBuilder](#voxelmeshbuilder) - voxel mesh builder
+- [VoxelSelecter](#voxelselecter) - voxel selection tool
+
+### Examples
+- [Basic voxel operations](#basic-voxel-operations)
+- [Building a block world](#building-a-block-world)
+- [Meshing and drawing](#meshing-and-drawing)
+
+---
+
+## IMat
+
+Integer matrix class. Performs rotation and translation transforms for voxel coordinates.  
+- Rotation is limited to 90-degree Y-axis rotations, specified as integers from 0 to 3.
+- Scale transforms cannot change the size except to 1.
+
+### Constructor
+
+```javascript
+IMat()
+IMat(rot)
+IMat(x, y, z)
+IMat(a, b, c, d, u, v, r)
+```
+
+**Arguments**:
+- `rot` (int, optional): rotation (0-3, in 90-degree steps)
+- `x, y, z` (int): translation components
+- `a, b, c, d, u, v, r` (int): rotation matrix components + translation components
+
+### Fields
+
+- `u` (int): X translation
+- `v` (int): Y translation
+- `r` (int): Z translation
+- `a, b, c, d` (int): rotation matrix components
+
+### Methods
+
+##### `set(...)`
+Sets the matrix.
+
+**Arguments**: same as constructor
+
+**Return value**: IMat (self)
+
+##### `identity()`
+Sets to the identity matrix.
+
+**Return value**: IMat (self)
+
+##### `rotate([times])`
+Applies a 90-degree rotation.
+
+**Arguments**:
+- `times` (int, optional): number of rotations (default: 1)
+
+**Return value**: IMat (new)
+
+##### `translate(x, y, z)`
+Applies translation.
+
+**Arguments**:
+- `x, y, z` (int): translation amount
+
+**Return value**: IMat (new)
+
+##### `scale(sx, sz)`
+Applies scale transform (flip only).
+
+**Arguments**:
+- `sx, sz` (int): -1 or 1
+
+**Return value**: IMat (new)
+
+##### `mult(other[, out])`
+Calculates matrix multiplication.
+
+**Arguments**:
+- `other` (IMat): right-hand matrix
+- `out` (IMat, optional): destination for the result
+
+**Return value**: IMat
+
+##### `invert()`
+Calculates the inverse matrix.
+
+**Return value**: IMat (self)
+
+##### `getRot()`
+Gets the current rotation value.
+
+**Return value**: int (0-3)
+
+##### `transform(target)`
+Transforms coordinates or Rect3D.
+
+**Arguments**:
+- `target` (IRect3D | IPos | Array): object to transform
+
+**Return value**: the same object after transformation
+
+##### `toMatrix(mat[, scale])`
+Converts to a Matrix (float matrix).
+
+**Arguments**:
+- `mat` (Matrix): destination
+- `scale` (float, optional): scale factor (default: 1.0)
+
+**Return value**: Matrix
+
+**Example**:
+```javascript
+local m = IMat(1); // 90-degree rotation
+m.translate(10, 5, 8);
+local pos = IPos(0, 0, 0);
+m.transform(pos);
+println("Transformed: " + pos.x + ", " + pos.y + ", " + pos.z);
+```
+
+---
+
+## IPos
+
+A position class with integer coordinates and rotation.
+
+### Constructor
+
+```javascript
+IPos(x, y, z[, rot])
+IPos([x, y, z[, rot]])
+IPos(IPos)
+```
+
+### Fields
+
+- `x` (int): X coordinate
+- `y` (int): Y coordinate
+- `z` (int): Z coordinate
+- `rot` (int): rotation (0-3)
+
+### Methods
+
+##### `set(...)`
+Sets values (same arguments as the constructor).
+
+**Return value**: IPos (self)
+
+---
+
+## IRect3D
+
+Integer 3D rectangle class. Used for specifying voxel regions.
+
+### Constructor
+
+```javascript
+IRect3D(x, y, z, w, h, d)
+IRect3D([x, y, z, w, h, d])
+IRect3D(IRect3D)
+IRect3D(Rect3D)
+```
+
+### Fields
+
+- `x, y, z` (int): position
+- `w, h, d` (int): size
+
+### Methods
+
+##### `set(x, y, z, w, h, d)`
+Sets the rectangle.
+
+**Return value**: IRect3D (self)
+
+##### `expand(value)`
+##### `expand([dx, dy, dz])`
+Expands the rectangle.
+
+**Return value**: IRect3D (self)
+
+##### `merge(other)`
+Merges with another rectangle.
+
+**Return value**: IRect3D (self)
+
+##### `clip(other)`
+Clips by another rectangle.
+
+**Return value**: IRect3D (self)
+
+##### `valid()`
+Checks whether the rectangle is valid (size > 0).
+
+**Return value**: bool
+
+##### `toRect3D()`
+Converts to a Rect3D (float rectangle).
+
+**Return value**: Rect3D
+
+##### `rotate([times])`
+Rotates 90 degrees.
+
+**Return value**: IRect3D (self)
+
+##### `transform(imat)`
+Transforms with IMat.
+
+**Return value**: IRect3D (self)
+
+##### `scale(value)`
+Applies scale transform.
+
+**Return value**: IRect3D (self)
+
+##### `offset(x, y, z)`
+Applies an offset.
+
+**Return value**: IRect3D (self)
+
