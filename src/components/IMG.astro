@@ -15,10 +15,15 @@ const { src, alt, minscale } = Astro.props;
 
 const slug = Astro.params.slug;
 const lang = slug ? (slug.indexOf( "/")>=0 ? slug.slice( 0, slug.indexOf( "/")) : slug) : null;
-let imgpath = "/src/assets/" + src;
+let imgpath = "/src/assets/" + lang + "/" + src;
 
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*.{jpeg,jpg,png,gif,webp,svg}');
 let imgref = images[imgpath];
+if( !imgref) {
+   imgpath = "/src/assets/" + src;
+   imgref = images[imgpath];
+}
+
 if( !imgref) {
 	console.log( images);
 	throw new Error(`"${imgpath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,webp,svg}"`);
