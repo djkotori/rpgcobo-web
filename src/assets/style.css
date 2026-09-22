@@ -168,6 +168,10 @@ h2 {
   /* border-bottom: 2.0px solid var(--sl-color-text-head); */
 }
 
+.card h2 {
+  font-size: 80%;
+}
+
 .sspart {
   padding: 0.5em 1.0em;
   background-color: var(--sl-color-gray-7);

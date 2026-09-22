@@ -1,0 +1,142 @@
+---
+title: RPG-Cobo Roadmap
+description: "RPG-Cobo's roadmap. A summary of upcoming development and release plans."
+template: splash
+---
+
+import { Card, CardGrid, LinkCard, LinkButton } from '@astrojs/starlight/components';
+import { default as Card2 } from '/src/components/Card2.astro';
+import { default as IMG } from '/src/components/IMG.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+This roadmap summarizes the state of RPG-Cobo's features as of **September 22, 2026**, along with our future development direction.
+
+## Items implemented during the beta test period
+
+Since the beta test began on June 5, 2026, features have been progressively added and fixed based on bug reports and improvement requests from testers.  
+Major highlighted features have also been added, and preparations for early access are steadily underway.
+
+|Item|Category|Timing|
+|---|---|---|
+|Voice playback event command|🔊|✅ v0.1.2|
+|Voice playback during battle|⚔️|✅ v0.1.3|
+|Enemy parameter formula settings|📊|✅ v0.1.4|
+|**Screen-space shadows**|🗺️🖼️|✅ v0.1.4|
+|**Moving terrain**|🖥️🗺️|✅ v0.1.4|
+|**Real-time battle**|⚔️|✅ v0.1.6|
+|Project upload for contests|🔧|✅ v0.1.8|
+|Debugging that reflects unsaved data|🔧|✅ v0.1.9|
+|Direct debugging of custom event pages|🔧|✅ v0.1.9|
+|Plugin development environment and sample plugins|🖥️|✅ v0.1.9|
+|Drag-and-drop import of images and audio|🎨|✅ v0.1.11|
+|PS4 controller support|🎮|✅ v0.1.12|
+|Auto battle|⚔️|✅ v0.1.13|
+|**Copy & paste between projects**|🔧|✅ v0.1.14|
+|Enhanced map editor leveling, fill, and water tools|🔧🗺️|✅ v0.1.16|
+|Advanced battle AI|⚔️|✅ v0.1.22|
+|**Map generator (alpha)**|🔧🗺️|✅ v0.1.20|
+|**Tool editing and hot reload while debugging**|🔧|✅ v0.1.24|
+|**AI-assisted development via MCP server (alpha)**|🤖|✅ v0.1.24|
+|Equipment level and random/formula-based equipment parameters|📊|✅ v0.1.27|
+|Bug reporting from within the tool|🔧|✅ v0.1.28|
+|Enhanced message window features|🧩🖥️|✅ v0.1.30|
+|Message preview|🔧🧩|✅ v0.1.31|
+|**Individual-order battle system**|⚔️|During beta period|
+|Full map and mini-map display|🧩|During beta period|
+|Enhanced battle presentation such as boss defeat effects|⚔️|During beta period|
+|Enhanced presentation for stage effects|🖥️|During beta period|
+|Additions and improvements to event movement actions, etc.|🖥️|During beta period|
+|Extended symbol encounters|🎮|During beta period|
+
+## Autumn 2026: Early access and beyond
+
+With early access, paid licenses will become available.  
+Alongside this, we will focus on improving export functionality for each OS, building out a tool environment for developing more advanced 3D RPGs.
+
+Early access is targeted to begin in October or November 2026, after thoroughly incorporating feedback from the beta test.  
+The transition from beta test to early access will be seamless, allowing users to experience new features without interruption.
+
+|Item|Category|Timing|
+|---|---|---|
+|**Export for Android**|🎮|At early access launch|
+|**Export for iOS**|🎮|At early access launch|
+|**Steam development features**|🎮|At early access launch|
+|**Support for importing external 3D models**|🎨|At early access launch|
+|Enhanced map generator: generating towns, castles, mountains, etc.|🔧🗺️|At early access launch|
+|Expanded standard asset library|🎨🔊|At early access launch|
+|Minimal-configuration project templates|🎨|At early access launch|
+|**Character generator (alpha)**|🔧🎨|Autumn 2026 onward|
+|**Battle formations, front-view battles**|⚔️|Autumn 2026 onward|
+|Vehicle support|🖥️|Autumn 2026 onward|
+|Custom shader support|🖼️|Autumn 2026 onward|
+|High-quality water surface rendering|🖼️|Autumn 2026 onward|
+|Further usability improvements to the map editor|🔧🗺️|Autumn 2026 onward|
+|**Expanded in-tool help**|📁🔧|Autumn 2026 onward|
+|Input settings screen for gamepad, keyboard, and touch controls|🎮🧩|Autumn 2026 onward|
+
+## Within 2026: Official launch in Japan and beyond
+
+The official launch will take place once the features implemented up through early access are judged to be sufficiently stable and performant.  
+In addition, a global service launch is planned for the first half of 2027.
+
+Our goal is to continue providing an even more usable and advanced 3D RPG creation environment.
+
+|Item|Category|Timing|
+|---|---|---|
+|**Japanese-style RPG assets**|🎨|Winter 2026 onward|
+|**Modern-style RPG assets**|🎨|Winter 2026 onward|
+|**Export for game consoles**|🎮|Winter 2026 onward|
+|**Map generator (official release)**|🔧🗺️|Winter 2026 onward|
+|**Character generator (official release)**|🔧🎨|Winter 2026 onward|
+|In-game advertising support|🌐|Winter 2026 onward|
+|AI-assisted game asset creation|🤖🎨|Winter 2026 onward|
+|AI-assisted large-scale data generation support|🤖|Winter 2026 onward|
+|AI-assisted plugin development support|🤖🔧|Winter 2026 onward|
+|AI-assisted playtesting support|🤖|Winter 2026 onward|
+|Advanced cutscene editing|✨🖥️|Winter 2026 onward|
+|Voxel editor built into RPG-Cobo|🔧🎨|Winter 2026 onward|
+|Movie playback|🎨|Winter 2026 onward|
+|Major improvements to the UI editor|🔧🧩|Winter 2026 onward|
+|Official plugin collection|🧩|Winter 2026 onward|
+|Pathfinding and advanced NPC behavior AI|🤖🖥️|Winter 2026 onward|
+|Project diagnostics: detecting broken references, duplicate IDs, and missing resources|🔧📊|Winter 2026 onward|
+
+## 2027 and beyond: Future vision
+
+The following are long-term development goals aimed at growing RPG-Cobo into a tool that can be used for a wider range of game development.
+
+|Item|Category|Timing|
+|---|---|---|
+|Support for developing action RPGs|⚔️|Undecided|
+|Online multiplayer support|🖥️|Undecided|
+|Web-based project management, publishing works, and player statistics|🌐|Undecided|
+|Community work publishing, search, ratings, and template sharing|🌐|Undecided|
+|Project sharing features to support collaborative and team development|🌐|Undecided|
+|A marketplace for RPG-Cobo assets|🎨🌐|Undecided|
+
+## We look forward to your feedback and requests about the roadmap!
+
+RPG-Cobo's development is guided by feedback from our users.  
+If you have any thoughts, requests, or feature suggestions regarding this roadmap, please feel free to share them with us.  
+Your feedback has a major impact on the future development of RPG-Cobo.
+
+Please share your feedback and requests through the #feature-request-ja/en channel on [Discord](https://discord.gg/mxKf6Qu7Hm),
+the [GitHub Issues page](https://github.com/djkotori/rpgcobo-tool/issues),
+or via the hashtag #RPGCobo on [X @RPG-Cobo official](https://x.com/RPG_Cobo).
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+### Category legend
+
+|||||||
+|---|---|---|---|---|---|
+|🔧|Creation tools, editor, debugging features|⚔️|Battle system, presentation|📊|Game data, parameters|
+|🎨|Graphics, voxels, and other assets|🖥️|Game system, plugins|📁|Help, documentation|
+|🤖|AI-assisted creation and generation|🔊|Voice, sound effects, ambient sound|🗺️|Maps, terrain, world|
+|🧩|Screens, windows, UI|🖼️|Rendering, shaders|✨|Screen effects, presentation, VFX|
+|🎮|Multi-platform support|🌐|Web services, sharing|

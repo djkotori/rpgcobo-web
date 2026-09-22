@@ -65,6 +65,13 @@ import { Splide, SplideSlide } from 'astro-splide';
 
 # 最新情報
 ---
+<Card title='2026/09/22 : ロードマップ公開のお知らせ' icon="star">
+## RPG-Coboの今後の開発計画を公開しました
+RPG-Coboの今後の開発計画や新機能の実装予定をまとめたロードマップを公開しました。  
+ユーザーの皆さまからのご意見を反映しつつ、より使いやすく高度なRPG制作環境を目指して開発を進めていきます。
+
+<LinkCard title="ロードマップの詳細はこちらから" href="roadmap" />
+</Card>
 <Card title='2026/09/14 : 第一回 RPG-Cobo 作品コンテスト 結果発表 のお知らせ' icon="star">
 ## 多数のご応募から厳正なる審査の結果、入選作品が決定しました！
 2026年7月9日から9月8日まで募集されていた「第一回 RPG-Cobo 作品コンテスト」の結果発表を行いました。  
@@ -74,33 +81,9 @@ import { Splide, SplideSlide } from 'astro-splide';
 <LinkCard title="コンテストの結果発表こちらから" href="post/20260914-awards1" />
 </Card>
 
-<Card title='2026/07/09 : 第一回 RPG-Cobo 作品コンテスト ～TGS2026杯～ のお知らせ' icon="star">
-## 総額100万円！入選作品は東京ゲームショウにて展示！
-RPG-Coboは、東京ゲームショウ2026への出展に合わせ、ユーザー作品を世界に向けて発信する作品コンテストを開催します！  
-入選作品は TGS会場のRPG-Coboブースで実際に来場者がプレイ可能。**あなたの作品が、世界中のゲームファンの目に触れるチャンスです！**
-
-#### 募集期間:  2026年7月9日 から 2026年9月8日(23:59:59 JST) まで
-
-***皆さんのコンテストへのご応募を心待ちにしています！***
-<LinkCard title="作品コンテストの詳細はこちらから" href="post/20260709-contest1" />
-</Card>
-{/* 
-<Card title='2026/06/05 : ベータテスト開始のお知らせ' icon="star">
-**RPG開発ツール RPG-Cobo は、本日よりベータテスト版を公開しました。**  
-ここから正式サービスへ向けて大きく前進する、重要なステップとなります。
-今回のベータテストでは、ユーザーの皆さまからのご意見・ご要望をもとに、集中的なデバッグと改善を行います。  
-RPG-Coboが「世界で最高のRPG制作ツール」となるための重要なこの期間に、ぜひ皆さまのお力をお借し下さい。
-
-||||
-|-|-|-|
-|〇|**2026年6月**|**ベータテスト開始**|
-|　|2026年秋|アーリーアクセス開始|
-|　|2026年内|日本正式サービス開始|
-|　|2027年前半|グローバルサービス開始|
-
-<LinkCard title="ベータテストの詳細はこちらから" href="post/20260605-betatest" />
-</Card> */}
-
+[ニュース一覧のページへ](news)
+<br/><br/>
+---
 <div >
 <iframe src="https://www.youtube.com/embed/Rs6m1FA47Vo?autoplay=1&mute=1" frameborder="0" allowfullscreen style="width:100%; aspect-ratio:16/9">
 </iframe>
@@ -137,14 +120,14 @@ RPG-CoboはオープンソースのRPG開発ツールです。Apache2 ライセ�
 ## <M code="eb9b"/> RPG-Coboを始めましょう！
 
 <CardGrid stagger>
+	<Card title="今すぐダウンロード" icon="add-document">
+		ダウンロードしてインストールするだけで、すぐにRPG制作を始めることができます。購入もユーザー登録も必要ありません！
+		<LinkCard title="ダウンロードのページへ" href="download" />
+	</Card>
 	<Card title="機能紹介" icon="pencil">
 		RPG-Coboは本格的なRPGを制作するための非常に高機能なツールです。
 		その実力をぜひご覧ください！
 		<LinkCard title="機能紹介のページへ" href="features" />
-	</Card>
-	<Card title="今すぐダウンロード" icon="add-document">
-		ダウンロードしてインストールするだけで、すぐにRPG制作を始めることができます。購入もユーザー登録も必要ありません！
-		<LinkCard title="ダウンロードのページへ" href="download" />
 	</Card>
 	<Card title="価格設定" icon="setting">
 		**RPG-Coboは完全無料のツールで、商用配布もOKです。**  
@@ -156,6 +139,10 @@ RPG-CoboはオープンソースのRPG開発ツールです。Apache2 ライセ�
 		RPG-CoboでどのようにRPGを制作していくのか分かりやすく解説していきます。
 		まだ使い始めてない方もまずは一読してみてください。
 		<LinkCard title="ガイドのページへ" href="guides/start" />
+	</Card>
+	<Card title="ロードマップ" icon="rocket">
+		RPG-Coboの今後の開発予定やリリース予定をまとめています。これからのRPG-Coboの進化にどうぞご期待ください！
+		<LinkCard title="ロードマップのページへ" href="roadmap" />
 	</Card>
 </CardGrid>
 
