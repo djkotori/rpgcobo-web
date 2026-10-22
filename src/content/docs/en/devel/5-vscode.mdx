@@ -1,0 +1,106 @@
+---
+title: Setting up a Visual Studio Code development environment
+description: "Explains how to set up a Visual Studio Code development environment for creating plugins."
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+To develop plugins in earnest, you should first set up a proper development environment.
+We recommend developing RPG-Cobo plugins in Visual Studio Code (VSCode).
+Setup is very easy, so take this opportunity to install VSCode.
+
+***This page assumes VSCode is already installed. If you haven't installed it yet, download it from [here](https://code.visualstudio.com/) and install it.***
+
+### <M code="f10d"/> Opening an RPG-Cobo project in VSCode
+---
+First, launch Visual Studio Code and drag & drop the RPG-Cobo project folder straight into it.
+
+<SS src='docs/vscode-1.png' alt=''/>
+
+The RPG-Cobo project will then open in VSCode as shown below. This is the standard VSCode development environment for RPG-Cobo plugin development.
+
+<SS src='docs/vscode-2.png' alt=''/>
+
+### <M code="f10d"/> Enabling syntax highlighting for sk files
+---
+Looking at the image above, you may notice something. Yes, the open `load.sk` file has no syntax highlighting….
+
+This is very inconvenient for RPG-Cobo plugin development. So let's install the VSCode extension for RPG-Cobo plugin development!  
+Download the VSCode extension from [here ⇒ sakanavs-0.0.1.vsix](/sakanavs-0.0.1.vsix).
+
+Then open Extensions in VSCode, click the "…" in the upper right, select "Install from VSIX," and choose the `sakanavs-0.0.1.vsix` file you just downloaded.
+
+<SS src='docs/vscode-3.png' alt=''/>
+
+Syntax highlighting for the sakana language is now enabled! Check that the language mode in the lower right of the editor shows `{} Sakana`.
+
+<SS src='docs/vscode-4.png' alt=''/>
+
+
+### <M code="f10d"/> Various tips for VSCode
+---
+
+#### <M code="e0f0"/> First, initialize Git
+
+**We strongly recommend managing this project with Git to make your work more efficient.**
+It's also great for backups, so we recommend using Git even if you're not developing plugins.
+
+Click the third icon from the top on the left side of VSCode, "Source Control (Ctrl+Shift+G)," and select "Initialize Repository."
+After that, click "<M code="e876"/> Commit" at milestones in your work to save your changes.
+
+#### <M code="e0f0"/> Launching RPG-Cobo from the terminal
+
+Being able to launch the tool and debugging from VSCode's "Terminal (Ctrl+@)" makes development much more productive.
+
+- Launching the RPG-Cobo tool
+```
+.\rpgcobo.exe
+```
+
+- Launching RPG-Cobo game debugging directly
+```
+.\rpgcobo.exe -testplay [options...]
+
+options:
+-slot <save slot idx>
+-map <map id>
+-battle <map id> <group id> [-enemy <enemy id>] [-skill <skill id>]
+```
+
+#### <M code="e0f0"/> Creating and editing plugins in project/plugin
+
+In the VSCode Explorer, create a `plugin name.plugsk` file with "New File" in the `project/plugin` folder to start developing a plugin.  
+Alternatively, you can copy a sample plugin from the `work/plugin-samples` folder into `project/plugin` and edit it.  
+<Aside>
+*We plan to expand the sample plugins in the future.*
+</Aside>
+
+You can also enable or disable plugins you want to debug as text by editing `project/plugin/plugin.json`.
+For example, if you created `myplugin.plugsk`, editing `plugin.json` as follows will enable it.
+
+```
+{
+	"rpgtools":{
+		"enable":true,
+		"lock":true,
+		"prop1":1234
+	},
+	"myplugin":{ "enable":true }
+}
+```
+
+#### <M code="e0f0"/> Reload the tool with Ctrl+F4
+
+When you've modified a plugin, closing the RPG-Cobo tool and launching it again is a hassle.  
+In that case, pressing `Ctrl+F4` in the RPG-Cobo tool reloads the tool, re-reading all plugins and other data.  
+This is very convenient during frequent trial and error, so be sure to remember it.
+
+### <M code="f10d"/> Make the most of GitHub Copilot
+<Aside>
+As for AI-assisted plugin development, the author is still learning, and we plan to explain it in more detail in future updates.
+</Aside>
+
+VSCode has an AI assistance feature called GitHub Copilot. The author has not yet fully mastered it, but it has the potential to automate a large part of plugin development.  
+In fact, almost all of the API specifications in the reference section of the RPG-Cobo documentation were auto-generated using GitHub Copilot.

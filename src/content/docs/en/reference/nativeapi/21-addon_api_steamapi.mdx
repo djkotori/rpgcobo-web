@@ -143,6 +143,76 @@ Gets the current game language code.
 
 ---
 
+### `SteamAPI.getDLCData()`
+
+Gets information about DLC (downloadable content).
+
+**Return value**: Array - an array of `[appid (int), name (string), installed (bool)]`
+
+**Description**: Gets information about the DLC associated with the current game.
+
+**Example**:
+```javascript
+local dlcData = SteamAPI.getDLCData();
+foreach( dlc in dlcData) {
+       println("DLC AppID: " .. dlc[0] .. ", Name: " .. dlc[1] .. ", Installed: " .. dlc[2]);
+}
+```
+
+---
+
+### `SteamAPI.isAppInstalled(appid)`
+
+Checks whether the specified application is installed.
+
+**Return value**: bool - true if installed, false otherwise
+
+**Description**: Checks whether the specified application is installed.
+
+**Example**:
+```javascript
+local appid = 123456; // Application ID to check
+local installed = SteamAPI.isAppInstalled(appid);
+println("AppID " .. appid .. " installed: " .. installed);
+```
+
+---
+
+### `SteamAPI.isDLCInstalled(appid)`
+
+Checks whether the specified downloadable content (DLC) is installed.
+
+**Return value**: bool - true if installed, false otherwise
+
+**Description**: Checks whether the specified DLC is installed.
+
+**Example**:
+```javascript
+local dlcid = 123456; // DLC ID to check
+local installed = SteamAPI.isDLCInstalled(dlcid);
+println("DLCID " .. dlcid .. " installed: " .. installed);
+```
+
+---
+
+### `SteamAPI.isSubscribed([appid])`
+
+Checks whether the user is subscribed to the specified application.
+If omitted, the current application is the target.
+
+**Return value**: bool - true if subscribed, false otherwise
+
+**Description**: Checks whether the user is subscribed to the specified application.
+
+**Example**:
+```javascript
+local appid = 123456; // Application ID to check
+local subscribed = SteamAPI.isSubscribed(appid);
+println("AppID " .. appid .. " subscribed: " .. subscribed);
+```
+
+---
+
 ## Authentication / tickets
 
 ### `SteamAPI.getAuthTicketForWebApi([identity])`
@@ -192,4 +262,487 @@ Cancels an authentication ticket.
 - `ticketHandle` (int): ticket handle
 
 **Description**: Invalidates the obtained authentication ticket. Call this when the session ends.
+
+---
+
+## Achievements
+
+### `SteamAPI.requestUserStats()`
+
+Requests the user's stats data and achievement data.
+
+**Return value**: bool - true if the request succeeds
+
+**Description**:
+- In Steamworks SDK v1.61 and later, the Steam client automatically syncs at startup, so this call is effectively unnecessary.
+- It is kept for backward compatibility and always returns true.
+
+---
+
+### `SteamAPI.getUserStatsResult()`
+
+Gets the result of the user stats request.
+
+**Return value**: int - result code (`k_EResultOK` = 1 means success)
+
+**Description**: Checks the result of `requestUserStats()`. In SDK v1.61 and later, `k_EResultOK` is always returned.
+
+---
+
+### `SteamAPI.getAchievements()`
+
+Gets the state of all of the user's achievements.
+
+**Return value**: table - `{id=achievedtime}`
+
+**Description**: Gets the completion status of all of the user's achievements. The key is the achievement's ID on Steam, and the value is the completion time (timestamp). If the achievement has not been unlocked, the value is `0`.
+
+---
+
+### `SteamAPI.setAchievement(name)`
+
+Unlocks an achievement.
+
+**Arguments**:
+- `name` (string): the achievement's API name (set in Steamworks App Admin)
+
+**Return value**: bool - true on success
+
+**Description**: Unlocks an achievement. It is not sent to the server until `storeStats()` is called.
+
+**Example**:
+```javascript
+if(playerScore >= 10000) {
+	SteamAPI.setAchievement("ACH_SCORE_10K");
+	SteamAPI.storeStats();
+}
+```
+
+---
+
+### `SteamAPI.storeStats()`
+
+Sends stats data and achievement data to the Steam server.
+
+**Return value**: bool - true on success
+
+**Description**: Commits changes made with `setStat()` and `setAchievement()`.
+
+---
+
+## Stats
+
+### `SteamAPI.setStat(name, value)`
+
+Sets a stat value.
+
+**Arguments**:
+- `name` (string): the stat's API name
+- `value` (int): stat value
+
+**Return value**: bool - true on success
+
+**Description**: Records in-game stats (score, play time, enemies defeated, and so on). Send them with `storeStats()`.
+
+**Example**:
+```javascript
+SteamAPI.setStat("TOTAL_PLAYTIME", playtimeSeconds);
+SteamAPI.setStat("ENEMIES_DEFEATED", enemyCount);
+SteamAPI.storeStats();
+```
+
+---
+
+## In-game purchases (micro transactions)
+
+### `SteamAPI.getMicroTxnResult()`
+
+Gets the result of an in-game purchase.
+
+**Return value**:
+- `null` - callback not yet received
+- `string` - order ID on transaction success (64-bit integer as a string)
+- `false` - transaction failed
+
+**Description**:
+- Receives the Steam purchase callback and returns the result.
+- Once the result is retrieved, the internal state is cleared (the next call returns null).
+
+**Example**:
+```javascript
+function checkPurchase() {
+	local result = SteamAPI.getMicroTxnResult();
+	if(result === null) {
+		// No result yet
+	} else if(result === false) {
+		println("Purchase failed");
+	} else {
+		println("Purchase succeeded! Order ID: " + result);
+		unlockPurchasedContent();
+	}
+}
+```
+
+---
+
+## Steam Deck / Big Picture mode
+
+### `SteamAPI.IsSteamRunningOnSteamDeck()`
+
+Determines whether the game is running on a Steam Deck.
+
+**Return value**: bool - true if running on a Steam Deck
+
+**Description**: Used for Steam Deck-specific UI layouts and control adjustments.
+
+**Example**:
+```javascript
+if(SteamAPI.IsSteamRunningOnSteamDeck()) {
+	useHandheldUI();
+	enableTouchControls();
+} else {
+	useDesktopUI();
+}
+```
+
+---
+
+### `SteamAPI.IsSteamInBigPictureMode()`
+
+Determines whether Steam is running in Big Picture mode.
+
+**Return value**: bool - true if running in Big Picture mode
+
+**Description**: In Big Picture mode, you may want to enlarge the UI or prioritize controller input.
+
+**Example**:
+```javascript
+if(SteamAPI.IsSteamInBigPictureMode()) {
+	increaseUIScale(1.5);
+	showControllerHints();
+}
+```
+
+---
+
+## Gamepad text input
+
+### `SteamAPI.showGamepadTextInput(params)`
+
+Shows Steam's text input dialog for gamepads.
+
+**Arguments**:
+- `params` (object): input parameters
+  - `text` (string): initial text
+  - `desc` (string): description text
+  - `maxlen` (int, optional): maximum number of characters (1-256, default: 32)
+  - `type` (int, optional): input type
+	- `1` = password (`TEXTEDIT_PASSWORD`)
+	- `6` = multiline (`TEXTEDIT_MULTILINE`)
+	- other = normal single-line input
+
+**Return value**: bool - true if the dialog was shown successfully
+
+**Description**:
+- Only full-screen input is supported (inline input is not available).
+- No other input is accepted while the dialog is open.
+- Get the result with `getGamepadTextInputResult()`.
+
+**Example**:
+```javascript
+local inputParams = {
+	text: "Player1",
+	desc: "Please enter a player name",
+	maxlen: 16,
+	type: 0
+};
+
+if(SteamAPI.showGamepadTextInput(inputParams)) {
+	inputState = "waiting";
+}
+```
+
+---
+
+### `SteamAPI.getGamepadTextInputResult()`
+
+Gets the result of gamepad text input.
+
+**Return value**:
+- `null` - input in progress (not finished)
+- `string` - text on successful input
+- `0` (int) - input canceled
+
+**Description**:
+- The state is cleared when input is completed or canceled.
+- It is an error if `showGamepadTextInput()` has not been called.
+
+**Example**:
+```javascript
+function checkTextInput() {
+	local result = SteamAPI.getGamepadTextInputResult();
+	if(result === null) {
+		// Input in progress
+	} else if(result === 0) {
+		println("Input canceled");
+	} else {
+		println("Input completed: " + result);
+		playerName = result;
+	}
+}
+```
+
+---
+
+## Screen display
+
+### `SteamAPI.activateGameOverlay( dialog, [friendid])`
+
+Activates the Steam overlay.
+
+**Arguments**:
+- `dialog` (string): the type of dialog to show (for example: `"friends"`, `"achievements"`)
+- `friendid` (long|string, optional): the Steam ID to specify when showing a friend's profile.
+
+**Return value**: bool - true if the overlay was shown successfully
+
+**Description**: Shows the specified dialog in the Steam overlay. `friendid` is optional and is used when showing a friend's profile.
+
+**Example**:
+```javascript
+SteamAPI.activateGameOverlay("friends");
+```
+
+---
+
+### `SteamAPI.activateGameOverlayToStore( appid, [flag])`
+
+Activates the Steam overlay for browsing and purchasing DLC in-game.
+
+**Arguments**:
+- `appid` (int): the App ID of the app whose store page to show.
+- `flag` (int, optional): display options (for example: `0` = default).
+
+**Return value**: bool - true if the overlay was shown successfully
+
+**Description**: Shows the specified app's store page in the Steam overlay. `flag` is optional and specifies display options.
+
+**Example**:
+```javascript
+SteamAPI.activateGameOverlayToStore(YOUR_APP_ID, 0);
+```
+
+---
+
+## Other utilities
+
+### `SteamAPI.GetAppID()`
+
+Gets the Steam App ID of the current application.
+
+**Return value**: int - App ID
+
+**Description**: Returns the App ID written in `steam_appid.txt`.
+
+**Example**:
+```javascript
+local appid = SteamAPI.GetAppID();
+println("App ID: " + appid);
+```
+
+---
+
+## Examples
+
+### Basic initialization and main loop
+
+```javascript
+// Initialization
+if(SteamAPI.restartAppIfNecessary(YOUR_APP_ID)) {
+	exit(0);
+}
+
+if(!SteamAPI.init()) {
+	println("Steam initialization failed");
+	exit(1);
+}
+
+local userName = SteamAPI.getPersonaName();
+println("Welcome, " + userName + "!");
+
+// Main loop
+function update() {
+	SteamAPI.runSteamCallbacks();
+
+	// Game logic
+	// ...
+}
+```
+
+---
+
+### Complete example of unlocking an achievement
+
+```javascript
+// At initialization
+SteamAPI.requestUserStats();
+
+// During gameplay
+function onPlayerScore(score) {
+	if(score >= 1000 && !achievement_1000_unlocked) {
+		SteamAPI.setAchievement("ACH_SCORE_1000");
+		SteamAPI.setStat("HIGH_SCORE", score);
+		SteamAPI.storeStats();
+		achievement_1000_unlocked = true;
+	}
+}
+
+// Check stats
+function update() {
+	SteamAPI.runSteamCallbacks();
+
+	local result = SteamAPI.getUserStatsResult();
+	if(result == 1) {
+		// Stats data is available
+	}
+}
+```
+
+---
+
+### Getting and using a Web API authentication ticket
+
+```javascript
+// Request a ticket
+local ticket = SteamAPI.getAuthTicketForWebApi("MyGameBackend");
+local ticketHandle = ticket[0];
+local hexToken = ticket[1];
+
+// Wait for the result
+local authChecked = false;
+function update() {
+	SteamAPI.runSteamCallbacks();
+
+	if(!authChecked) {
+		local result = SteamAPI.getAuthTicketResult();
+		if(result !== null) {
+			authChecked = true;
+			if(result == 1) { // k_EResultOK
+				// Send to the server
+				sendAuthTokenToServer(hexToken);
+			} else {
+				println("Authentication failed: " + result);
+			}
+		}
+	}
+}
+
+// When the session ends
+function cleanup() {
+	SteamAPI.cancelSteamAuthSessionTicket(ticketHandle);
+}
+```
+
+---
+
+### Handling in-game purchases
+
+```javascript
+// Start a purchase (handled on the Steam side)
+// When the user completes the purchase in the Steam overlay,
+// a callback is fired
+
+function update() {
+	SteamAPI.runSteamCallbacks();
+
+	local result = SteamAPI.getMicroTxnResult();
+	if(result !== null) {
+		if(result === false) {
+			showMessage("Purchase failed");
+		} else {
+			local orderID = result;
+			println("Purchase succeeded! Order ID: " + orderID);
+			unlockDLC();
+		}
+	}
+}
+```
+
+---
+
+### Multi-language support
+
+```javascript
+function loadLocalization() {
+	local lang = SteamAPI.getCurrentGameLanguage();
+
+	local locFile = "loc_english.json";
+	if(lang == "japanese") {
+		locFile = "loc_japanese.json";
+	} else if(lang == "schinese") {
+		locFile = "loc_schinese.json";
+	} else if(lang == "german") {
+		locFile = "loc_german.json";
+	}
+
+	local data = FileRef(locFile).open().read();
+	locStrings = JSON.parse(data.toString());
+}
+```
+
+---
+
+### Steam Deck support
+
+```javascript
+function setupPlatform() {
+	local isSteamDeck = SteamAPI.IsSteamRunningOnSteamDeck();
+	local isBigPicture = SteamAPI.IsSteamInBigPictureMode();
+
+	if(isSteamDeck) {
+		// Steam Deck settings
+		setResolution(1280, 800);
+		setUIScale(1.2);
+		enableTouchControls(true);
+		setGraphicsPreset("medium");
+	} else if(isBigPicture) {
+		// Big Picture mode settings
+		setUIScale(1.5);
+		showControllerUI(true);
+	} else {
+		// Desktop settings
+		setUIScale(1.0);
+		showKeyboardMouseUI(true);
+	}
+}
+```
+
+---
+
+### Periodically saving stats
+
+```javascript
+local statsTimer = 0;
+local totalPlaytime = 0;
+local enemiesDefeated = 0;
+
+function update(dt) {
+	SteamAPI.runSteamCallbacks();
+
+	totalPlaytime += dt;
+	statsTimer += dt;
+
+	// Save stats every 5 minutes
+	if(statsTimer >= 300) {
+		SteamAPI.setStat("TOTAL_PLAYTIME", Math.floor(totalPlaytime));
+		SteamAPI.setStat("ENEMIES_DEFEATED", enemiesDefeated);
+		SteamAPI.storeStats();
+		statsTimer = 0;
+	}
+}
+
+function onEnemyDefeated() {
+	enemiesDefeated++;
+}
+```
 

@@ -1,0 +1,60 @@
+---
+title: Decorating conversation text
+description: "Explains the workflow for event creation and presentation settings in RPG-Cobo, using decorating conversation text as the theme."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+The "<M code="e0b7"/> Message" event command lets you decorate conversation text using a syntax called "tags," and can also play effects, sound effects, voices, and more.
+
+### <M code="e8af"/> Inserting tags from the right-click menu
+First, let's try the easy way: inserting tags from the right-click menu. Right-click in the "<M code="e0b7"/> Message" edit screen to show a menu for inserting tags and more.
+<SS src='docs/message-1.png' alt=''/>
+
+|Menu|Description|
+|---|---|
+|<M code="e545"/> Emoji|Directly inserts emoji, icons, and button icons.|
+|Text style|Inserts tags that make text bold or italic. Monospace font is also available (alphanumeric characters only).|
+|Font size|Inserts a tag that changes the font size of the text.|
+|Font color|Inserts a tag that changes the color of the text.|
+|Text advance|Inserts tags that set text advance timing, line breaks, page breaks, waits, and more.|
+|Action|Inserts tags that trigger effects or play sound effects and voices.|
+|<M code="f120"/> Insert item name|Inserts an item name from the database. An icon can also be attached.|
+
+
+### <M code="f10d"/> Tag syntax
+When you insert a tag from the right-click menu, text is inserted as shown below. For example, inserting Text style ⇒ Bold produces the following.
+
+```
+Hello [B] bold text!
+```
+
+`[B]` is the tag that makes text bold, and typing it directly as text has exactly the same effect. Once you get used to entering tags, typing them directly instead of using the right-click menu is more efficient.  
+Some tags can be specified directly and intuitively, as shown below.
+
+`[#fc0]` `[#ffcc00]` : Both produce yellow text. You can specify text colors using the familiar color codes from CSS and similar.
+`[FX200]` : Triggers the "anger" emotion effect. IDs from FX200 onward are emotion effects, so if you memorize the ID mappings, you can quickly specify expressive presentations.
+
+### <M code="f10d"/> Tag reference
+
+The character presentation tool lets you add detailed movement not only to humanoid characters, but also to moving terrain.  
+The one way moving terrain differs from humanoid characters is that movement actions let you specify details such as position, rotation, and easing (adding acceleration and deceleration to movement).
+
+- *In tags, `x` is an integer from 0 to 9.*
+
+|Menu|Description|
+|---|---|
+|`[b]`|Tag that makes text bold.|
+|`[i]`|Tag that makes text italic.|
+|`[#xxx] [#xxxxxx]`|Tag that changes the text color. Example: `[#ff0000]` produces red.|
+|`[+] [-] [+x] [-x]`|Tag that changes the font size. x is an integer from 0 to 9, and `[+]` has the same effect as `[+3]`.|
+|`[fx]`|Specifies the font by number. `[f0]`: default font, `[f1]`: UI font, `[f2]`: monospace alphanumeric 1, `[f3]`: monospace alphanumeric 2, `[f4]`: icon|
+|`[.]`|Tag that pauses text advance and waits for button input.|
+|`[p]`|Tag that inserts a page break.|
+|`[>] [<] [=]`|Changes the text advance speed. `[>]` speeds it up, `[<]` slows it down, and `[=]` returns to normal speed.|
+|`[FXxxx]`|Tag that triggers an effect.|
+|`[SExxx]`|Tag that plays a sound effect.|
+|`[VAxxx VOICEID]`|Tag that plays a voice. Voices have two specifiers: `VAxxx` is the voice actor ID, and `VOICEID` is the voice ID within the actor. Wildcard specification using `*` is also supported.|

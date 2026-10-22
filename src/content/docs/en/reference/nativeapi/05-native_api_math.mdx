@@ -259,3 +259,1546 @@ Returns the position of the least significant bit.
 
 **Return value**: index of the least significant bit
 
+### Other
+
+#### `Math.mod2(value, min, max)`
+A modulo that loops within a range.
+
+**Arguments**:
+- `value` (float): value
+- `min` (float): minimum value
+- `max` (float): maximum value
+
+**Return value**: value looped within the range min to max
+
+#### `Math.digit(value, precision)`
+Rounds to the specified precision.
+
+**Arguments**:
+- `value` (float): value
+- `precision` (int): precision
+
+**Return value**: rounded value
+
+#### `Math.vtohp(x, y, z)` / `Math.vtohp(vector)` / `Math.vtohp(array)`
+Calculates the heading and pitch angles from a vector.
+
+**Arguments**:
+- `x, y, z` (float): vector components
+- or `vector` (Vector3D): vector
+- or `array` (array): an `[x, y, z]` array
+
+**Return value**: a `[heading, pitch]` tuple (radians)
+
+#### `Math.length(...values)`
+Calculates a length from multiple values.
+
+**Arguments**:
+- `...values` (float): values of each component
+
+**Return value**: `sqrt(sum(values))`
+
+---
+
+## Classes
+
+### Random
+
+Pseudo-random number generator (Xorshift).
+
+#### Constructor
+
+```javascript
+Random([seed[, warmup]])
+```
+
+**Arguments**:
+- `seed` (int, optional): seed value (current time if omitted)
+- `warmup` (int, optional): number of warmup iterations
+
+#### Fields
+
+- `x`, `y`, `z`, `w` (int): internal state (read-only)
+
+#### Methods
+
+##### `setSeed(seed[, warmup])`
+Sets the seed value.
+
+**Arguments**:
+- `seed` (int): seed value
+- `warmup` (int, optional): number of warmup iterations
+
+##### `next([bits])`
+Generates random bits.
+
+**Arguments**:
+- `bits` (int, optional): number of bits (default: 24)
+
+**Return value**: random integer
+
+##### `nexti([min,] max)`
+Generates a random value in an integer range.
+
+**Arguments**:
+- `min` (int, optional): minimum value (default: 0)
+- `max` (int): maximum value (**exclusive**)
+
+**Return value**: random integer greater than or equal to min and less than max
+
+##### `nextf([min,] max)`
+Generates a random value in a floating-point range.
+
+**Arguments**:
+- `min` (float, optional): minimum value (default: 0.0)
+- `max` (float, optional): maximum value (default: 1.0)
+
+**Return value**: random float greater than or equal to min and less than max
+
+##### `crypt(buffer[, length])`
+XOR-encrypts a buffer with random numbers.
+
+**Arguments**:
+- `buffer` (ByteBuffer): buffer to encrypt
+- `length` (int, optional): length to encrypt
+
+##### `choose(value1, value2, ...)`
+Randomly picks one of the arguments.
+
+**Arguments**:
+- `value1, value2, ...`: choices
+
+**Return value**: randomly chosen value
+
+##### `choosea(array)`
+Randomly picks one element from an array.
+
+**Arguments**:
+- `array` (array): array
+
+**Return value**: randomly chosen element
+
+#### Call operator
+
+```javascript
+rnd(max)              // 0 to max
+rnd(min, max)         // min to max
+```
+
+**Description**: Calls `nexti` or `nextf` (automatically determined based on the argument types).
+
+---
+
+### Vector3D
+
+3D vector class.
+
+#### Constructor
+
+```javascript
+Vector3D()                          // (0, 0, 0)
+Vector3D(value)                     // (value, value, value)
+Vector3D(x, y)                      // (x, y, 0)
+Vector3D(x, y, z)                   // (x, y, z)
+Vector3D(vector)                    // copy
+Vector3D([x, y, z])                 // from an array
+```
+
+#### Fields
+
+- `x`, `y`, `z` (float): components
+- `[0]`, `[1]`, `[2]` (float): index access (aliases)
+
+#### Methods
+
+##### Setting and getting
+
+##### `set(x, y, z)` / `set(value)` / `set(vector)` / `set([x,y,z])`
+Sets the values.
+
+**Return value**: itself
+
+##### `iszero()`
+Determines whether this is a zero vector.
+
+**Return value**: `true` if all components are 0
+
+##### `equals(other)`
+Determines whether this equals another vector.
+
+**Arguments**:
+- `other` (Vector3D): comparison target
+
+**Return value**: `true` if equal
+
+##### Arithmetic operations
+
+##### `add(x, y, z)` / `add(value)` / `add(vector)`
+Performs addition.
+
+**Return value**: itself
+
+##### `sub(x, y, z)` / `sub(value)` / `sub(vector)`
+Performs subtraction.
+
+**Return value**: itself
+
+##### `mul(x, y, z)` / `mul(value)` / `mul(vector)`
+Performs multiplication.
+
+**Return value**: itself
+
+##### `div(x, y, z)` / `div(value)` / `div(vector)`
+Performs division.
+
+**Return value**: itself
+
+##### `scale(x, y, z)` / `scale(value)` / `scale(vector)`
+Scale (alias for multiplication).
+
+**Return value**: itself
+
+##### Vector operations
+
+##### `length()`
+Returns the length of the vector.
+
+**Return value**: `sqrt(x*x + y*y + z*z)`
+
+##### `lengthSq()`
+Returns the squared length of the vector.
+
+**Return value**: `x*x + y*y + z*z`
+
+##### `normalize()`
+Normalizes the vector (makes its length 1).
+
+**Return value**: itself
+
+##### `dot(other)`
+Calculates the dot product.
+
+**Arguments**:
+- `other` (Vector3D): another vector
+
+**Return value**: dot product value
+
+##### `cross(other[, result])`
+Calculates the cross product.
+
+**Arguments**:
+- `other` (Vector3D): another vector
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: cross product vector (new or `result`)
+
+##### `hypot(other)`
+Returns the distance between two vectors.
+
+**Arguments**:
+- `other` (Vector3D): another vector
+
+**Return value**: distance
+
+##### `hypotSq(other)`
+Returns the squared distance between two vectors.
+
+**Arguments**:
+- `other` (Vector3D): another vector
+
+**Return value**: squared distance
+
+##### Transforms
+
+##### `transform(matrix)`
+Transforms by a matrix (including translation).
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+##### `transform0(matrix)`
+Transforms by a matrix (without translation).
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+##### `transformw(matrix)`
+Transforms by a matrix and returns the w component.
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: w component (float)
+
+##### `rotate(quaternion)` / `rotate(h, p, b)` / `rotate(vector)`
+Applies a rotation.
+
+**Arguments**:
+- `quaternion` (Quaternion): rotation quaternion
+- or `h, p, b` (float): heading, pitch, bank (radians)
+- or `vector` (Vector3D): rotation vector
+
+**Return value**: itself
+
+##### Other
+
+##### `saturate()`
+Clamps each component to the range 0 to 1.
+
+**Return value**: itself
+
+##### `floor()`, `ceil()`, `round()`
+Rounds each component.
+
+**Return value**: itself
+
+##### `lerp(other, t[, result])`
+Performs linear interpolation.
+
+**Arguments**:
+- `other` (Vector3D): end vector
+- `t` (float): interpolation factor (0 to 1)
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: interpolated vector
+
+##### `min(other)`, `max(other)`
+Takes the minimum or maximum of each component.
+
+**Arguments**:
+- `other` (Vector3D): another vector
+
+**Return value**: itself
+
+##### `hasNaN()`
+Checks whether the vector contains NaN.
+
+**Return value**: `true` if it contains NaN
+
+##### `nanCheck()`
+Returns NaN/Inf information as a bitfield.
+
+**Return value**: bitfield (int)
+
+#### Static methods
+
+##### `Vector3D.fromRandom(min, max)`
+Generates a random vector.
+
+**Arguments**:
+- `min` (float): minimum value of each component
+- `max` (float): maximum value of each component
+
+**Return value**: random vector
+
+#### Operators
+
+```javascript
+v1 + v2          // addition (new vector)
+v1 - v2          // subtraction (new vector)
+v1 * v2          // multiplication (new vector)
+v1 / v2          // division (new vector)
+v1 % v2          // modulo (new vector)
+v1 << v2         // assignment (v1 = v2)
+-v               // negation (new vector)
+v1 | v2          // dot product (float)
+v1 ^ v2          // cross product (new vector)
+v(x, y, z)       // set via call operator
+```
+
+---
+
+### Quaternion
+
+Quaternion (rotation) class.
+
+#### Constructor
+
+```javascript
+Quaternion()                              // identity quaternion
+Quaternion(x, y, z, w)                    // direct specification
+Quaternion(angle, axis)                   // rotation around an axis
+Quaternion(quaternion)                    // copy
+Quaternion(matrix)                        // from a matrix
+Quaternion([x, y, z, w])                  // from an array
+```
+
+#### Fields
+
+- `x`, `y`, `z`, `w` (float): components
+- `[0]`, `[1]`, `[2]`, `[3]` (float): index access
+
+#### Methods
+
+##### `set(x, y, z, w)` / `set(angle, axis)` / `set(other)`
+Sets the values.
+
+**Return value**: itself
+
+##### `iszero()`
+Determines whether this is an identity quaternion.
+
+**Return value**: `true` if identity quaternion (w=1, x=y=z=0)
+
+##### `equals(other)`
+Determines whether this equals another quaternion.
+
+**Arguments**:
+- `other` (Quaternion): comparison target
+
+**Return value**: `true` if equal
+
+##### `norm()`
+Returns the norm (length).
+
+**Return value**: norm
+
+##### `normalize()`
+Normalizes the quaternion.
+
+**Return value**: itself
+
+##### `toMatrix()`
+Converts to a 3x3 matrix.
+
+**Return value**: `Matrix` object
+
+##### `lerp(other, t[, result])`, `slerp(other, t[, result])`
+Performs linear interpolation or spherical linear interpolation.
+
+**Arguments**:
+- `other` (Quaternion): end quaternion
+- `t` (float): interpolation factor (0 to 1)
+- `result` (Quaternion, optional): where to store the result
+
+**Return value**: interpolated quaternion
+
+##### `synthesize(other)`
+Composes quaternions (multiplication).
+
+**Arguments**:
+- `other` (Quaternion): quaternion to compose
+
+**Return value**: itself
+
+##### `getHPB([result])`
+Gets the Heading-Pitch-Bank angles.
+
+**Arguments**:
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: `Vector3D(h, p, b)`
+
+##### `setHPB(h, p, b)` / `setHPB(vector)`
+Sets from Heading-Pitch-Bank angles.
+
+**Arguments**:
+- `h, p, b` (float): Heading, Pitch, Bank (radians)
+- or `vector` (Vector3D): HPB vector
+
+**Return value**: itself
+
+##### `setAxis(angle, x, y, z)`
+Sets a rotation around an axis.
+
+**Arguments**:
+- `angle` (float): rotation angle (radians)
+- `x, y, z` (float): rotation axis
+
+#### Static methods
+
+##### `Quaternion.fromAxis(angle, axis)`
+Creates a rotation quaternion around an axis.
+
+**Arguments**:
+- `angle` (float): rotation angle (radians)
+- `axis` (Vector3D): rotation axis
+
+**Return value**: `Quaternion` object
+
+##### `Quaternion.from2Axis(from, to)`
+Creates a rotation between two vectors.
+
+**Arguments**:
+- `from` (Vector3D): start vector
+- `to` (Vector3D): end vector
+
+**Return value**: `Quaternion` object
+
+##### `Quaternion.fromHPB(h, p, b)` / `Quaternion.fromHPB(vector)` / `Quaternion.fromHPB([h,p,b])`
+Creates a quaternion from HPB angles.
+
+**Arguments**:
+- `h, p, b` (float): Heading, Pitch, Bank
+- or `vector` (Vector3D)
+- or `[h, p, b]` (array)
+
+**Return value**: `Quaternion` object
+
+#### Operators
+
+```javascript
+q1 * q2          // composition (new quaternion)
+q * v            // vector rotation (new vector)
+q1 << q2         // assignment (q1 = q2)
+-q               // conjugate (new quaternion)
+q(...)           // set via call operator
+```
+
+---
+
+### Plane
+
+Plane class (ax + by + cz + d = 0).
+
+#### Constructor
+
+```javascript
+Plane()                        // (0, 0, 0, 1)
+Plane(a, b, c, d)              // direct specification
+Plane(plane)                   // copy
+Plane([a, b, c, d])            // from an array
+```
+
+#### Fields
+
+- `a`, `b`, `c`, `d` (float): plane coefficients
+- `[0]`, `[1]`, `[2]`, `[3]` (float): index access
+
+#### Methods
+
+##### `set(a, b, c, d)` / `set(plane)`
+Sets the values.
+
+**Return value**: itself
+
+##### `equals(other)`
+Determines whether this equals another plane.
+
+**Arguments**:
+- `other` (Plane): comparison target
+
+**Return value**: `true` if equal
+
+##### `normalize()`
+Normalizes the plane (makes the normal vector length 1).
+
+**Return value**: itself
+
+##### `lerp(other, t)`
+Performs linear interpolation.
+
+**Arguments**:
+- `other` (Plane): end plane
+- `t` (float): interpolation factor
+
+**Return value**: new `Plane` object
+
+##### `setParam(nx, ny, nz, px, py, pz)` / `setParam(normal, position)`
+Sets from a normal and a position.
+
+**Arguments**:
+- `nx, ny, nz` (float): normal vector
+- `px, py, pz` (float): position on the plane
+- or `normal`, `position` (Vector3D)
+
+**Return value**: itself
+
+##### `getHeight(x, y, z)` / `getHeight(position)`
+Returns the height of the specified point from the plane.
+
+**Arguments**:
+- `x, y, z` (float): position
+- or `position` (Vector3D)
+
+**Return value**: height (float, signed distance)
+
+##### `inside(x, y, z)` / `inside(vector)` / `inside(rect3d)`
+Determines whether the specified object is inside the plane.
+
+**Arguments**:
+- `x, y, z` (float): position
+- or `vector` (Vector3D)
+- or `rect3d` (Rect3D)
+
+**Return value**: `true` if inside
+
+##### `project(position, direction)`
+Calculates the projection point onto the plane.
+
+**Arguments**:
+- `position` (Vector3D): start position
+- `direction` (Vector3D): direction vector
+
+**Return value**: projection point (`Vector3D`)
+
+##### `getIntersectTime(position, direction)`
+Calculates the time to the intersection point with the plane.
+
+**Arguments**:
+- `position` (Vector3D): start position
+- `direction` (Vector3D): direction vector
+
+**Return value**: time to the intersection point (float), or a negative value if there is no intersection
+
+##### `dot(vector)`
+Calculates the dot product with the normal vector.
+
+**Arguments**:
+- `vector` (Vector3D): vector
+
+**Return value**: dot product value
+
+##### `transform(matrix)`
+Transforms by a matrix.
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+#### Operators
+
+```javascript
+p1 << p2         // assignment (p1 = p2)
+p(...)           // set via call operator
+```
+
+---
+
+### Matrix
+
+4x4 matrix class.
+
+#### Constructor
+
+```javascript
+Matrix()                                   // identity matrix
+Matrix(e0, e1, ..., e15)                   // direct specification of 16 elements
+Matrix(matrix)                             // copy
+```
+
+#### Fields
+
+- `[0]` to `[15]` (float): matrix elements (column-major)
+
+**Description**: Matrix elements are stored in column-major order.
+
+```
+[0  4  8  12]
+[1  5  9  13]
+[2  6  10 14]
+[3  7  11 15]
+```
+
+#### Methods
+
+##### Basic operations
+
+##### `set(e0, ..., e15)` / `set(matrix)`
+Sets the values.
+
+**Return value**: itself
+
+##### `identity()`
+Sets to the identity matrix.
+
+**Return value**: itself
+
+##### `abs()`
+Returns the absolute value of the matrix (the sum of the absolute values of each element).
+
+**Return value**: float value
+
+##### Matrix operations
+
+##### `mult33(other[, result])`, `mult34(other[, result])`, `mult44(other[, result])`
+Matrix multiplication (3x3, 3x4, 4x4).
+
+**Arguments**:
+- `other` (Matrix): matrix to multiply by
+- `result` (Matrix, optional): where to store the result
+
+**Return value**: result matrix (new or `result`)
+
+##### `invert34([result])`, `invert34u([result])`, `invert44([result])`
+Calculates the inverse matrix.
+
+**Description**:
+- `invert34`: 3x4 inverse matrix
+- `invert34u`: 3x4 inverse matrix (uniform scale only)
+- `invert44`: 4x4 inverse matrix
+
+**Arguments**:
+- `result` (Matrix, optional): where to store the result
+
+**Return value**: inverse matrix
+
+##### `transpose33([result])`, `transpose44([result])`
+Calculates the transposed matrix.
+
+**Arguments**:
+- `result` (Matrix, optional): where to store the result
+
+**Return value**: transposed matrix
+
+##### Transform operations
+
+##### `translate(x, y, z)`, `translate(vector)`
+Applies a translation.
+
+**Arguments**:
+- `x, y, z` (float): translation amounts
+- or `vector` (Vector3D/Rect3D)
+
+**Return value**: itself
+
+##### `ltranslate(x, y, z)`, `ltranslate(vector)`
+Applies a translation in the local coordinate system.
+
+**Arguments**: same as `translate`
+
+**Return value**: itself
+
+##### `scale(x, y, z)`, `scale(vector)`, `scale(value)`
+Applies a scale.
+
+**Arguments**:
+- `x, y, z` (float): scale factors
+- or `vector` (Vector3D)
+- or `value` (float): uniform scale
+
+**Return value**: itself
+
+##### `lscale(x, y, z)`, `lscale(vector)`
+Applies a scale in the local coordinate system.
+
+**Arguments**: same as `scale`
+
+**Return value**: itself
+
+##### `rotate(quaternion)` / `rotate(h, p, b)` / `rotate(vector)` / `rotate([h,p,b])`
+Applies a rotation.
+
+**Arguments**:
+- `quaternion` (Quaternion): rotation quaternion
+- or `h, p, b` (float): Heading-Pitch-Bank
+- or `vector` (Vector3D): HPB vector
+- or `[h, p, b]` (array)
+
+**Return value**: itself
+
+##### Getting and setting elements
+
+##### `setTranslation(x, y, z)` / `setTranslation(vector)`
+Sets the translation component.
+
+**Arguments**:
+- `x, y, z` (float): position
+- or `vector` (Vector3D/Rect3D)
+
+**Return value**: itself
+
+##### `getTranslation([result])`
+Gets the translation component.
+
+**Arguments**:
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: position vector (`Vector3D`)
+
+##### `getRotation([result])`
+Gets the rotation component.
+
+**Arguments**:
+- `result` (Quaternion, optional): where to store the result
+
+**Return value**: rotation quaternion (`Quaternion`)
+
+##### `getHPB([result])`
+Gets the Heading-Pitch-Bank angles.
+
+**Arguments**:
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: HPB vector (`Vector3D`)
+
+##### `getScale([result])`
+Gets the scale component.
+
+**Arguments**:
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: scale vector (`Vector3D`)
+
+##### `getAverageScale([result])`
+Gets the average scale value.
+
+**Arguments**:
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: uniform scale vector (`Vector3D(s,s,s)`)
+
+##### Transform-related
+
+##### `setSRT(t, s, r)`
+Sets from a Transform (position, scale, rotation).
+
+**Arguments**:
+- `t` (Vector3D): position
+- `s` (Vector3D): scale
+- `r` (Quaternion): rotation
+
+**Return value**: itself
+
+##### `setTransform(transform[, pivot])`
+Sets from a Transform object.
+
+**Arguments**:
+- `transform` (Transform): Transform object
+- `pivot` (Vector3D, optional): pivot position
+
+**Return value**: itself
+
+##### `getTransform([result])`
+Gets a Transform object.
+
+**Arguments**:
+- `result` (Transform, optional): where to store the result
+
+**Return value**: `Transform` object
+
+##### Other
+
+##### `normalize()`
+Normalizes the rotation component.
+
+**Return value**: itself
+
+##### `lerp(other, t[, result])`
+Performs linear interpolation.
+
+**Arguments**:
+- `other` (Matrix): end matrix
+- `t` (float): interpolation factor
+- `result` (Matrix, optional): where to store the result
+
+**Return value**: interpolated matrix
+
+##### `integrate(array|...transforms)`
+Integrates multiple Transforms or Matrices.
+
+**Arguments**:
+- `array` (array): array of Transforms or Matrices
+- or `...transforms`: variable-length arguments
+
+**Return value**: itself
+
+##### `nanCheck()`
+Returns NaN/Inf information as a bitfield.
+
+**Return value**: bitfield (int)
+
+##### `print([with4thRow])`
+Outputs the matrix to the console.
+
+**Arguments**:
+- `with4thRow` (bool, optional): whether to also display the 4th row
+
+#### Static methods
+
+##### `Matrix.fromOrtho(left, right, bottom, top, near, far)`
+Creates an orthographic projection matrix.
+
+**Arguments**: projection range parameters
+
+**Return value**: `Matrix` object
+
+##### `Matrix.fromPerspective(fovy, aspect, near, far)`
+Creates a perspective projection matrix.
+
+**Arguments**:
+- `fovy` (float): field of view (radians)
+- `aspect` (float): aspect ratio
+- `near` (float): near clip
+- `far` (float): far clip
+
+**Return value**: `Matrix` object
+
+##### `Matrix.fromTranslate(x, y, z)` / `Matrix.fromTranslate(vector)`
+Creates a translation matrix.
+
+**Return value**: `Matrix` object
+
+##### `Matrix.fromScale(x, y, z)` / `Matrix.fromScale(vector)`
+Creates a scale matrix.
+
+**Return value**: `Matrix` object
+
+##### `Matrix.fromHPB(h, p, b)`
+Creates a rotation matrix.
+
+**Arguments**:
+- `h, p, b` (float): Heading-Pitch-Bank
+
+**Return value**: `Matrix` object
+
+##### `Matrix.fromHSV(h, s, v)` / `Matrix.fromHSV(vector)`
+Creates an HSV color space conversion matrix.
+
+**Arguments**:
+- `h, s, v` (float): Hue-Saturation-Value
+
+**Return value**: `Matrix` object
+
+#### Operators and properties
+
+```javascript
+m1 * m2          // matrix multiplication (new matrix)
+m1 << m2         // assignment (m1 = m2)
+m["m0"] to m["m3"] // get column vectors (Vector3D)
+m["n0"] to m["n3"] // get row vectors (Vector3D)
+```
+
+---
+
+### Rect2D
+
+2D rectangle class.
+
+#### Constructor
+
+```javascript
+Rect2D()                    // (0, 0, 0, 0)
+Rect2D(x, y, w, h)          // direct specification
+Rect2D(rect)                // copy
+```
+
+#### Fields
+
+- `x`, `y`, `w`, `h` (float): rectangle position and size
+- `[0]`, `[1]`, `[2]`, `[3]` (float): index access
+
+#### Methods
+
+##### `set(x, y, w, h)` / `set(rect)`
+Sets the values.
+
+**Return value**: itself
+
+##### `expand(rect|value)`
+Expands the rectangle.
+
+**Arguments**:
+- `rect` (Rect2D): rectangle to merge
+- or `value` (float): expansion amount
+
+**Return value**: itself
+
+##### `clip(rect)`
+Clips the rectangle (keeps only the intersecting region).
+
+**Arguments**:
+- `rect` (Rect2D): rectangle to clip by
+
+**Return value**: itself
+
+##### `valid()`
+Determines whether this is a valid rectangle.
+
+**Return value**: `true` if `w > 0 && h > 0`
+
+##### `add(x, y)` / `add(vector)` / `add(rect)`
+Moves the position.
+
+**Arguments**:
+- `x, y` (float): movement amounts
+- or `vector` (Vector3D)
+- or `rect` (Rect2D)
+
+**Return value**: itself
+
+##### `scale(sx, sy)` / `scale(rect)`
+Applies a scale.
+
+**Arguments**:
+- `sx, sy` (float): scale factors
+- or `rect` (Rect2D)
+
+**Return value**: itself
+
+##### `transform(matrix)`, `transform0(matrix)`
+Transforms by a matrix.
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+##### `contacts(rect)`, `contains(rect)`
+Determines whether rectangles are touching or contained.
+
+**Arguments**:
+- `rect` (Rect2D): target rectangle
+
+**Return value**: `true` if touching or contained
+
+##### `lerp(other, t)`
+Performs linear interpolation.
+
+**Arguments**:
+- `other` (Rect2D): end rectangle
+- `t` (float): interpolation factor
+
+**Return value**: new `Rect2D` object
+
+##### `floor()`, `ceil()`, `round()`
+Rounds each component.
+
+**Return value**: itself
+
+##### `getdir(px, py, vx, vy)`
+Calculates the angle between a direction vector and the rectangle.
+
+**Arguments**:
+- `px, py` (float): reference position
+- `vx, vy` (float): direction vector
+
+**Return value**: angle (radians)
+
+##### `getFrontMostDistance(px, py)`
+Calculates the distance to the nearest point of the rectangle.
+
+**Arguments**:
+- `px, py` (float): position
+
+**Return value**: distance (float)
+
+#### Operators
+
+```javascript
+r1 | r2          // union (new rectangle)
+r1 & r2          // intersection (new rectangle)
+r * m            // matrix transform (new rectangle)
+r * v            // scale (new rectangle)
+r << r2          // assignment
+```
+
+---
+
+### Rect3D
+
+3D bounding box class.
+
+#### Constructor
+
+```javascript
+Rect3D()                          // (0, 0, 0, 1, 1, 1)
+Rect3D(x, y, z, r, s, t)          // direct specification
+Rect3D(rect)                      // copy
+Rect3D([x, y, z, r, s, t])        // from an array
+```
+
+#### Fields
+
+- `x`, `y`, `z` (float): center coordinates
+- `r`, `s`, `t` (float): radius of each axis
+- `[0]` to `[5]` (float): index access
+
+**Description**: `(x-r, y-s, z-t)` is the minimum coordinate, and `(x+r, y+s, z+t)` is the maximum coordinate.
+
+#### Methods
+
+##### `set(x, y, z, r, s, t)` / `set(rect)` / `set([...])`
+Sets the values.
+
+**Return value**: itself
+
+##### `invalidate()`
+Sets to an invalid state.
+
+**Return value**: itself
+
+##### `valid()`
+Determines whether this is a valid box.
+
+**Return value**: `true` if all radii are positive
+
+##### `expand(rect|vector|value)`
+Expands the box.
+
+**Arguments**:
+- `rect` (Rect3D): box to merge
+- or `vector` (Vector3D): point to include
+- or `value` (float): expansion amount
+
+**Return value**: itself
+
+##### `offset(x, y, z)` / `offset(vector)` / `offset(rect)`
+Moves the position.
+
+**Arguments**:
+- `x, y, z` (float): movement amounts
+- or `vector` (Vector3D)
+- or `rect` (Rect3D)
+
+**Return value**: itself
+
+##### `transform(matrix)`, `transform0(matrix)`
+Transforms by a matrix.
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+##### `contacts(rect)`, `insideof(rect)`
+Determines whether boxes are touching or contained.
+
+**Arguments**:
+- `rect` (Rect3D): target box
+
+**Return value**: `true` if touching or contained
+
+##### `contactTest(rect[, overlap])`
+Performs a contact test and returns the overlap.
+
+**Arguments**:
+- `rect` (Rect3D): target box
+- `overlap` (Vector3D, optional): where to store the overlap amount
+
+**Return value**: overlap amount (float), or a negative value if not touching
+
+##### `sweepTest(target, direction[, normal])`
+Performs a sweep test (moving collision detection).
+
+**Arguments**:
+- `target` (Rect3D/Vector3D): target
+- `direction` (Vector3D): movement direction
+- `normal` (Vector3D, optional): where to store the collision normal
+
+**Return value**: time until collision (0 to 1), or a negative value if there is no collision
+
+##### `getFrontMostDistance(position)`, `getRearMostDistance(position)`
+Calculates the distance to the frontmost and rearmost faces of the box.
+
+**Arguments**:
+- `position` (Vector3D): reference position
+
+**Return value**: distance (float)
+
+#### Operators
+
+```javascript
+r1 + v           // move (new box)
+r1 | r2          // union (new box)
+r1 | v           // include point (new box)
+r1 & r2          // intersection (new box)
+r * v            // scale (new box)
+r * f            // uniform scale (new box)
+r << r2          // assignment
+```
+
+---
+
+### Transform
+
+SRT transform class representing position, rotation, and scale.
+
+#### Constructor
+
+```javascript
+Transform()                                 // initial state
+Transform(x, y, z)                          // position only
+Transform(tx,ty,tz,sx,sy,sz,rx,ry,rz,rw)    // specify position, scale, and rotation
+Transform(transform)                        // copy
+Transform([tx,ty,tz,sx,sy,sz,rx,ry,rz,rw])  // from an array
+```
+
+#### Fields
+
+- `tx`, `ty`, `tz` (float): position (Translation)
+- `sx`, `sy`, `sz` (float): scale (Scale)
+- `rx`, `ry`, `rz`, `rw` (float): rotation (Rotation, quaternion)
+
+#### Methods
+
+##### `set(...)` / `clear()`
+Sets or clears the values.
+
+**Return value**: itself
+
+##### `setSRT(t, s, r)`
+Sets position, scale, and rotation.
+
+**Arguments**:
+- `t` (Vector3D): position
+- `s` (Vector3D): scale
+- `r` (Quaternion): rotation
+
+**Return value**: itself
+
+##### `setMatrix(matrix)`
+Extracts and sets the position, scale, and rotation components from a matrix.
+
+**Arguments**:
+- `matrix` (Matrix): transform matrix
+
+**Return value**: itself
+
+##### `translate(x, y, z)` / `translate(vector)`
+Applies a translation.
+
+**Arguments**:
+- `x, y, z` (float): translation amounts
+- or `vector` (Vector3D/Rect3D)
+
+**Return value**: itself
+
+##### `scale(x, y, z)` / `scale(vector)`
+Applies a scale.
+
+**Arguments**:
+- `x, y, z` (float): scale factors
+- or `vector` (Vector3D)
+
+**Return value**: itself
+
+##### `rotate(quaternion)`
+Applies a rotation.
+
+**Arguments**:
+- `quaternion` (Quaternion): rotation quaternion
+
+**Return value**: itself
+
+#### Static methods
+
+##### `Transform.integrate(array)`
+Integrates an array of Transforms.
+
+**Arguments**:
+- `array` (array): array of `Transform`s
+
+**Return value**: integrated `Transform`
+
+#### Operators
+
+```javascript
+t1 + t2          // integration (new Transform)
+t1 << t2         // assignment
+```
+
+---
+
+### TransformTimeline
+
+Timeline animation of Transforms.
+
+#### Constructor
+
+```javascript
+TransformTimeline()
+```
+
+#### Fields
+
+- `start` (int): start frame (read-only)
+- `end` (int): end frame (read-only)
+
+#### Methods
+
+##### `loadData(buffer)`
+Loads timeline data from a byte buffer.
+
+**Arguments**:
+- `buffer` (ByteBuffer): timeline data
+
+##### `evaluate(frame[, result])`
+Evaluates the Transform at the specified frame.
+
+**Arguments**:
+- `frame` (float): frame number (interpolated)
+- `result` (Transform, optional): where to store the result
+
+**Return value**: `Transform` object
+
+#### Static methods
+
+##### `TransformTimeline.create( tb)`
+Creates a TransformTimeline from a table.
+
+**Arguments**:
+- `tb` (table): `{time:Transform,...}` a map of times to their corresponding Transforms
+
+**Return value**: the created `TransformTimeline` object
+
+**Example**:
+```javascript
+local tb = {
+   [0] = Transform(),
+   [5] = Transform(),
+   [10] = Transform()
+};
+
+local tfline = TransformTimeline.create( tb);
+```
+
+---
+
+### Camera
+
+3D camera class.
+
+#### Constructor
+
+```javascript
+Camera()
+```
+
+#### Fields
+
+- `prjtype` (float): projection type (0: orthographic, 1: perspective)
+- `znear`, `zfar` (float): near and far clip
+- `fovy` (float): field of view (radians)
+- `focus` (float): focus distance
+- `aspect` (float): aspect ratio
+- `eye` (Vector3D): eye position
+- `fw` (Vector3D): forward vector
+- `ri` (Vector3D): right direction vector
+- `pivot` (Vector3D): pivot position
+- `viewmat` (Matrix): view matrix
+- `prjmat` (Matrix): projection matrix
+
+**Description**: `pos` is an alias for `eye`.
+
+#### Methods
+
+##### `set(camera)`
+Copies settings from another camera.
+
+**Arguments**:
+- `camera` (Camera): copy source
+
+**Return value**: itself
+
+##### `move(x, y, z)`
+Moves the camera.
+
+**Arguments**:
+- `x, y, z` (float): movement amounts
+
+##### `lookat(eye, target[, up])` / `lookat(matrix)`
+Sets the eye position and look-at point.
+
+**Arguments**:
+- `eye` (Vector3D): eye position
+- `target` (Vector3D): look-at point
+- `up` (Vector3D, optional): up vector (default: (0,1,0))
+- or `matrix` (Matrix): set from a camera matrix
+
+##### `perspective(fovy, aspect, near, far)`
+Sets a perspective projection.
+
+**Arguments**:
+- `fovy` (float): field of view (radians)
+- `aspect` (float): aspect ratio
+- `near` (float): near clip
+- `far` (float): far clip
+
+##### `ortho(left, right, bottom, top, near, far)`
+Sets an orthographic projection.
+
+**Arguments**: projection range parameters
+
+##### `project(vector[, result])`
+Projects 3D coordinates to screen coordinates.
+
+**Arguments**:
+- `vector` (Vector3D): world coordinates
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: screen coordinates (`Vector3D`)
+
+##### `unproject(vector[, result])`
+Unprojects screen coordinates back to 3D coordinates.
+
+**Arguments**:
+- `vector` (Vector3D): screen coordinates
+- `result` (Vector3D, optional): where to store the result
+
+**Return value**: world coordinates (`Vector3D`)
+
+##### `getDistance(object)`
+Gets the distance from the camera to an object.
+
+**Arguments**:
+- `object` (Vector3D/Rect3D): object
+
+**Return value**: distance (float)
+
+##### `isInside(object[, margin])`
+Determines whether an object is inside the view frustum.
+
+**Arguments**:
+- `object` (Vector3D/Rect3D): object
+- `margin` (float, optional): margin
+
+**Return value**: `true` if inside the view frustum
+
+##### `setViewport(array)`
+Sets the viewport.
+
+**Arguments**:
+- `array` (array): `[x, y, width, height]`
+
+##### `changeZClip(near, far)`
+Changes the near and far clip.
+
+**Arguments**:
+- `near` (float): near clip
+- `far` (float): far clip
+
+##### `getWVP([result])`
+Gets the world-view-projection matrix (WVP).
+
+**Arguments**:
+- `result` (Matrix, optional): where to store the result
+
+**Return value**: WVP matrix (`Matrix`)
+
+##### `updatePlanes()`
+Updates the view frustum planes.
+
+**Description**: Must be called before using `isInside`.
+
+##### `getPlanes(array)`
+Gets the six planes of the view frustum.
+
+**Arguments**:
+- `array` (array): array of six `Plane` objects
+
+**Return value**: the same array
+
+##### `getSubplanes(rect, array)`
+Gets the view frustum planes of a rectangular region.
+
+**Arguments**:
+- `rect` (Rect2D): screen rectangle
+- `array` (array): array of four `Plane` objects
+
+**Return value**: the same array
+
+##### `getWorldBounds([result])`
+Gets the view range in world coordinates.
+
+**Arguments**:
+- `result` (Rect3D, optional): where to store the result
+
+**Return value**: bounding box (`Rect3D`)
+
+#### Operators
+
+```javascript
+c1 << c2         // assignment
+```
+
+---
+
+### bigint
+
+Arbitrary-precision integer class.
+
+#### Constructor
+
+```javascript
+bigint()                                 // 0
+bigint(value)                            // from an integer
+bigint(string[, radix])                  // from a string (decimal or hexadecimal)
+bigint(buffer[, offset, length])         // from a byte buffer
+```
+
+**Arguments**:
+- `value` (int/long): initial value
+- `string` (string): decimal or hexadecimal string
+- `radix` (int, optional): radix (16 for hexadecimal)
+- `buffer` (ByteBuffer): byte buffer
+- `offset`, `length` (int, optional): range to read
+
+#### Fields
+
+- `sign` (int): sign (read-only)
+- `size` (int): size (number of elements in the internal array, read-only)
+- `[index]` (int): elements of the internal array (read-only)
+
+#### Methods
+
+##### `add(other)`, `sub(other)`, `mul(other)`, `div(other)`, `mod(other)`
+Performs arithmetic operations.
+
+**Arguments**:
+- `other` (bigint): operation target
+
+**Return value**: itself
+
+**Description**: Modifies itself (destructive operation).
+
+##### `powmod(p, n)`
+Calculates the modular exponentiation (this^p mod n).
+
+**Arguments**:
+- `p` (bigint): exponent
+- `n` (bigint): modulus
+
+**Return value**: itself
+
+##### `tostring([radix])`
+Converts to a string.
+
+**Arguments**:
+- `radix` (int, optional): 16 for hexadecimal (default is decimal)
+
+**Return value**: string
+
+##### `getbytes([buffer])`
+Gets the value as a byte sequence.
+
+**Arguments**:
+- `buffer` (ByteBuffer, optional): buffer to write to
+
+**Return value**: byte buffer (new or the `buffer` argument)
+
+#### Operators
+
+```javascript
+bi[index]        // get internal array element
+bi(...)          // set value via call operator
+bi.tostring()    // stringify ("<123>" format)
+```
+
+---
+
+## Notes
+
+1. **Coordinate system**: SakanaGL uses a right-handed coordinate system.
+
+2. **Angle units**: All angles are specified in radians. Use `Math.DTOR` to convert from degrees to radians.
+
+3. **Quaternions**: Rotation composition is applied from right to left (`q1 * q2` applies `q2` first, then `q1`).
+
+4. **Matrices**: Stored in column-major order. Compatible with OpenGL.
+
+5. **Transform**: `Transform + Transform` composes hierarchical transforms.
+
+6. **Bounding boxes**: `Rect3D` is represented by a center coordinate and radii (not minimum and maximum coordinates).
+
+7. **Camera**: `isInside()` does not work correctly unless `updatePlanes()` is called first.
+
+8. **Operator overloading**: Operators such as `+`, `-`, `*`, `/`, `|`, `^`, and `<<` are overloaded in many classes.
+
+9. **Destructive operations**: Methods such as `add()`, `sub()`, and `mul()` modify the object itself. Use operators (`+`, `-`, `*`) to create new objects.
+

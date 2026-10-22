@@ -92,7 +92,7 @@ Performs BASE64 encoding.
 
 **Return value**: BASE64-encoded string or byte buffer
 
-#### `decodeBASE64(data, dest)`
+#### `decodeBASE64(data[, dest])`
 ```
 ByteBuffer decodeBASE64(string|ByteBuffer data, ByteBuffer dest)
 ```
@@ -100,7 +100,7 @@ Performs BASE64 decoding.
 
 **Arguments**:
 - `data` (string/ByteBuffer): data to decode
-- `dest` (ByteBuffer): destination byte buffer
+- `dest` (ByteBuffer, optional): destination byte buffer. If omitted, a new TempBuffer is created
 
 **Return value**: decoded byte buffer
 

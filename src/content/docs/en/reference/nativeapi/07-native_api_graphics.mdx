@@ -60,6 +60,11 @@ It provides OpenGL/OpenGL ES/WebGL-based 3D graphics rendering, shader managemen
 
 ### System information
 
+#### `skGetAPILevel()`
+Gets the supported OpenGL API level. Returns 0 if skCreateScreen() has not been called.
+
+**Return value**: int
+
 #### `skGetSupportedTextureFormats()`
 Gets the list of supported texture compression formats.
 
@@ -147,6 +152,14 @@ Sets the default clear parameters.
 
 **Arguments**:
 - `clearParam` (ClearParam): clear parameters
+
+#### `skInvalidateFrameBuffer(bits)`
+Invalidates the frame buffer of the render target.  
+In `bits`, bits 0-8 represent color buffers, bit 9 represents the depth buffer, and bit 10 represents the stencil buffer.  
+Set bits are cleared on the next skSetRenderTarget call.
+
+**Arguments**:
+- `bits` (int): bitmask of buffers to invalidate
 
 #### `skSetRenderTarget(renderTarget)`
 Sets the render target. Specify `null` to return to the screen (swap chain).
@@ -403,11 +416,11 @@ Draws a sprite.
 
 #### `skDrawSprites(...sprites)`
 #### `skDrawSprites(spriteArray)`
-Draws multiple sprites.
+Draws multiple sprites or text boxes.
 
 **Arguments**:
-- `sprites` (Sprite, variadic): sprites
-- `spriteArray` (array): array of sprites
+- `sprites` (Sprite|TextBox, variadic): sprites or text boxes
+- `spriteArray` (array): array containing sprites or text boxes
 
 **Description**: Draws only sprites that are visible and have `bnd` set.
 

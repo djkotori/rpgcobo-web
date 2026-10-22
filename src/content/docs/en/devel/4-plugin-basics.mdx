@@ -1,0 +1,143 @@
+---
+title: How to create a plugin
+description: "Explains how to create plugins, covering RPG-Cobo's developer features and extension methods."
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+Now, let's get to the main topic. We'll explain how to create plugins for RPG-Cobo!
+
+### <M code="f10d"/> Two plugin formats
+---
+RPG-Cobo supports the following two plugin formats.
+
+#### 1. Single plugin script format (plugsk format)
+  - Simply placing a single file ( ***plugin name.plugsk*** ) in the plugin folder is enough for it to be recognized as a plugin.  
+    It can be made with a single text file, so it's very easy.
+  
+#### 2. Plugin folder format that bundles multiple scripts and resources (folder format)
+  - Placing a folder inside the plugin folder, with a ***plugin.sk*** inside it, makes it recognized as a plugin.  
+    In addition to extending the program, you can bundle resources and data together and distribute them as a plugin.
+
+
+
+### <M code="f10d"/> How to define a plugin script
+---
+***plugin name.plugsk*** or ***/plugin name/plugin.sk*** must be an `sk` script with a specific structure.  
+Define properties and functions in the script as shown below.
+
+```javascript
+1:	pluginfo <- {
+2:		name : { "ja":"プラグイン名","en":"Plugin Name"}
+3:		auther : "djkotori"
+4:		ver : "0.0.1"
+5:		desc : { "ja":"最も簡単なプラグインの例です。","en":"The simplest plugin example."}
+6:		order : 10
+7:		props : [
+8:			{ pid:"message", lbl:"Hello message", type:PropertyType.STRING, defval="RPG-Cobo" }
+9:		]
+10:	}
+11:
+12:	function loadPlugin( args, opt){
+13:		return true;
+14:	}
+```
+
+Below is an explanation of the property and function definitions. All properties except those marked (required) can be omitted.
+
+##### `1-10: pluginfo` (required)
+Defines the registration information for this plugin. pluginfo is defined as a table, and defines the plugin name, author, version, description, and properties configurable from the plugin manager, as described below.
+
+##### `2: name` (required)
+The plugin name displayed in the plugin manager. It can be a string type, or a table type to define strings for each language.
+<Aside>
+Much of RPG-Cobo's string information can be defined as localized strings by specifying a table.
+</Aside>
+##### `3: auther`
+The plugin author's name.
+##### `4: ver`
+The plugin version. Currently for display only.
+##### `5: desc`
+The plugin description. Write a clear explanation of the plugin and how to use it.
+##### `6: order`
+Specifies the loading priority of the plugin. Smaller numbers have higher priority and are loaded first.  
+**RPG-Cobo's standard plugin `rpgtools` has `order:0`.** If you need to load before `rpgtools`, you can specify a negative value, but normally we recommend specifying a positive value.  
+If omitted, it defaults to `order:100`.
+
+##### `7-9: props`
+Defines properties configurable from the plugin manager. props is defined as an array, and each element is a table defining the property information.
+<Aside>
+Property definitions are an important mechanism that forms the foundation of RPG-Cobo's data structures, used in all of RPG-Cobo's data definitions.  
+First, let's take a look at how they are used in RPG-Cobo's source code.
+</Aside>
+##### `8: props[0]`
+Shows one property definition as an example.
+- `pid` : The property ID. Used when referencing this property within the plugin.
+- `lbl` : The property label. The string displayed in the plugin manager.
+- `type` : The property type. Specified with the PropertyType type. See the reference for details.  
+- `defval` : The property's default value. Used when the property has not been set in the plugin manager.
+
+##### `12-14: function loadPlugin( args, opt)` (required)
+A function executed when an enabled plugin is loaded. Inside this function, you change the behavior of existing processes, add definitions, and add hooks to extend the program's behavior.
+Return `true` if the plugin loads successfully, and `false` if it fails. The plugin load also fails if an exception is thrown.
+
+- `args` : An array containing the command-line arguments specified when the game was launched. Normally not used.
+- `opt` : A table containing the property definitions defined in pluginfo. You can reference the property values set in the plugin manager.
+
+### <M code="f10d"/> Example: adding a menu
+---
+
+```javascript
+	//	pluginfo omitted
+1:	function loadPlugin( args, opt) {
+2:		::skstudio.registerMenu( {
+3:			uid = "menu_edit_pluginx"
+4:			lbl = "PluginX"
+5:			parentid = "menu_edit"
+6:			icon = "\ue166"
+7:			defkey = "^_L"
+8:			where = null
+9:			func = @( m){ printf( "PluginX menu selected!\n"); }
+10:		});
+11:		return true;
+12:	}
+```
+This sample is a plugin that adds a menu called "PluginX" to RPG-Cobo's "Edit" menu.  
+You can add a menu by passing a table containing the following information to the `registerMenu` function.
+
+- `3: uid` (required) : The menu ID. Specify an ID that does not overlap with others.
+- `4: lbl` (required) : The string displayed in the menu.
+- `5: parentid` : The parent menu ID. Here, the ID of the "Edit" menu is specified.
+- `6: icon` : The icon displayed in the menu. Specify a code point from RPG-Cobo's icon font.
+- `7: defkey` : The menu's shortcut key. Specify it in RPG-Cobo's shortcut key definition format.
+- `8: where` : Specifies the conditions under which the menu is displayed.
+- `9: func` : The function executed when the menu is selected. The menu information is passed as an argument.
+
+*You can also add a submenu by specifying `submenu`.*
+
+##### <M code="e838"/><M code="e3f4"/><M code="e9e6"/><M code="ea2f"/> Icon character codes <M code="e63e"/><M code="e323"/><M code="ea44"/><M code="e87d"/>
+The icon font used in RPG-Cobo's tools is based on Material Icons from Google Fonts. By specifying a Unicode code point, such as `"\ue166"`, you can display an icon.
+
+You can see the list of Material Icons at the URL below. Check the `Code point` of the icon you want to use, and specify the code point after `\u`.
+
+https://fonts.google.com/icons?selected=Material+Icons+Outlined
+
+### <M code="f10d"/> Points to note when writing plugin code
+---
+**Processes that have side effects on the entire system must be executed inside the `loadPlugin` function. Never execute them outside the function.**  
+For example, if you put code that adds a menu outside the `loadPlugin` function, the menu will be added even when the plugin is disabled, defeating the purpose of enabling and disabling plugins.
+It also breaks the rules for plugin execution order.
+
+In particular, when loading other scripts or resources in a folder-format plugin, be careful to load them inside the `loadPlugin` function.
+
+```javascript
+	pluginfo <- { ... };
+
+	::skstudio.registerMenu( { ... });	//	This kind of code is not allowed!
+
+	function loadPlugin( args, opt) {
+		return true;
+	}
+```
