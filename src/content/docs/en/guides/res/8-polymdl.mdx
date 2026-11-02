@@ -1,0 +1,150 @@
+---
+title: Using external 3D models
+description: "Explains how to work with resources in RPG-Cobo, using external 3D models as the theme."
+---
+
+import { Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+import { default as M } from '/src/components/MIcon.astro';
+import { default as SS } from '/src/components/SS.astro';
+import { Steps } from '@astrojs/starlight/components';
+
+RPG-Cobo can load 3D models in the `glTF` format to represent characters and objects in your game.  
+This feature is for anyone who wants to include 3D model assets that are sold or distributed elsewhere, or try creating more advanced 3D graphics.
+***If you don't need it, you don't have to use this feature at all.***
+
+To manage external 3D models, open "<M code="e86b"/> Polygon Models" from "<M code="f089"/> Resources" in the activity bar.  
+
+## Polygon model resources screen
+
+The Polygon Model Resources screen is where you manage 3D models used in the game.
+
+
+<div class="sspart">
+<SS src='docs/polymdl-1.png' alt=''/>
+
+##### <M part="A"/> Polygon model list
+Imported polygon models are displayed in this list.
+
+##### <M part="B"/> Properties
+- Model: Select the imported 3D model.
+- Position, Rotation, Scale: Adjust the model's position, rotation, and scale.
+- Collision, Size: Set an approximate collision shape. Detailed collision shapes are planned for a future update.
+- Use as character: Specify whether to use this model as a character.
+- Place on map: Specify whether this model can be placed on the map as an event.
+
+##### <M part="C"/> Preview
+The selected polygon model is previewed here. You can also check its animations.
+
+</div>
+
+### <M code="f10d"/> Importing glTF models
+---
+
+glTF is a standard 3D model format supported by nearly all 3D software. This makes it easy to import and use models created elsewhere in RPG-Cobo.  
+The file extensions are `.gltf` and `.glb`. You can also load `.vrm` files, a type of glTF format used for VRM models.
+<Aside type="note">
+Currently, loading VRM models supports only basic information. VRM-specific features and settings, such as animations and physics bones, are not supported.  
+Support for VRM-specific features and settings is planned for a future update.
+</Aside>
+
+You can import glTF files into RPG-Cobo in either of the following ways:
+- Drag and drop a glTF file onto the Polygon Model screen.
+- Right-click the polygon model list and select "<M code="e675"/> Import External 3D Model."
+<SS src='docs/polymdl-2.png' alt=''/>
+
+When the import succeeds, the imported polygon model appears in a dialog. If everything looks correct, click "OK" to complete the import.
+
+<SS src='docs/polymdl-3.png' alt=''/>
+
+
+
+### <M code="f10d"/> Using imported models in your game
+---
+You can use an imported model in your game by enabling "Use as character" or "Place on map" in its polygon model properties.
+
+#### Use as character
+Enable this to use the polygon model for a player character or enemy.  
+The model will then appear in the model selection list when editing "Players" or "Enemies" in the database.
+
+#### Place on map
+Enable this to place the polygon model as a map event.  
+The model will then appear in the model selection list in event settings.
+
+
+### <M code="f10d"/> Setting up animations
+
+RPG-Cobo characters use a standard set of animation IDs, each corresponding to an action. In the model editor, assign animations to the IDs you want to use.
+<Aside type="note">
+There are many animations, so setting them all up may seem like a lot of work.
+However, you don't need to assign every animation. Just set up the ones you need.  
+For example, a character that is never used in battle doesn't need any battle animations, and you only need to set up the emotions you plan to use.
+</Aside>
+
+<div class="sspart">
+<SS src='docs/polymdl-6.png' alt=''/>
+
+##### <M part="A"/> Editor tabs
+Switch tabs to open the editors for materials, animations, bones, and shapes.  
+For this example, select the "Anime" tab.
+
+##### <M part="B"/> Animation list
+This list displays the animation IDs. You can manage animations by adding list entries or renaming IDs.
+
+##### <M part="C"/> Properties
+- ID: Set an ID from the table below to associate the animation with an action.
+- Motion: Select a motion defined in the glTF file.
+- Start, End, Speed: Set the animation's start frame, end frame, and playback speed. Edit these only if you want to change the motion imported from glTF.
+- Loop: Enable this for animations that should repeat, such as standing, walking, or running.
+- Replay: Specify whether the animation should restart from the beginning when the same action is performed again.
+</div>
+
+
+|Category| Animation ID | Action |
+|----------------|----------------|------|
+|Basic actions| stand | Stand |
+| | walk | Walk |
+| | dash | Run |
+| | crimb | Climb |
+| | sleep | Sleep |
+| | aim | Ready stance |
+| | sick | Weakened |
+| | sit | Sit |
+| | jump | Jump |
+| | land | Land |
+|Emotions| greet | Greet |
+| | yes | Yes |
+| | no | No |
+| | happy | Happy |
+| | anger | Angry |
+| | sad | Sad |
+| | doubt | Doubt |
+|Battle| fight | Start battle |
+| | victory | Victory |
+| | damage | Take damage |
+| | shield | Defend with shield |
+| | avoid | Dodge |
+| | die | Die |
+|Ready stances| aimp | Unarmed stance |
+| | aimw | Weapon stance |
+| | aimb | Bow stance |
+| | spell | Cast spell |
+| | dashw | Charge / lunge |
+|Weapon attacks| slash1 | Diagonal slash |
+| | slash2 | Horizontal slash |
+| | slash3 | Overhead smash |
+| | slash4 | Rising slash |
+| | stick1 | Forward thrust |
+| | stick2 | Downward thrust |
+| | bow1 | Shoot bow (forward) |
+| | bow2 | Shoot bow (diagonal) |
+| | shoot1 | Shoot gun |
+| | sweep1 | Overhead swing |
+| | raise1 | Raise weapon (up) |
+| | raise2 | Raise weapon (forward) |
+|Unarmed attacks| punch1 | Side punch |
+| | punch2 | Uppercut |
+| | punch3 | Elbow strike |
+| | kick1 | Side kick |
+| | kick2 | Sode kick |
+| | blast1 | Energy blast |
+| | magic1 | Magic |

@@ -1,0 +1,171 @@
+---
+title: Mastering variables
+description: "Explains event creation and presentation settings in RPG-Cobo, using variables as the theme."
+date: 2025-06-02T23:08:31.066Z
+---
+
+import { default as SS } from '/src/components/SS.astro';
+import { default as M } from '/src/components/MIcon.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+**Variables** play a vital role in making RPGs. They can track how far the player has progressed, whether a chest has been opened, the time played, or the player's money.
+
+This page takes an in-depth look at **variables** in RPG-Cobo.
+
+### <M code="f10d"/> Types of variables
+---
+
+The following types of variables are available in RPG-Cobo event commands.
+
+|Variable type|Variable names|Description|
+|------------------|------------|-------|
+|Work variables|W X Y Z|Temporary variables available while an event is running (not saved)|
+|Event variables|A B C D|Variables saved separately for each event|
+|Global variables|G000 ~ G999|Variables that can be read and written by all events|
+|System variables|MONEY PTIME MAPID...|Variables that provide game system state, such as money, play time, and the current map ID|
+|Button states|BTN_UP BTN_LEFT BTN_A...|Variables that report whether a button is pressed|
+|Query variables|NUM_I000 NUM_E000...|Variables that report values such as item counts and enemies defeated|
+
+#### <M code="ea50"/> What are work variables?
+
+Work variables are temporary variables used while an event is running. Their values are not retained after the event ends, and they are initialized again the next time the event runs. They are useful for temporarily storing calculation results, for example.
+
+**Work variables also play an important role when calling macro events.** Set a value in a work variable in the calling event, and the macro event can use that value.  
+Additionally, the value of `W` when a macro event ends is returned to the calling event as its return value. You can use this behavior when calling a macro event with the "<M code="eb8e"/> Run Macro" command.
+
+#### <M code="ea50"/> Read/write variables and read-only variables
+
+RPG-Cobo has both read/write variables and read-only variables.
+
+- Work, event, and global variables can be read and written.
+- System variables, button states, and query variables are generally read-only. Some system variable values can be written.
+
+#### <M code="ea50"/> Global variables shared between save files
+
+Global variables have a "Share across saves" setting. When enabled, the same value is retained and updated across save files. This is useful for information that should be shared between saves, such as a game-clear flag.
+
+Open the settings screen from "<M code="ea28"/> Game Settings" > "<M code="e16e"/> Global Variables" in the database.
+
+
+### <M code="f10d"/> Changing variable values
+---
+
+In the custom event or macro event editor, you can configure event commands to change variable values.
+
+#### <M code="ea50"/> Event command: "<M code="ea5f"/> Set Variable"
+The usual way to change a variable's value is with the "<M code="ea5f"/> Set Variable" event command. You can set the variable by graphically specifying the left-hand value, operation, and right-hand value.
+
+<div class="sspart">
+<SS src='docs/variables-1.png' alt=''/>
+- Left-hand value: Select the variable to change.
+- Operation: Choose from `=` `+` `-` `×` `÷` `%`.  
+  - `=` assigns the right-hand value as-is.
+  - `+` adds the right-hand value to the left-hand value and assigns the result to the left-hand value. `-`, `×`, `÷`, and `%` work similarly.
+- Right-hand value: You can specify several kinds of values.
+  - <M code="e9f6"/> ON/OFF: Specify ON or OFF. Used for switch states.
+  - <M code="e0bc"/> Number: Specify any number.
+  - <M code="e167"/> String: Specify any string.
+  - <M code="eb40"/> Random: Specify a random value within a range.
+  - <M code="eb8e"/> Script: Specify a script. Use this for complex formulas or calculations combining multiple variables.
+  - <M code="e322"/> Select Variable: Use the value of another variable as the right-hand value.
+  - <M code="f120"/> Data ID: Specify any data ID. Use this to reference data such as items or enemies.
+</div>
+
+#### <M code="ea50"/> Event command: "<M code="eb8e"/> Run Script"
+
+The "<M code="ea5f"/> Run Script" command is a powerful command that lets you write any program you need.
+Of course, you can also get and change variable values with it.
+
+***However, because Run Script is so flexible, mistakes in the script can prevent the event from working correctly. Use it carefully.***
+
+<SS src='docs/variables-2.png' alt=''/>
+
+
+### <M code="f10d"/> Using variables in events
+---
+
+#### <M code="ea50"/> Using variable values in conditions
+For example, you can use a variable to determine whether a character appears, or check its value in a conditional branch of an event command.
+
+<SS src='docs/variables-3.png' alt=''/>
+
+Select "Compare Variable..." to set a condition that compares the specified variable's value with another value.
+
+#### <M code="ea50"/> Using variables in event parameters
+As an example, let's use a variable to specify the number of items to add or remove with the "<M code="f109"/> Change Items" command.
+
+<div class="sspart">
+<SS src='docs/variables-4.png' alt=''/>
+
+1. An "<M code="e157"/>" icon appears to the left of the "Quantity" parameter. Click it to open a menu.
+2. Select "<M code="e322"/> Select Variable" from the menu, then choose the variable to use.
+3. "<M code="e157"/>" is highlighted, and the variable is assigned to the quantity.
+
+This lets you dynamically change the number of items added or removed by using a variable.
+</div>
+
+**In RPG-Cobo, variables and expressions can be assigned to many event command parameters, allowing you to create highly flexible and dynamic events.**
+
+#### <M code="ea50"/> Displaying variable values in dialogue and UI
+
+You can embed variable values in dialogue text. For example, to display the value of the global variable with ID `G000`, write:
+
+```
+Welcome to RPG-Cobo!
+The value of G000 is $G000. It can also be displayed with ${G000}.
+The value of PTIME is $PTIME. You can also display the calculation result like ${PTIME + 1000}.
+```
+
+Try entering this text in a villager's dialogue.
+
+<SS src='docs/variables-5.png' alt=''/>
+
+In test play, the dialogue message appears as follows.
+
+<SS src='docs/variables-6.png' alt=''/>
+
+### <M code="e8af"/> Variable types
+---
+
+Variables can have several types, mainly numbers, strings, and booleans (ON/OFF), as well as arrays and tables. Each type can hold values appropriate to it.  
+Be aware that calculations or comparisons may not work correctly when the types of variables do not match. In some cases, a calculation may produce an error.
+It is important to know what type of value each variable contains.
+
+#### <M code="ea50"/> Comparison rules
+
+- If either the left or right value is a boolean (ON/OFF), the other value is converted to a boolean.  
+  For example, in the comparison `W = ON`, `W` is treated as OFF if it is 0, and ON if it is any nonzero value.
+
+- When using comparison operators such as `<`, `<=`, `>`, and `>=`, comparisons between numbers work correctly, but results may be unexpected if either value is not a number.  
+  Note that the string `"0"` is not recognized as a number.
+
+
+### <M code="f10d"/> Reference: system variables
+---
+
+|Variable name|Name|Description|
+|---|---|---|
+|MONEY|Money|Amount of money the player has|
+|AVELV|Average level|Average level of the party|
+|MAXLV|Maximum level|Highest level in the party|
+|MAPID|Current map ID|ID of the current map|
+|RND99|Random (0-99)|Random integer from 0 to 99|
+|SYSTIME|System time|Time elapsed since the application started (milliseconds)|
+|PTIME|Play time|Time played (milliseconds)|
+|STEPCNT|Step count|Number of steps the player has taken|
+|RESULT|Result|Contains results such as battle outcomes and UI results|
+|ERROR|Error|Type of error that occurred during event processing|
+|REMAPID|Map reposition ID|Incrementing this causes doors, enemies, and other objects on the map to be repositioned|
+|ENCOUNTER|Encounter|Random encounter counter. An encounter occurs when it reaches 100|
+|INBATTLE|In battle|Indicates whether the player is currently in battle|
+|ESCAPABLE|Can escape|Indicates whether the player can escape from the current battle|
+|UIFOCUS|UI focus|Name of the UI element currently focused by the cursor|
+|ATKCHR|Attacking character|Reference to the current attacking character|
+|DEFCHR|Defending character|Reference to the current defending character|
+|MEMBERS|Members|Array of references to the current party members|
+|ENEMIES|Enemies|Array of references to the current enemies|
+|CURPORTAL|Current portal|Variable containing position information for when moving to the current map|
+|RETPORTAL|Return portal|Variable indicating the destination portal when returning|
+|EXITMAP|Exit map|Variable indicating the destination when using an escape item, etc.|
+|FPS|Frame rate|Current frame rate|
+

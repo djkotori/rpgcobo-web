@@ -172,6 +172,10 @@ h2 {
   font-size: 80%;
 }
 
+h3 {
+  color: var(--sl-color-text-head);
+}
+
 .sspart {
   padding: 0.5em 1.0em;
   background-color: var(--sl-color-gray-7);
